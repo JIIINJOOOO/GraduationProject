@@ -1,8 +1,8 @@
 #pragma once
 #include "Physics.h"
 
-#define MAX_OBJ 10
-
+#define MAX_OBJ 200
+#define MAX_MOVE_RANGE 30
 enum Obj_Type {
 	obj_player, obj_monster
 };

@@ -10,8 +10,9 @@
 #include <thread>
 #include "globals.h"
 #include "CDBConnector.h"
-#include "CLobby.h"
 #include "CPlayer.h"
+#include "CMonster.h"
+
 using namespace std;
 
 struct SOCKETINFO {
@@ -46,13 +47,12 @@ private:
 
 	CDBConnector m_dbc;
 
-	CLobby *m_lobby[MAX_LOBBY];
 	int m_numofRooms;
 	int m_numofUsers;
 
 public:
 	CServer() = default;
-	~CServer() = default;
+	~CServer();
 
 	void Start();
 	void CreateMonsters();
@@ -66,12 +66,12 @@ public:
 	static DWORD WINAPI SendThread(LPVOID arg);
 	static DWORD WINAPI MonsterThread(LPVOID arg);
 
+	bool ProcessPacket(char* buf, const int& idx);
+	void Send(const char* buf);
+	void Disconnect(const int& idx);
 	// Supervise Account with MS-SQL
 	int Login(char* buf);
 	int SignUp(char* buf);
-
-	// Supervise Lobby
-	int AddRoom(const int& hostIdx);
 
 	// Supervise Player
 	int GetNewSockIdx();

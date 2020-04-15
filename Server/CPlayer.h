@@ -5,7 +5,7 @@
 #include "packet.h"
 #define MAX_CLIENTS 100
 #define MAX_MOVE_RANGE 10
-#define MAX_VIEW_RANGE 5
+#define MAX_VIEW_RANGE 1000
 
 enum Player_State {
 	not_login = -1, In_Lobby, In_Room, In_Game,

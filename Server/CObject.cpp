@@ -10,6 +10,7 @@ void CObject::Initialize(Position pos, Velocity vel, Volume vol, Accel acc, int 
 
 // Getter & Setter
 void CObject::SetPosition(const Position& pos) {
+	// if (GetDistance(pos) < MAX_MOVE_RANGE)
 	m_pos = pos;
 }
 void CObject::SetVelocity(const Velocity& vel) {

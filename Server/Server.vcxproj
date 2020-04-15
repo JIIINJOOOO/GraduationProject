@@ -126,19 +126,21 @@
     <ClCompile Include="CDBConnector.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CObject.cpp" />
+    <ClCompile Include="CPathFinder.cpp" />
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CServer.cpp" />
-    <ClCompile Include="CLobby.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="node.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CDBConnector.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CObject.h" />
+    <ClInclude Include="CPathFinder.h" />
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CServer.h" />
     <ClInclude Include="globals.h" />
-    <ClInclude Include="CLobby.h" />
+    <ClInclude Include="node.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="Physics.h" />
   </ItemGroup>

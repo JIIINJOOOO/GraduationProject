@@ -1,42 +1,74 @@
 #include "CMonster.h"
-#include "CLobby.h"
-
-void CMonster::Update(const CObject& other) {
-	/*
-	1. 자신의 시야에 플레이어가 있는지 검사 있다면 추적
-	2. 공격 범위에 들어왔다면 공격
-	3. 최대 추적 범위를 벗어났다면 원래 위치로 돌아옴
-	*/
-	Position pos;
-
-	int distance;
-	for (int i = 0; i < MAX_PLAYER; ++i) {
-		
-		// if (users[i] == None) continue;
-		// distance = g_players[users[i]]->GetDistance(m_obj->GetPosition());
-		if (distance < ACTIVITY_RANGE) {
-			/*
-			추적 가능한 범위에 플레이어가 들어왔으므로 추적을 하긴 하는데 
-			1. 몬스터의 시야 고려해야함 뒤통수에 눈깔이 달리진 않잖아?
-			2. 나중에 터레인이든 뭐든 가져오면, 그걸로 시야에 들어오는 영역만 탐지해보는 것도 좋을듯
-			*/
-			m_state = chase;
-		//	Chase(*g_players[i]);
-			if (distance < ATTACK_RANGE) {
-				// 공격 가능한 범위에 들어옴
-				m_state = attack;
-			}
+#include "globals.h"
+#include "CServer.h"
+using namespace std;
+extern short board[SIDE_LEN][SIDE_LEN];
+void CMonster::Update(CObject& my, const CObject& other) {
+	Position myPos = my.GetPosition();
+	Position otherPos = other.GetPosition();
+	int distance = my.GetDistance(otherPos);
+	// cout << myPos.x << "\t" << myPos.y << "\tsta: " << m_state << endl;
+	if (m_state == chase) {
+		// 여기서 추적해야하잖아 
+		// x, y축으로 이동하고 z축은 일단 신경쓰지 않는다
+		if (distance < ATTACK_RANGE) { 
+			m_state = attack;
+			return;
 		}
+		if (my.GetDistance(m_defaultPos) > CHASE_RANGE) {
+			m_state = return_home;
+			return;
+		}
+		
+		// m_chasePath = m_pathFinder->GetPath(myPos, otherPos);
+		// for (int i = 0; i < m_chasePath.size(); ++i) {
+		// 	// myPos = m_chasePath.pop_front();
+		// 	// m_chasePath.
+		// 	myPos = m_chasePath.front();
+		// 	m_chasePath.pop_front();
+		// 	Sleep(1000 / 400);
+		// 	// printf("%d  %d  %d \n", myPos.x, myPos.y, myPos.z);
+		// }
+		// m_chasePath.clear();
+
+		float x_dis = myPos.x - otherPos.x;
+		float y_dis = myPos.y - otherPos.y;
+		x_dis=myPos.x + (-x_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
+		y_dis=myPos.y + (-y_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
+		
+		float desZ = board[(int)x_dis + X_SIDE][(int)y_dis + Y_SIDE];
+		if (desZ > (myPos.z + 20.f))
+			return;
+		myPos.x = x_dis;
+		myPos.y = y_dis;
+		myPos.z = desZ;
 	}
-	// 원래의 위치에서 추적 범위를 벗어났는가
-	// int distanceToActivityRange = m_obj->GetDistance(m_defaultPos);
-	// if (distanceToActivityRange > ACTIVITY_RANGE) {
-	// 	// 원래의 자리 (m_difaultPos)로 돌아간다
-	// }
+	else if (m_state == return_home) {
+		if (distance < ATTACK_RANGE) {
+			m_state = attack;
+			return;
+		}
+		if (my.GetDistance(m_defaultPos) < IDLE_RANGE) {
+			m_state = idle;
+			return;
+		}
+		float x_dis = myPos.x - m_defaultPos.x;
+		float y_dis = myPos.y - m_defaultPos.y;
+		x_dis = myPos.x + (-x_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
+		y_dis = myPos.y + (-y_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
+		float desZ = board[(int)x_dis + X_SIDE][(int)y_dis + Y_SIDE];
+		cout << desZ << endl;
+		if (desZ > (myPos.z + 20.f))
+			return;
+		myPos.x = x_dis;
+		myPos.y = y_dis;
+		myPos.z = desZ;
+	}
+	if (m_state == attack) {
+	}
+	my.SetPosition(myPos);
 }
 
-void CMonster::Chase(const CPlayer& target) {
-}
 void CMonster::Initialize(Position pos, int type) {
 	SetDefaultPos(pos);
 	SetActivityRange(ACTIVITY_RANGE);
@@ -44,11 +76,12 @@ void CMonster::Initialize(Position pos, int type) {
 	m_type = type;
 	xIdx = pos.x;
 	zIdx = pos.z;
+	m_pathFinder = new CPathFinder;
 }
 
 // Getter & Setter
-void CMonster::SetObjIdx(const int& idx) {
-	// m_objIdx = idx;
+void CMonster::SetState(const int& state) {
+	m_state = state;
 }
 void CMonster::SetDefaultPos(const Position& pos) {
 	m_defaultPos = pos;
@@ -59,6 +92,10 @@ void CMonster::SetActivityRange(const int& range) {
 int CMonster::GetHealthPoint() const {
 	return m_healthPoint;
 }
-Position CMonster::GetPosition() const {
-//	return m_obj->GetPosition();
+int CMonster::GetState() const {
+	return m_state;
+}
+
+void CMonster::SetChaseObj(const CObject& other) {
+	// if (m_state == chase)
 }

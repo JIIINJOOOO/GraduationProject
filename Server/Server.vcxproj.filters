@@ -24,9 +24,6 @@
     <ClCompile Include="CDBConnector.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CLobby.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CPlayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -34,6 +31,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CPathFinder.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="node.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,9 +53,6 @@
     <ClInclude Include="CDBConnector.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CLobby.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CPlayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -63,6 +63,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Physics.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CPathFinder.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="node.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
