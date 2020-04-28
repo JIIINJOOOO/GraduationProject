@@ -19,29 +19,34 @@ void CMonster::Update(CObject& my, const CObject& other) {
 			m_state = return_home;
 			return;
 		}
-		
-		// m_chasePath = m_pathFinder->GetPath(myPos, otherPos);
-		// for (int i = 0; i < m_chasePath.size(); ++i) {
-		// 	// myPos = m_chasePath.pop_front();
-		// 	// m_chasePath.
-		// 	myPos = m_chasePath.front();
-		// 	m_chasePath.pop_front();
-		// 	Sleep(1000 / 400);
-		// 	// printf("%d  %d  %d \n", myPos.x, myPos.y, myPos.z);
-		// }
-		// m_chasePath.clear();
+		// cout << "설마 돌아가고 있는거니?\n";
+		m_chasePath = m_pathFinder->GetPath(myPos, otherPos);
+		// cout << "에이 설마\n";
 
-		float x_dis = myPos.x - otherPos.x;
-		float y_dis = myPos.y - otherPos.y;
-		x_dis=myPos.x + (-x_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
-		y_dis=myPos.y + (-y_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
-		
-		float desZ = board[(int)x_dis + X_SIDE][(int)y_dis + Y_SIDE];
-		if (desZ > (myPos.z + 20.f))
-			return;
-		myPos.x = x_dis;
-		myPos.y = y_dis;
-		myPos.z = desZ;
+		for (int i = 0; i < m_chasePath.size(); ++i) {
+			// myPos = m_chasePath.pop_front();
+			// m_chasePath.
+			myPos = m_chasePath.front();
+			// cout << myPos.x << "\t" << myPos.y << endl;
+			myPos.z = board[(int)myPos.x+X_SIDE][(int)myPos.y+Y_SIDE];
+			m_chasePath.pop_front();
+			Sleep(1000 / 400);
+			// if (board[(int)myPos.x + X_SIDE][(int)myPos.y + 100] > 240)
+				// printf("%f  %f  %f \n", myPos.x, myPos.y, myPos.z);
+		}
+		m_chasePath.clear();
+
+		// float x_dis = myPos.x - otherPos.x;
+		// float y_dis = myPos.y - otherPos.y;
+		// x_dis=myPos.x + (-x_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
+		// y_dis=myPos.y + (-y_dis / sqrt((x_dis*x_dis) + (y_dis*y_dis)))*3.f;
+		// 
+		// float desZ = board[(int)x_dis + X_SIDE][(int)y_dis + Y_SIDE];
+		// if (desZ > (myPos.z + 20.f))
+		// 	return;
+		// myPos.x = x_dis;
+		// myPos.y = y_dis;
+		// myPos.z = desZ;
 	}
 	else if (m_state == return_home) {
 		if (distance < ATTACK_RANGE) {

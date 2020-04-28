@@ -14,15 +14,21 @@
 #include "CMonster.h"
 
 using namespace std;
+enum ENUMOP { OP_RECV, OP_SEND, OP_ACCEPT };
+
+struct EXOVER {
+	WSAOVERLAPPED over;
+	ENUMOP op;
+	char io_buf[BUFSIZE];
+	WSABUF wsabuf;
+};
 
 struct SOCKETINFO {
-	OVERLAPPED overlapped;
+	EXOVER over;
 	SOCKET sock;
 	int idx;
-	char buf[BUFSIZE];
 	int recvBytes;
 	int sendBytes;
-	WSABUF wsabuf[1];
 };
 
 class CServer {

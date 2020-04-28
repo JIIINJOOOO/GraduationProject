@@ -1,4 +1,6 @@
 #pragma once
+#include <stdio.h>
+#include <math.h>
 struct Position {
 	float x, y, z;
 	Position operator+(const Position& p) {
@@ -9,12 +11,12 @@ struct Position {
 		return np;
 	}
 	bool operator==(const Position& p) {
-		if ((int)p.x != (int)x) false;
-		if ((int)p.y != (int)y) false;
-		if ((int)p.z != (int)z) false;
+		if ((int)p.x != (int)x) return false;
+		if ((int)p.y != (int)y) return false;
 		return true;
 	}
 };
+
 struct Velocity {
 	int x, y, z;
 };

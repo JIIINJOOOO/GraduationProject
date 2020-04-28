@@ -6,7 +6,7 @@
 HANDLE g_sendEvents[MAX_PLAYER];
 short board[SIDE_LEN][SIDE_LEN];
 DWORD WINAPI CServer::WorkerThread(LPVOID arg) {
-	CServer* server = (CServer*)arg;
+	CServer* server = reinterpret_cast<CServer*>(arg);
 	SOCKET sock = server->GetSock();
 	int retval;
 	char buf[BUFSIZE];
@@ -340,7 +340,7 @@ void CServer::Start() {
 		int newIdx = GetNewSockIdx();
 		if (newIdx == ADD_FAIL) break;
 		m_clients[newIdx] = new SOCKETINFO;
-		ZeroMemory(&m_clients[newIdx]->overlapped, sizeof(m_clients[newIdx]->overlapped));
+		// ZeroMemory(&m_clients[newIdx]->overlapped, sizeof(m_clients[newIdx]->overlapped));
 		m_clients[newIdx]->sock = m_clientsock;
 		m_clients[newIdx]->idx = newIdx;
 		// m_clients[newIdx]->wsabuf[0].buf = m_clients[newIdx]->buf;
@@ -464,6 +464,8 @@ int CServer::GetNewSockIdx() {
 
 void CServer::CreateMonsters() {
 	Position defPos{-530.f, -10.f, 218.f};
+	// Position defPos{ -530, -10, 218 };
+
 	for (int i = 0; i < MAX_MONSTER; ++i) {
 		short idx = START_POINT_MONSTER + i;
 		m_monsters[idx] = new CMonster;
@@ -485,7 +487,6 @@ CServer::~CServer() {
 	m_obj.clear();
 	
 }
-
 
 void CServer::err_quit(const char* msg) {
 	LPVOID lpMsgBuf;
