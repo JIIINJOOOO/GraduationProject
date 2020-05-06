@@ -48,3 +48,5 @@ public:
 	int GetState() const;
 };
 
+void CreateMonster(int num);
+void monster_thread();

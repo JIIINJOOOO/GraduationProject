@@ -129,6 +129,8 @@
     <ClCompile Include="CPathFinder.cpp" />
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CServer.cpp" />
+    <ClCompile Include="CTerrain.cpp" />
+    <ClCompile Include="KDTree.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="node.cpp" />
   </ItemGroup>
@@ -139,7 +141,10 @@
     <ClInclude Include="CPathFinder.h" />
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CServer.h" />
+    <ClInclude Include="CTerrain.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="KDTree.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="Physics.h" />

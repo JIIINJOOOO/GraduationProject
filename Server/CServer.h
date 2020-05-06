@@ -8,19 +8,23 @@
 #include <mutex>
 #include <map>
 #include <thread>
+#include <random>
 #include "globals.h"
 #include "CDBConnector.h"
 #include "CPlayer.h"
 #include "CMonster.h"
+#include "KDTree.h"
 
-using namespace std;
 enum ENUMOP { OP_RECV, OP_SEND, OP_ACCEPT };
 
 struct EXOVER {
 	WSAOVERLAPPED over;
 	ENUMOP op;
 	char io_buf[BUFSIZE];
-	WSABUF wsabuf;
+	union {
+		WSABUF wsabuf;
+		SOCKET c_sock;
+	};
 };
 
 struct SOCKETINFO {
@@ -52,9 +56,12 @@ private:
 	std::mutex m_mu;
 
 	CDBConnector m_dbc;
+	KDTree* m_kdTree;
 
 	int m_numofRooms;
 	int m_numofUsers;
+
+	vector<thread> m_workerthreads;
 
 public:
 	CServer() = default;
@@ -71,10 +78,13 @@ public:
 	static DWORD WINAPI WorkerThread(LPVOID arg);
 	static DWORD WINAPI SendThread(LPVOID arg);
 	static DWORD WINAPI MonsterThread(LPVOID arg);
+	static void worker_thread(void* carg);
 
 	bool ProcessPacket(char* buf, const int& idx);
 	void Send(const char* buf);
 	void Disconnect(const int& idx);
+	void SendPacket(int uid, void* p);
+
 	// Supervise Account with MS-SQL
 	int Login(char* buf);
 	int SignUp(char* buf);
