@@ -3,7 +3,9 @@
 #define MAXLEN 10
 
 enum PACKET_TYPE {
-	login_packet, signup_packet, lobby_packet, player_packet, start_packet, init_packet, move_packet, attack_packet, act_packet, skill_packet
+	login_packet, signup_packet, lobby_packet, player_packet, start_packet, init_packet, move_packet, attack_packet, act_packet, skill_packet,
+	sc_leave, sc_login, sc_signup, sc_login_fail, sc_login_ok,
+	sc_signup_ok, sc_signup_fail, sc_player_move, sc_update_obj
 };
 
 enum Login_State {
@@ -94,11 +96,48 @@ struct SC_UPDATE_OBJ {
 	char size;
 	char type;
 	Position pos;
+	short oid;
 };
 struct CS_ACT {
 	char size;
 	char type;
 	char detailType;
 	unsigned short idx;
+};
+
+// New Packets
+struct SC_LEAVE {
+	char size;
+	char type;
+	short id;
+};
+
+struct SC_LOGIN_FAIL {
+	char size;
+	char type;
+};
+
+struct SC_LOGIN_OK {
+	char size;
+	char type;
+	short uid;
+	char name[MAXLEN];
+};
+
+struct SC_SIGNUP_OK {
+	char size;
+	char type;
+};
+
+struct SC_SIGNUP_FAIL {
+	char size;
+	char type;
+};
+
+struct SC_PLAYER_MOVE{
+	char size;
+	char type;
+	short uid;
+	Position pos;
 };
 #pragma pack(pop)

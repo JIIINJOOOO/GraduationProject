@@ -23,6 +23,7 @@ AMyMonster::AMyMonster()
 	{
 		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
 	}*/
+	
 }
 
 // Called when the game starts or when spawned
