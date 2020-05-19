@@ -23,6 +23,8 @@ protected:
 	UPROPERTY()
 		class UEditableTextBox* UserNameTextBox;
 private:
+	bool bIsLogin;
+	FName TransferLevelName = "Test_map2";
 	UFUNCTION()
 		void OnLoginClicked();
 };

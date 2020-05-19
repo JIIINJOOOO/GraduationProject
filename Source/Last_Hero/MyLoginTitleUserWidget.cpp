@@ -4,6 +4,8 @@
 #include "MyLoginTitleUserWidget.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
+#include "Kismet/GameplayStatics.h"
+
 
 void UMyLoginTitleUserWidget::NativeConstruct()
 {
@@ -16,6 +18,11 @@ void UMyLoginTitleUserWidget::NativeConstruct()
 
 void UMyLoginTitleUserWidget::OnLoginClicked()
 {
+	bIsLogin = true;
 	FString UserName = UserNameTextBox->GetText().ToString();
+	if (bIsLogin)
+	{
+		UGameplayStatics::OpenLevel(this, TransferLevelName);
+	}
 	if (UserName.Len() <= 0 || UserName.Len() > 10) return;
 }
