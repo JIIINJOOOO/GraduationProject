@@ -22,6 +22,9 @@ protected:
 		class UButton* LoginButton;
 	UPROPERTY()
 		class UEditableTextBox* UserNameTextBox;
+	UPROPERTY()
+		class UEditableTextBox* UserPassTextBox;
+
 private:
 	UFUNCTION()
 		void OnLoginClicked();
