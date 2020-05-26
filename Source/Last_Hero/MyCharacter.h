@@ -2,8 +2,9 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "Last_Hero.h"
 #include "GameFramework/Character.h"
+#include "UObject/ConstructorHelpers.h"
 #include "MyCharacter.generated.h"
 
 UCLASS()
@@ -34,9 +35,39 @@ public:
 	UPROPERTY(BlueprintReadWrite,VisibleAnywhere, Category = Camera)
 		UCameraComponent* Camera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
+		bool bIsCasting;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
+		bool bIsLooting;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Utilities)
+		float MaxWalkSpeed;
+
+
+
+
 private:
-	void UpDown(float NewAxisValue);
-	void LeftRight(float NewAxisValue);
+	void MoveForward(float NewAxisValue);
+	void MoveRight(float NewAxisValue);
 	void LookUp(float NewAxisValue);
 	void Turn(float NewAxisValue);
+	void Attack();
+	UFUNCTION()
+		void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	void AttackStartComboState();
+	void AttackEndComboState();
+
+
+private:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		bool IsAttacking;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		bool CanNextCombo;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		bool IsComboInputOn;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		int32 CurrentCombo;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		int32 MaxCombo;
+	UPROPERTY()
+		class UMyAnimInstance* MyAnim;
 };

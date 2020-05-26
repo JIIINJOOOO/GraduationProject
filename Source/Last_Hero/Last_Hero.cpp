@@ -3,4 +3,5 @@
 #include "Last_Hero.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Last_Hero, "Last_Hero" );
+DEFINE_LOG_CATEGORY(Last_Hero);
+IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Last_Hero, "LastHero" );
