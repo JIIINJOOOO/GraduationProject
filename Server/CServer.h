@@ -15,20 +15,7 @@
 #include "CMonster.h"
 #include "KDTree.h"
 
-enum ENUMOP { OP_RECV, OP_SEND, OP_ACCEPT };
-
-struct EXOVER {
-	WSAOVERLAPPED over;
-	ENUMOP op;
-	char io_buf[BUFSIZE];
-	union {
-		WSABUF wsabuf;
-		SOCKET c_sock;
-	};
-};
-
 struct SOCKETINFO {
-	EXOVER over;
 	SOCKET sock;
 	int idx;
 	int recvBytes;
@@ -78,7 +65,6 @@ public:
 	static DWORD WINAPI WorkerThread(LPVOID arg);
 	static DWORD WINAPI SendThread(LPVOID arg);
 	static DWORD WINAPI MonsterThread(LPVOID arg);
-	static void worker_thread(void* carg);
 
 	bool ProcessPacket(char* buf, const int& idx);
 	void Send(const char* buf);

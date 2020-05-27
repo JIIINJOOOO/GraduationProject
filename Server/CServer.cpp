@@ -11,7 +11,6 @@ mt19937 gen(rd());
 uniform_int_distribution<int> xdis(-1807, 1007);
 uniform_int_distribution<int> ydis(-1407, 1407);
 
-
 DWORD WINAPI CServer::WorkerThread(LPVOID arg) {
 	CServer* server = reinterpret_cast<CServer*>(arg);
 	SOCKET sock = server->GetSock();
@@ -189,44 +188,17 @@ DWORD WINAPI CServer::MonsterThread(LPVOID arg) {
 	return 0;
 }
 
-void CServer::worker_thread(void* carg) {
-	CServer* arg = reinterpret_cast<CServer*>(carg);
-
-	while (true) {
-		DWORD flags = 0;
-		DWORD io_byte;
-		ULONG_PTR key;
-		WSAOVERLAPPED* over;
-
-		GetQueuedCompletionStatus(arg->m_iocp, &io_byte, &key, &over, INFINITE);
-		EXOVER *exover = reinterpret_cast<EXOVER*>(over);
-		int uid = static_cast<int>(key);
-
-		switch (exover->op) {
-		case OP_RECV:
-			break;
-		case OP_SEND:
-			break;
-		case OP_ACCEPT:
-			break;
-
-		default:
-			break;
-		}
-	}
-}
-
 void CServer::SendPacket(int uid, void* p) {
-	char* buf = reinterpret_cast<char*>(p);
-	CPlayer& cp = *m_players[uid];
-	
-	EXOVER* exover = new EXOVER;
-	exover->op = OP_SEND;
-	ZeroMemory(&exover->over, sizeof(exover->over));
-	exover->wsabuf.buf = exover->io_buf;
-	exover->wsabuf.len = buf[0];
-	memcpy(exover->io_buf, buf, buf[0]);
-//	WSASend()
+	// char* buf = reinterpret_cast<char*>(p);
+	// CPlayer& cp = *m_players[uid];
+	// 
+	// EXOVER* exover = new EXOVER;
+	// exover->op = OP_SEND;
+	// ZeroMemory(&exover->over, sizeof(exover->over));
+	// exover->wsabuf.buf = exover->io_buf;
+	// exover->wsabuf.len = buf[0];
+	// memcpy(exover->io_buf, buf, buf[0]);
+//	// WSASend()
 }
 
 bool CServer::ProcessPacket(char* buf, const int& idx) {
@@ -247,7 +219,7 @@ bool CServer::ProcessPacket(char* buf, const int& idx) {
 				m_players[idx]->SetState(play_game);
 				m_obj[idx] = new CObject;
 				m_obj[idx]->Initialize(Position(), Velocity(), Volume(), Accel(), obj_player);
-				m_kdTree->Insert(*m_obj[idx]);
+				//m_kdTree->Insert(*m_obj[idx]);
 			}
 		}
 		// sendBytes = sizeof(SC_LOGIN);
@@ -337,7 +309,7 @@ void CServer::Start() {
 	// }
 	// Create KD-Tree
 	m_kdTree = new KDTree;
-	cout << "Create K-D Tree Complete" << endl;
+	// cout << "Create K-D Tree Complete" << endl;
 
 	for (short x = -1807; x < 1007; ++x)
 		for (short y = -1407; y < 1407; ++y) {
@@ -382,13 +354,6 @@ void CServer::Start() {
 	printf("Create Map Complete\n");
 	m_hthread = CreateThread(NULL, 0, MonsterThread, (LPVOID)this, 0, NULL);
 
-	m_iocp = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, NULL, 0);
-	CreateIoCompletionPort(reinterpret_cast<HANDLE>(m_listensocket), m_iocp, 999, 0);
-	SOCKET cs = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-	EXOVER accept_over;
-	ZeroMemory(&accept_over.over, sizeof(accept_over.over));
-	accept_over.op = OP_ACCEPT;
-	accept_over.c_sock = cs;
 	// AcceptEx(m_listensocket, cs, accept_over.io_buf, NULL, sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, NULL, &accept_over.over);
 
 	// for (int i=0; i<6; ++i)
@@ -415,12 +380,12 @@ void CServer::Start() {
 		// CreateIoCompletionPort((HANDLE)m_clientsock, m_iocp, m_clientsock, 0);
 
 		// send access sucess (player's index)
-		retval = send(m_clients[newIdx]->sock, (char*)&newIdx, sizeof(newIdx), 0);
-		if (retval == SOCKET_ERROR) {
-			err_display("send access");
-			break;
-		}
-		if (retval == 0) break;
+		// retval = send(m_clients[newIdx]->sock, (char*)&newIdx, sizeof(newIdx), 0);
+		// if (retval == SOCKET_ERROR) {
+		// 	err_display("send access");
+		// 	break;
+		// }
+		// if (retval == 0) break;
 		printf("Client is Access Server - Index is %d\n", newIdx);
 
 		// retval = WSARecv(m_clientsock, m_clients[newIdx]->wsabuf, 1, NULL,

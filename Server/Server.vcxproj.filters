@@ -45,6 +45,9 @@
     <ClCompile Include="CTerrain.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="state.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CServer.h">

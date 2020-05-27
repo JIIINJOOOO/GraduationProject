@@ -16,20 +16,20 @@
 #include <vector>
 #include <thread>
 #include <map>
+#include "CTerrain.h"
 #include "main.h"
 
 // Global Values
 SOCKET g_listenSocket;
 HANDLE g_iocp;
-CLIENT g_clients[10];
+CLIENT g_clients[MAX_PLAYER];
 CDBConnector g_dbc;
+CTerrain *g_tmap;
 map<int, CPlayer*> g_player;
 map<int, CMonster*> g_monster;
 map<int, CObject*> g_obj;
 
 int main() {
-	// CServer server;
-	// server.Start();
 	int retval;
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return 0;
@@ -51,6 +51,15 @@ int main() {
 		g_clients[i].id = i;
 	}
 
+	CTerrain* tmap = new CTerrain;
+	if (tmap->LoadMap("../Heightmap.r16")) 
+		cout << "Success Loading Hightmap to Terrain!\n";
+	else {
+		cout << "Fail Loading Hightmap to Terrain!\n";
+		exit(-1);
+	}
+	
+
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_listenSocket), g_iocp, 999, 9);
 	SOCKET cs = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 	EXOVER accept_over;
@@ -62,27 +71,27 @@ int main() {
 	vector<thread> worker_threads;
 	for (int i = 0; i < 6; ++i)
 		worker_threads.emplace_back(worker_thread);
-	worker_threads.emplace_back(monster_thread);
+	worker_threads.emplace_back(MonsterThread);
 	for (auto& th : worker_threads) th.join();
 }
 
 void worker_thread() {
 	while (true) {
-		DWORD flags = 0;
 		DWORD io_byte;
 		ULONG_PTR key;
 		WSAOVERLAPPED* over;
-
 		GetQueuedCompletionStatus(g_iocp, &io_byte, &key, &over, INFINITE);
 		EXOVER *exover = reinterpret_cast<EXOVER*>(over);
 		int user_id = static_cast<int>(key);
 		CLIENT& cl = g_clients[user_id];
+
 		switch (exover->op) {
 		case OP_RECV:
 			if (io_byte == 0) Disconnect(user_id);
 			else {
 				recv_packet_construct(user_id, io_byte);
 				ZeroMemory(&cl.recv_over, sizeof(cl.recv_over));
+				DWORD flags = 0;
 				WSARecv(cl.sock, &cl.recv_over.wsabuf, 1, NULL, &flags, &cl.recv_over.over, NULL);
 			}
 			break;
@@ -94,22 +103,27 @@ void worker_thread() {
 			cout << "1234" << endl;
 			int user_id = -1;
 			for (int i = 0; i < MAX_PLAYER; ++i)
-				if (!g_clients[i].isconnected) user_id = i;
+				if (!g_clients[i].isconnected) {
+					user_id = i;
+					break;
+				}
 			SOCKET cs = exover->c_sock;
-			CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs), g_iocp, user_id, 0);
-			CLIENT& nc = g_clients[user_id];
-			nc.id = user_id;
-			nc.prev_size = 0;
-			nc.recv_over.op = OP_RECV;
-			nc.recv_over.c_sock = cs;
+			if (user_id == -1) closesocket(cs);
+			else {
+				CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs), g_iocp, user_id, 0);
+				CLIENT& nc = g_clients[user_id];
+				nc.id = user_id;
+				nc.prev_size = 0;
+				nc.recv_over.op = OP_RECV;
 
-			ZeroMemory(&nc.recv_over.over, sizeof(nc.recv_over.over));
-			nc.recv_over.wsabuf.buf = nc.recv_over.io_buf;
-			nc.recv_over.wsabuf.len = BUFSIZE;
-			nc.sock = cs;
-			nc.isconnected = true;
-			WSARecv(cs, &nc.recv_over.wsabuf, 1, NULL, &flags, &nc.recv_over.over, NULL);
-
+				ZeroMemory(&nc.recv_over.over, sizeof(nc.recv_over.over));
+				nc.recv_over.wsabuf.buf = nc.recv_over.io_buf;
+				nc.recv_over.wsabuf.len = BUFSIZE;
+				nc.sock = cs;
+				nc.isconnected = true;
+				DWORD flags = 0;
+				WSARecv(cs, &nc.recv_over.wsabuf, 1, NULL, &flags, &nc.recv_over.over, NULL);
+			}
 			cs = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 			exover->c_sock = cs;
 			ZeroMemory(&exover->over, sizeof(exover->over));
@@ -163,15 +177,17 @@ void ProcessPacket(int uid, char* buf) {
 	case move_packet: {
 		CS_MOVE* pack = reinterpret_cast<CS_MOVE*>(buf);
 		g_obj[uid]->SetPosition(pack->destination);
-		
+		g_player[uid]->SetPosition(pack->destination);
+
 		SC_PLAYER_MOVE packet;
 		packet.size = sizeof(SC_PLAYER_MOVE);
 		packet.type = sc_player_move;
 		packet.uid = uid;
-		packet.pos = g_obj[uid]->GetPosition();
+		packet.pos = g_player[uid]->GetPosition();
 		for (auto& cl : g_clients)
-			if (cl.isconnected)
+			if (cl.isconnected) {
 				send_packet(cl.id, &packet);
+			}
 	}
 		break;
 	default:
@@ -232,7 +248,6 @@ void SignUp(const int& uid, const CS_LOGIN& pack) {
 void Login(const int& uid, const CS_LOGIN& pack) {
 	string sql = "select * from Account where id  = \'" + (string)pack.id +
 		"\' and password = \'" + (string)pack.password + "\'";
-	
 	int status;	// check login status (fail, success)
 	int ret = g_dbc.ExcuteStatementDirect((SQLCHAR*)sql.c_str());
 	if (g_dbc.RetrieveResult(pack.id, pack.password)) status = login_ok;
@@ -245,11 +260,13 @@ void Login(const int& uid, const CS_LOGIN& pack) {
 		packet.type = sc_login_ok;
 
 		g_player[uid] = new CPlayer;
+		// g_obj[uid] = new CObject;
 		g_player[uid]->Initialize(CPlayer(string(pack.id), string(pack.password)));
-
+		// g_obj[uid]->Initialize(Position(), Velocity(), Volume(), Accel(), obj_player);
 		for (int i = 0; i < MAX_PLAYER; ++i)
 			if (g_clients[i].isconnected)
 				send_packet(i, &packet);
+		return;
 	}
 	else {
 		cout << pack.id << " is Log-in Fail (Invalid ID or Password)\n";
@@ -258,7 +275,6 @@ void Login(const int& uid, const CS_LOGIN& pack) {
 		packet.type = sc_login_fail;
 		send_packet(uid, &packet);
 	}
-		
 }
 
 void monster_thread() {
@@ -295,10 +311,10 @@ void monster_thread() {
 			packet.type = sc_update_obj;
 			packet.pos = g_obj[idx]->GetPosition();
 
-			// for (auto& cl : g_clients)
-			// 	if (g_obj[cl.id]->GetDistance(g_obj[idx]->GetPosition()) < MAX_VIEW_RANGE)
-			// 		if (cl.isconnected) send_packet(cl.id, )
-
+			for (auto& cl : g_clients)
+				if (cl.isconnected)
+					if (g_obj[cl.id]->GetDistance(g_obj[idx]->GetPosition()) < MAX_VIEW_RANGE)
+						if (cl.isconnected) send_packet(cl.id, &packet);
 		}
 		
 
@@ -306,19 +322,3 @@ void monster_thread() {
 	}
 }
 
-void CreateMonster(int num) {
-	Position defPos{ -530.f,-10.f,218.f };
-
-	for (int i = 0; i < num; ++i) {
-		short idx = START_POINT_MONSTER + i;
-		// defPos.x = xdis(gen);
-		// defPos.y = ydis(gen);
-		// defPos.z = board[(int)defPos.x + X_SIDE][(int)defPos.y + Y_SIDE];
-		g_monster[idx] = new CMonster;
-		g_monster[idx]->Initialize(defPos, normal);
-		// g_obj[idx] = new CObject;
-		// g_obj[idx]->Initialize(defPos, Velocity(), Volume(), Accel(), obj_monster);
-		// m_kdTree->Insert(*m_obj[idx]);
-	}
-	cout << "Create Monsters Complete (num of : " << num << ")\n";
-}

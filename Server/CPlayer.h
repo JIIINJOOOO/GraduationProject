@@ -23,6 +23,8 @@ private:
 	int m_idx;
 	bool m_ready{ false };
 	bool m_host{ false };
+
+	Position pos;
 public:
 	CPlayer() = default;
 	CPlayer(std::string id, std::string pass);
@@ -41,7 +43,9 @@ public:
 	bool GetHost() { return m_host; }
 	void SetIdx(int n) { m_idx = n; }
 	int GetIdx() { return m_idx; }
-
+	void SetPosition(const Position& pos);
+	Position GetPosition() const;
+	int GetDistance(Position pos);
 	// ??
 	void Ready();
 

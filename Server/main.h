@@ -4,7 +4,7 @@
 #include "CPlayer.h"
 #include "CMonster.h"
 #include "KDTree.h"
-
+#include "CServer.h"
 enum ENUMOP { OP_RECV, OP_SEND, OP_ACCEPT };
 
 struct EXOVER {

@@ -133,6 +133,7 @@
     <ClCompile Include="KDTree.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="node.cpp" />
+    <ClCompile Include="state.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CDBConnector.h" />

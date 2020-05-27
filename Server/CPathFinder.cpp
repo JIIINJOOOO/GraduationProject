@@ -1,4 +1,7 @@
 #include "CPathFinder.h"
+#include "CTerrain.h"
+
+extern CTerrain *g_tmap;
 
 list<Position> CPathFinder::GetPath(Position start, Position end) {
 	// Initialize List
@@ -56,16 +59,16 @@ Node* CPathFinder::PathFind(Node* parent, Position end) {
 	for (int i = 0; i < WAY_DIR; ++i) {
 		Position childPos = parent->GetPosition() + direction[i];
 		if (IsOutMap(childPos, i)) {
-			
-
 			// Position p = parent->GetPosition();
 			// cout << p.x << "\t" << childPos.x << endl;
 			// cout << p.y << "\t" << childPos.y << endl;
 			// cout << p.z << "\t" << childPos.z << endl;
 			if (parent->GetParent() != nullptr)
-				if (parent->GetParent()->GetPosition() == childPos) {
+				if (childPos.Compare(parent->GetParent()->GetPosition()))
 					continue;
-				}
+				// if (parent->GetParent()->GetPosition() == childPos) {
+				// 	continue;
+				// }
 			int n = 0;
 			// int xIdx = (int)childPos.x + X_SIDE;
 			// int yIdx = (int)childPos.y + Y_SIDE;
@@ -135,10 +138,11 @@ Node* CPathFinder::PathFind(Node* parent, Position end) {
 
 bool CPathFinder::IsOutMap(const Position& pos, int direction) {
 	// 좌표는 임시좌표(맵 미완성) 사용
-	if (pos.x < -1807 || pos.x> 1007) return false;
-	if (pos.y < -1407 || pos.y> 1407) return false;
-	int xIdx = (int)pos.x + X_SIDE;
-	int yIdx = (int)pos.y + Y_SIDE;
+	// if (pos.x < -1807 || pos.x> 1007) return false;
+	// if (pos.y < -1407 || pos.y> 1407) return false;
+	// int xIdx = (int)pos.x + X_SIDE;
+	// int yIdx = (int)pos.y + Y_SIDE;
+	/*
 	// z축으로 이동할 수 있는 최대 높이보다 높은가
 	// if (board[xIdx][yIdx]-20 > ((int)pos.z))
 	// 	return false;
@@ -154,14 +158,17 @@ bool CPathFinder::IsOutMap(const Position& pos, int direction) {
 	// if (direction == Y_DOWN && board[xIdx][yIdx - 10] - 20 > pos.z) return false;
 	// if (direction == X_UP && board[xIdx+10][yIdx] - 20 > pos.z) return false;
 	// if (direction == X_DOWN && board[xIdx-10][yIdx] - 20 > pos.z) return false;
-
-	if (board[xIdx][yIdx]-30 > pos.z) return false;
-	return true;
-
-	/*
-	위에서 정방향으로 보았을때 좌우가 y축
-	상하가 x축
 	*/
+	// if (board[xIdx][yIdx]-30 > pos.z) return false;
+	// return true;
+
+	if (pos.x < SIDE_MIN || pos.x > SIDE_MAX) return false;
+	if (pos.y < SIDE_MIN || pos.y > SIDE_MAX) return false;
+	int x = static_cast<int>((pos.x + (-SIDE_MIN)) / POS_SCALE);
+	int y = static_cast<int>((pos.y + (-SIDE_MIN)) / POS_SCALE);
+	float height = g_tmap->OnGetHeight(x, y) - pos.z;
+	if (height > POSSIBLE_MOVE_HEIGHT) return false;
+	return true;
 } 
 
 bool CPathFinder::IsOverlap(Node* node) {
@@ -185,219 +192,3 @@ bool CPathFinder::IsOverlap(Node* node) {
 	openList.push_back(node);
 	return true;
 }
-/*
-//////////////////////////////////////////////////////////
-list<Position> CPathFinder::FindPath(Position start, Position end) {
-	Node* selectedNode;
-
-	Node * node = new Node(start, NULL, NULL, end);	
-	openList.push_back(node);
-
-	auto iter = openList.begin();
-	while ((openList.end() != openList.begin()) && (openList.end() == FindPosNode(end, &openList))) {
-		iter = FindNextNode(&openList);
-		selectedNode = *iter;
-
-		ExploreNode(selectedNode, &openList, &closedList, end);
-
-		closedList.push_back(selectedNode);
-		openList.erase(iter);
-	}
-
-	// Success search 
-	if (openList.end() != openList.begin()) {
-		iter = FindPosNode(end, &openList);
-		Node*& s = selectedNode;
-		for (s = *iter; s->GetParent() != NULL; s = s->GetParent())
-			pathList.push_back(s->GetPosition());
-		pathList.push_back(s->GetPosition());
-		pathList.reverse();
-
-		iter = openList.begin();
-		for (; iter != openList.end(); ++iter)
-			delete *iter;
-		iter = closedList.begin();
-		for (; iter != closedList.end(); ++iter)
-			delete *iter;
-		return pathList;
-	}
-
-	// Fail search
-	iter = closedList.begin();
-	for (; iter != closedList.end(); ++iter)
-		delete *iter;
-	return pathList;
-}
-
-void CPathFinder::ExploreNode(Node* node, list<Node*>* o_node, list<Node*>* c_node, Position end) {
-	list<Node*>::iterator iter;
-	Position pos;
-	bool up = true, right = true, down = true, left = true;
-
-	pos.x = static_cast<int>(node->GetPosition().x) - 1;
-	pos.y = static_cast<int>(node->GetPosition().y);
-	if (IsOutMap(pos)) {
-		up = false;
-		if (openList.end() != FindPosNode(pos, &openList)) {
-			iter = FindPosNode(pos, &openList);
-			if ((*iter)->GetCostG() > node->GetCostG() + 10)
-				(*iter)->SetParent(node);
-		}
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-			// closedList에 있는 경우
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-
-	pos.x = static_cast<int>(node->GetPosition().x);
-	pos.y = static_cast<int>(node->GetPosition().y) + 1;
-	if (IsOutMap(pos)) {
-		right = false;
-		if (openList.end() != FindPosNode(pos, &openList)) {
-			iter = FindPosNode(pos, &openList);
-			if ((*iter)->GetCostG() > node->GetCostG() + 10)
-				(*iter)->SetParent(node);
-		}
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-			// closedList에 있는 경우
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-
-	pos.x = static_cast<int>(node->GetPosition().x)+1;
-	pos.y = static_cast<int>(node->GetPosition().y);
-	if (IsOutMap(pos)) {
-		down = false;
-		if (openList.end() != FindPosNode(pos, &openList)) {
-			iter = FindPosNode(pos, &openList);
-			if ((*iter)->GetCostG() > node->GetCostG() + 10)
-				(*iter)->SetParent(node);
-		}
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-			// closedList에 있는 경우
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-
-	pos.x = static_cast<int>(node->GetPosition().x);
-	pos.y = static_cast<int>(node->GetPosition().y)-1;
-	if (IsOutMap(pos)) {
-		left = false;
-		if (openList.end() != FindPosNode(pos, &openList)) {
-			iter = FindPosNode(pos, &openList);
-			if ((*iter)->GetCostG() > node->GetCostG() + 10)
-				(*iter)->SetParent(node);
-		}
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-			// closedList에 있는 경우
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-
-	pos.x = static_cast<int>(node->GetPosition().x) - 1;
-	pos.y = static_cast<int>(node->GetPosition().y) + 1;
-	if (IsOutMap(pos) && !up && !right) {
-		if (openList.end() != FindPosNode(pos, &openList));
-		if ((*iter)->GetCostG() > node->GetCostG() + 14)
-			(*iter)->SetParent(node);
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-
-	pos.x = static_cast<int>(node->GetPosition().x) + 1;
-	pos.y = static_cast<int>(node->GetPosition().y) + 1;
-	if (IsOutMap(pos) && !down && !right) {
-		if (openList.end() != FindPosNode(pos, &openList));
-		if ((*iter)->GetCostG() > node->GetCostG() + 14)
-			(*iter)->SetParent(node);
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-
-	pos.x = static_cast<int>(node->GetPosition().x) + 1;
-	pos.y = static_cast<int>(node->GetPosition().y) - 1;
-	if (IsOutMap(pos) && !down && !left) {
-		if (openList.end() != FindPosNode(pos, &openList));
-		if ((*iter)->GetCostG() > node->GetCostG() + 14)
-			(*iter)->SetParent(node);
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-
-	pos.x = static_cast<int>(node->GetPosition().x) - 1;
-	pos.y = static_cast<int>(node->GetPosition().y) - 1;
-	if (IsOutMap(pos) && !up && !left) {
-		if (openList.end() != FindPosNode(pos, &openList));
-		if ((*iter)->GetCostG() > node->GetCostG() + 14)
-			(*iter)->SetParent(node);
-		else if (closedList.end() != FindPosNode(pos, &closedList)) {
-
-		}
-		else {
-			Node *n = new Node(pos, node, NULL, end);
-			openList.push_back(n);
-		}
-	}
-}
-                               
-list<Node*>::iterator CPathFinder::FindNextNode(list<Node*>* o_node) {
-	auto iter = openList.begin();
-	int minValue = 200'000'000;
-	int order = 0;
-
-	for (int i = 1; iter != openList.end(); ++i, ++iter)
-		if ((*iter)->GetCostF() <= minValue) {
-			minValue = (*iter)->GetCostF();
-			order = i;
-		}
-	iter = openList.begin();
-	for (int i = 1; i < order; ++i)
-		++iter;
-	return iter;
-}
-
-list<Node*>::iterator CPathFinder::FindPosNode(Position pos, list<Node*>* nodeList) {
-	auto iter = openList.begin();
-	for (int i = 1; iter != openList.end(); ++i, ++iter)
-		if ((*iter)->GetPosition() == pos) return iter;
-	return openList.end();
-}
-void CPathFinder::FindPath() {
-	pathList = FindPath(start, end);
-	iter = pathList.begin();
-}
-Position CPathFinder::GetPosition(const int n) {
-	for (int i = 1; i < n; ++i)
-		++iter;
-	Position p = (*iter);
-	iter = pathList.begin();
-	return p;
-}
-*/

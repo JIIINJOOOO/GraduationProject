@@ -12,6 +12,7 @@ void CPlayer::Initialize(const CPlayer& p) {
 	m_id = p.m_id;
 	m_pass = p.m_pass;
 	m_level = p.m_level;
+	pos = { 0,0,0 };
 }
 bool CPlayer::operator== (const CPlayer& cp) const {
 	return m_id == cp.m_id;
@@ -37,4 +38,20 @@ void CPlayer::Ready() {
 }
 void CPlayer::Attck() {
 	
+}
+
+void CPlayer::SetPosition(const Position& pos) {
+	if (GetDistance(pos) < 10)
+		this->pos = pos;
+}
+Position CPlayer::GetPosition() const {
+	return pos;
+}
+int CPlayer::GetDistance(Position pos) {
+	int x = pow((this->pos.x - pos.x), 2);
+	int y = pow((this->pos.y - pos.y), 2);
+	int z = pow((this->pos.z - pos.z), 2);
+
+	int distance = sqrt(x + y + z);
+	return abs(distance);
 }
