@@ -23,6 +23,7 @@ AMyMonster::AMyMonster()
 	{
 		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
 	}*/
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
 	
 }
 
@@ -45,5 +46,12 @@ void AMyMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+float AMyMonster::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	ABLOG(Warning, TEXT("Actor: %s took Damage: %f"), *GetName(), FinalDamage);
+	return FinalDamage;
 }
 

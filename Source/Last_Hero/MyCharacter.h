@@ -25,6 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
 	virtual void PossessedBy(AController* NewController) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -41,8 +42,9 @@ public:
 		bool bIsLooting;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Utilities)
 		float MaxWalkSpeed;
-
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
+		bool bIsDead;
+	
 
 
 private:
@@ -55,6 +57,7 @@ private:
 		void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	void AttackStartComboState();
 	void AttackEndComboState();
+	void AttackCheck();
 
 
 private:
@@ -68,6 +71,12 @@ private:
 		int32 CurrentCombo;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		int32 MaxCombo;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		float AttackRange;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		float AttackRadius;
+
+		
 	UPROPERTY()
 		class UMyAnimInstance* MyAnim;
 };
