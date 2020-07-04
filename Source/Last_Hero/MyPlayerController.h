@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "Last_Hero.h"
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 

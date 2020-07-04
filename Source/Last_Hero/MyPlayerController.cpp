@@ -6,6 +6,7 @@
 void AMyPlayerController::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 }
 
 void AMyPlayerController::OnPossess(APawn* aPawn)

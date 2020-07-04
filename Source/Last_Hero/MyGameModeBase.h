@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "Last_Hero.h"
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
@@ -15,5 +15,19 @@ class LAST_HERO_API AMyGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	AMyGameModeBase();
+protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:
+	/*UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "NetworkMonster")
+		UBlueprint* MonsterBP;*/
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "NetworkMonster")
+		UBlueprint* MonsterAIBP;
+	UPROPERTY(EditAnywhere, Category = "NetworkMonster")
+		TSubclassOf<class AMyMonster> MonToSpawn;
+protected:
+	UFUNCTION()
+	void SpawnMonster();
 };

@@ -3,6 +3,7 @@
 
 #include "MyGameInstance.h"
 
+
 UMyGameInstance::UMyGameInstance()
 {
 
@@ -11,5 +12,5 @@ UMyGameInstance::UMyGameInstance()
 void UMyGameInstance::Init()
 {
 	Super::Init();
-
+	//AMyCharacter* SpawnedPlayer = GetWorld()->SpawnActor<AMyCharacter>(WhoToSpawn, SpawnLocation, SpawnRotation);
 }

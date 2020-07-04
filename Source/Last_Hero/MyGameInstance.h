@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "Last_Hero.h"
 #include "Engine/GameInstance.h"
 #include "MyGameInstance.generated.h"
 

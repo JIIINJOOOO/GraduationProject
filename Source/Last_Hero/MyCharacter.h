@@ -44,9 +44,8 @@ public:
 		float MaxWalkSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
 		bool bIsDead;
+
 	
-
-
 private:
 	void MoveForward(float NewAxisValue);
 	void MoveRight(float NewAxisValue);

@@ -38,7 +38,7 @@ void AMyMonster::BeginPlay()
 void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	MonPos = GetActorLocation();
 }
 
 // Called to bind functionality to input
@@ -53,5 +53,11 @@ float AMyMonster::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	ABLOG(Warning, TEXT("Actor: %s took Damage: %f"), *GetName(), FinalDamage);
 	return FinalDamage;
+}
+
+
+FVector AMyMonster::GetMonsterPos()
+{	
+	return MonPos;
 }
 
