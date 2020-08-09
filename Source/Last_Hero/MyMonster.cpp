@@ -39,6 +39,7 @@ void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
+	
 }
 
 // Called to bind functionality to input

@@ -33,7 +33,8 @@ void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 	// 플레이어 스폰 코드
 	RestartPlayerAtTransform(NewPlayer, PlayerSpawnTrans);
 	Super::PostLogin(NewPlayer);
-	
+	// 플레이어 얻어오기
+	// auto MyCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
 }
 
 void AMyGameModeBase::BeginPlay()
@@ -55,5 +56,5 @@ void AMyGameModeBase::SpawnMonster()
 	AMyMonster* SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
-	
+
 }
