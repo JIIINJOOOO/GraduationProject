@@ -1,8 +1,16 @@
 /Last_Hero.sln
 /.vs
+/Binaries
+/DerivedDataCache
 /Intermediate
 /Saved
 /Build
 /Plugins
+/.VC.db
 /Content/InfinityBladeGrassLands/Maps/ElvenRuins.umap
+/Content/InfinityBladeEffects
+/Content/InfinityBladeGrassLands
+/Content/InfinityBladeWeapons
+/Content/Mannequin
+/Content/Weapon_Pack
 *_BuiltData.uasset
