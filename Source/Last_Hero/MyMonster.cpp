@@ -2,7 +2,8 @@
 
 
 #include "MyMonster.h"
-
+#include "Network.h"
+extern Network net;
 // Sets default values
 AMyMonster::AMyMonster()
 {
@@ -38,7 +39,33 @@ void AMyMonster::BeginPlay()
 void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	MonPos = GetActorLocation();
+	// UE_LOG(LogTemp, Log, TEXT("Monster Tick"));
+	// if (objectID == net.gmb.oid) {;
+	// 	SetActorLocation(FVector(net.gmb.pos.x, net.gmb.pos.y, net.gmb.pos.z));
+	// 	net.gmb.oid = -1;
+	// }
+	// GMB를 거쳐서 처리한다.
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.oid < NPC_ID_START) return;
+	if (ev.oid == objectID) {
+		// 1. 좌표 이동
+		UE_LOG(LogTemp, Log, TEXT("Call Move"));
+		SetActorLocation(FVector(ev.pos.x, ev.pos.y, ev.pos.z));
+		// 2. 애니메이션 실행
+		// 애니메이션 실행 관련 코드 받아서 진행
+		// 3. 대미지 처리
+		hp = ev.hp;
+		net.eventLock.lock();
+		net.eventQue.pop();
+		net.eventLock.unlock();
+	}
+
 }
 
 // Called to bind functionality to input
@@ -61,3 +88,6 @@ FVector AMyMonster::GetMonsterPos()
 	return MonPos;
 }
 
+void AMyMonster::SetObjectID(int oid) {
+	objectID = oid;
+}

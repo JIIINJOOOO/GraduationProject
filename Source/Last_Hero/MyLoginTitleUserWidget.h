@@ -17,6 +17,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "My LoginTitle User Widget")
 		FString MyLoginTitleUserWidget;
 	void NativeConstruct();
+	void ChangeScene();
 protected:
 	UPROPERTY()
 		class UButton* LoginButton;

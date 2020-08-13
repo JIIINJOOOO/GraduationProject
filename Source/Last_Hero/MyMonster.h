@@ -14,6 +14,9 @@ class LAST_HERO_API AMyMonster : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AMyMonster();
+private:
+	int objectID;
+	int hp;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,9 +32,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-	
 	UFUNCTION(BlueprintCallable)
 		FVector GetMonsterPos();
+	void SetObjectID(int oid);
 
 
 };

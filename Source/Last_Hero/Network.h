@@ -12,6 +12,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <mutex>
+#include <queue>
 #include "protocol.h"
 
 #define MAXLEN 10
@@ -19,21 +21,40 @@
 #define SERVERPORT 9000
 #define BUFSIZE 512
 #define MAX_USERS 4
+#define NPC_ID_START 10000
+#define MAX_MONSTER 100
 /**
  *
  */
 using namespace std;
 
-class LAST_HERO_API Network
-{
+
+class LAST_HERO_API Network {
+struct GMB_Event {
+	// 받은 패킷 정보를 이벤트를 통해 넘겨준다?
+	char type;
+	short oid;
+	Position pos;
+	short hp;
+	short anim_id;
+};
+
 private:
-	SOCKET m_sock;
 	HANDLE m_sendEvent;
 	char sendBuf[BUFSIZE];
-	char recvBuf[BUFSIZE];
 	P_STATE m_status;
 	string id, pass;
-	
+public:
+	SOCKET m_sock;
+	char recvBuf[BUFSIZE];
+	GMB_Event gmb;
+	mutex gmbLock;
+	HANDLE hEvent;
+	int objectID; // 오브젝트에 접근할때 사용한다
+	queue<GMB_Event> eventQue;
+	mutex eventLock;
+
+	HANDLE test1;
 public:
 	Network();
 	~Network() = default;
@@ -45,7 +66,6 @@ public:
 
 	// static void RecvThread(void* net);
 	static DWORD WINAPI RecvThread(LPVOID p);
-
 	int GetStatus() const;
 };
 

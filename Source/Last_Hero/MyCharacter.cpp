@@ -4,6 +4,9 @@
 #include "MyCharacter.h"
 #include "MyAnimInstance.h"
 #include "DrawDebugHelpers.h"
+#include "Network.h"
+extern Network net;
+HANDLE cEvent;
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -48,6 +51,7 @@ AMyCharacter::AMyCharacter()
 	AttackRadius = 50.0f;
 
 	AttackEndComboState();
+	cEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 //5/31: 290p 세팅까지 마친상태
 
@@ -61,7 +65,24 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (net.GetStatus() != p_login) return;
+	auto pos = GetActorLocation();
+	CS_MOVE pack;
+	pack.size = sizeof(CS_MOVE);
+	pack.type = move_packet;
+	pack.destination = { pos.X, pos.Y, pos.Z };
+	net.SendPacket(&pack);
 
+	// GMB를 거쳐서 여기서 Update처리
+	if (net.eventQue.empty()) return;
+	auto ev = net.eventQue.front();
+	if (ev.type != sc_update_obj) return;
+	if (ev.oid == id) {
+		if (id == 0) return;	// 이동 처리를 클라에서 하고 자신의 정보는 입력하지 않게 한다. 일단 임시로 0으로 하드코딩하고 나중에 자기 id는 따로 저장하도록 한다
+		// 처리
+		pos = { ev.pos.x, ev.pos.y, ev.pos.z };
+		SetActorLocation(pos);
+	}
 }
 
 void AMyCharacter::PostInitializeComponents()

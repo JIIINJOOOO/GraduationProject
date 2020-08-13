@@ -5,7 +5,8 @@
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Network.h"
+extern Network net;
 
 void UMyLoginTitleUserWidget::NativeConstruct()
 {
@@ -25,4 +26,8 @@ void UMyLoginTitleUserWidget::OnLoginClicked()
 		UGameplayStatics::OpenLevel(this, TransferLevelName);
 	}
 	if (UserName.Len() <= 0 || UserName.Len() > 10) return;
+}
+
+void UMyLoginTitleUserWidget::ChangeScene() {
+	UGameplayStatics::OpenLevel(this, TransferLevelName);
 }
