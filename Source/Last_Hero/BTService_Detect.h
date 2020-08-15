@@ -7,7 +7,7 @@
 #include "BTService_Detect.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class LAST_HERO_API UBTService_Detect : public UBTService
@@ -18,8 +18,8 @@ public:
 
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-	
-//private:
-//	UPROPERTY()
-//		class UObject* BPCharacter;
+
+	//private:
+	//	UPROPERTY()
+	//		class UObject* BPCharacter;
 };

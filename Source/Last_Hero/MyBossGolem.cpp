@@ -43,6 +43,7 @@ void AMyBossGolem::Attack()
 	IsAttacking = true;
 }
 
+
 bool AMyBossGolem::getIsAttacking()
 {
 	return IsAttacking;
@@ -100,6 +101,11 @@ void AMyBossGolem::PostInitializeComponents()
 void AMyBossGolem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (!IsDownInit && IsDown)
+	{
+		GolemAnim->PlayGolemFallingDownMontage();
+		IsDownInit = true;
+	}
 	
 }
 

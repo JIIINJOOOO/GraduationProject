@@ -35,7 +35,7 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent & O
 	/*FTimerHandle Handle;
 	FTimerDelegate TimerDel;
 	TimerDel.BindUFunction(this, FName("ExecuteTask"), &OwnerComp, MyGolem);*/
-	MyGolem->SetActorRotation(FMath::RInterpTo(MyGolem->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 2.0f));
+	MyGolem->SetActorRotation(FMath::RInterpTo(MyGolem->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), 10.0f));
 	bool bIsAttacking = OwnerComp.GetBlackboardComponent()->GetValueAsBool(AMyAIController::IsAttackingKey);
 	//if (bIsAttacking == true /*&& (LookVector != Target->GetActorLocation() - MyGolem->GetActorLocation())*/)
 	if (OwnerComp.GetBlackboardComponent()->GetValueAsRotator(AMyAIController::TargetRotKey) != FRotator(0.0f,0.0f,0.0f))

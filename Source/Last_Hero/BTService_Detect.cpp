@@ -1,10 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "BTService_Detect.h"
 #include "MyAIController.h"
 #include "MyBossGolem.h"
 #include "MyCharacter.h"
+#include "Engine/EngineTypes.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
 
@@ -49,7 +47,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 			//auto MyCharacter = OverlapResult.GetActor();
 
 			if (MyCharacter && MyCharacter->GetController()->IsPlayerController())
-			//if (MyCharacter && MyCharacter->GetName() == "BP_Player_C_0")
+				//if (MyCharacter && MyCharacter->GetName() == "BP_Player_C_0")
 			{
 				//OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, Dist);
 				/*if (Dist <= 200.0f)
@@ -71,7 +69,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 					FVector LookVector = MyCharacter->GetActorLocation() - BossGolem->GetActorLocation();
 					LookVector.Z = 0.0f;
 					FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
-					if (BossGolem->getIsAttacking() == false)
+					if (BossGolem->getIsAttacking() == true)
 					{
 						OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::TargetRotKey, TargetRot);
 
@@ -82,23 +80,21 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 						OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::TargetRotKey, FRotator(0.0f, 0.0f, 0.0f));
 						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
 						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true);
-
-
 					}
-					
+
 				}
 				else
 				{
-					OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey,10000.0f);
+					OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, 10000.0f);
 					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false);
 					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
 				}
-				
-			
 
 
-				
-				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey,MyCharacter);
+
+
+
+				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, MyCharacter);
 
 				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 
@@ -110,5 +106,4 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	}
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, nullptr);
 	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
-}
-
+ }

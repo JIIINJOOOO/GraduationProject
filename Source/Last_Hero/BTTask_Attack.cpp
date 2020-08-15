@@ -38,10 +38,17 @@ void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	if (!IsAttacking && (OwnerComp.GetBlackboardComponent()->GetValueAsRotator(AMyAIController::TargetRotKey) != FRotator(0.0f,0.0f,0.0f)))
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false); // 이때가 true일때
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, true); // 이때가 true일때
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false); 
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, true);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
+	else if (!IsAttacking && (OwnerComp.GetBlackboardComponent()->GetValueAsRotator(AMyAIController::TargetRotKey) == FRotator(0.0f, 0.0f, 0.0f)))
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
+
 }
 
 //void UBTTask_Attack::OnTaskFinished(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory, EBTNodeResult::Type TaskResult)

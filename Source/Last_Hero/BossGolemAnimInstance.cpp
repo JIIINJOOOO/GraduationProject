@@ -9,6 +9,7 @@ UBossGolemAnimInstance::UBossGolemAnimInstance()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> NORMAL_ATTACK_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/AnimMontage/Golem_Attack_Anim_Montage.Golem_Attack_Anim_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DOWN_ATTACK_1_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/AnimMontage/Golem_DownAttack1_Anim_Montage.Golem_DownAttack1_Anim_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DOWN_ATTACK_2_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/AnimMontage/Golem_DownAttack2_Anim_Montage.Golem_DownAttack2_Anim_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> GOLEM_BROKENLEG_FALLING(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/AnimMontage/Golem_Down_Anim_Montage.Golem_Down_Anim_Montage"));
 
 	if (NORMAL_ATTACK_MONTAGE.Succeeded())
 	{
@@ -21,6 +22,10 @@ UBossGolemAnimInstance::UBossGolemAnimInstance()
 	if (DOWN_ATTACK_2_MONTAGE.Succeeded())
 	{
 		DownAttack2Montage = DOWN_ATTACK_2_MONTAGE.Object;
+	}
+	if (GOLEM_BROKENLEG_FALLING.Succeeded())
+	{
+		GolemFallingDownMontage = GOLEM_BROKENLEG_FALLING.Object;
 	}
 }
 
@@ -50,4 +55,9 @@ void UBossGolemAnimInstance::PlayDownAttack_1_Montage()
 void UBossGolemAnimInstance::PlayDownAttack_2_Montage()
 {
 	Montage_Play(DownAttack2Montage, 1.0f);
+}
+
+void UBossGolemAnimInstance::PlayGolemFallingDownMontage()
+{
+	Montage_Play(GolemFallingDownMontage, 1.0f);
 }

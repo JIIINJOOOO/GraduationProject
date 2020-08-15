@@ -19,6 +19,7 @@ public:
 	void PlayNormalAttackMontage();
 	void PlayDownAttack_1_Montage();
 	void PlayDownAttack_2_Montage();
+	void PlayGolemFallingDownMontage();
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
@@ -29,6 +30,8 @@ private:
 		UAnimMontage* DownAttack1Montage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* DownAttack2Montage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* GolemFallingDownMontage;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		bool IsAttacking;
 };

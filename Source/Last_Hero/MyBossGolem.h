@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Last_Hero.h"
+#include "MyAIController.h"
 #include "GameFramework/Character.h"
 #include "MyBossGolem.generated.h"
 
@@ -46,8 +47,10 @@ public:
 		TMap<FName, int32> BoneMap; // <본이름,피격횟수>
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
 		bool IsDown;
+
 	void Attack();
 	FOnAttackEndDelegate OnAttackEnd;
+
 
 	// c++ functions
 	bool getIsAttacking();
@@ -63,4 +66,7 @@ private:
 	
 	UPROPERTY()
 		class UBossGolemAnimInstance* GolemAnim;
+
+	// c++ variables
+	bool IsDownInit;
 };

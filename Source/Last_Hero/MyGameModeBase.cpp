@@ -42,6 +42,11 @@ void AMyGameModeBase::BeginPlay()
 	SpawnMonster();
 }
 
+void AMyGameModeBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
 
 void AMyGameModeBase::SpawnMonster()
 {
