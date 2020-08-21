@@ -51,7 +51,9 @@ AMyCharacter::AMyCharacter()
 	AttackRadius = 50.0f;
 
 	AttackEndComboState();
-	cEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	id = -1;
+	isSend = false;
+	isSetID = false;
 }
 //5/31: 290p 세팅까지 마친상태
 
@@ -66,22 +68,57 @@ void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	if (net.GetStatus() != p_login) return;
-	auto pos = GetActorLocation();
-	CS_MOVE pack;
-	pack.size = sizeof(CS_MOVE);
-	pack.type = move_packet;
-	pack.destination = { pos.X, pos.Y, pos.Z };
-	net.SendPacket(&pack);
 
-	// GMB를 거쳐서 여기서 Update처리
-	if (net.eventQue.empty()) return;
+	if (id == net.GetMyID()) {		
+		position = GetActorLocation();
+		rotation = GetActorRotation();
+		CS_MOVE pack;
+		pack.size = sizeof(CS_MOVE);
+		pack.type = move_packet;
+		pack.destination = { position.X, position.Y, position.Z };
+		pack.rotation = { rotation.Pitch, rotation.Yaw, rotation.Roll };
+		net.SendPacket(&pack);
+		isSend = true;
+	}
+
+	if (isSetID) {
+		UE_LOG(LogTemp, Log, TEXT("Seted Char ID :: %d"), id);
+	}
+
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
 	auto ev = net.eventQue.front();
-	if (ev.type != sc_update_obj) return;
-	if (ev.oid == id) {
-		if (id == 0) return;	// 이동 처리를 클라에서 하고 자신의 정보는 입력하지 않게 한다. 일단 임시로 0으로 하드코딩하고 나중에 자기 id는 따로 저장하도록 한다
-		// 처리
-		pos = { ev.pos.x, ev.pos.y, ev.pos.z };
-		SetActorLocation(pos);
+	net.eventLock.unlock();
+	if (ev.type == sc_login_ok) {
+		if (id != -1) return;
+		// 새로 스폰되는 객체가 여길 지나가지 못해야함
+		id = net.GetMyID();
+		isSetID = true;
+		net.eventLock.lock();
+		net.eventQue.pop();
+		net.eventLock.unlock();
+	}
+	if (ev.type == sc_update_obj) {
+		if (ev.oid == net.GetMyID()) {
+			net.eventLock.lock();
+			net.eventQue.pop();
+			net.eventLock.unlock();
+			isSend = false;
+			return;
+		}
+		else if (ev.oid == id) {
+			position = { ev.pos.x, ev.pos.y, ev.pos.z };
+			// SetActorLocation(destination);
+			rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+			// SetActorRotation(rotation);
+			SetActorLocationAndRotation(position, rotation, false, 0, ETeleportType::None);
+			net.eventLock.lock();
+			net.eventQue.pop();
+			net.eventLock.unlock();
+		}
 	}
 }
 
@@ -240,5 +277,11 @@ void AMyCharacter::AttackCheck()
 			FDamageEvent DamageEvent;
 			HitResult.Actor->TakeDamage(10.0f, DamageEvent, GetController(), this); // 여기서 첫번째 인자에 어택 데미지 입력
 		}
-	}
+	}	
+}
+
+void AMyCharacter::SetID(const int& id) {
+	this->id = id;
+	isSetID = true;
+
 }

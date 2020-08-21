@@ -28,16 +28,19 @@ public:
 		UBlueprint* MonsterAIBP;
 	UPROPERTY(EditAnywhere, Category = "NetworkMonster")
 		TSubclassOf<class AMyMonster> MonToSpawn;
+	UPROPERTY(EditAnywhere, Category = "NetworkCharacter")
+		TSubclassOf<class AMyCharacter> CharToSpawn;
 // 	static void GameThread();
 	virtual void Tick(float DeltaTime) override;
 	static DWORD WINAPI GameThread(LPVOID arg);
 	void ProcessEvent();
-	void Test();
 
 protected:
 	UFUNCTION()
-	void SpawnMonster();
-	void SpawnMonster(int oid, float x, float y, float z);
-	void SpawnPlayer(int oid, float x, float y, float z);
+		void SpawnMonster();
+		void SpawnMonster(int oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnPlayer(int oid, float x, float y, float z);
+	void SpawnBoss(int oid, float x, float y, float z);
 
 };

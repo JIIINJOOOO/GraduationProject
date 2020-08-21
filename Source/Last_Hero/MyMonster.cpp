@@ -25,6 +25,7 @@ AMyMonster::AMyMonster()
 		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
 	}*/
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
+	objectID = -1;	// 플레이어의 oid가 0부터 시작함
 	
 }
 
@@ -44,6 +45,8 @@ void AMyMonster::Tick(float DeltaTime)
 	// 	SetActorLocation(FVector(net.gmb.pos.x, net.gmb.pos.y, net.gmb.pos.z));
 	// 	net.gmb.oid = -1;
 	// }
+
+
 	// GMB를 거쳐서 처리한다.
 	net.eventLock.lock();
 	if (net.eventQue.empty()) {
@@ -53,9 +56,10 @@ void AMyMonster::Tick(float DeltaTime)
 	auto ev = net.eventQue.front();
 	net.eventLock.unlock();
 	if (ev.oid < NPC_ID_START) return;
+	if (ev.type != sc_update_obj) return;	// enter 등의 처리는 gmb에서 해주어야함
 	if (ev.oid == objectID) {
 		// 1. 좌표 이동
-		UE_LOG(LogTemp, Log, TEXT("Call Move"));
+		UE_LOG(LogTemp, Log, TEXT("Monster ID :: %d"), ev.oid);
 		SetActorLocation(FVector(ev.pos.x, ev.pos.y, ev.pos.z));
 		// 2. 애니메이션 실행
 		// 애니메이션 실행 관련 코드 받아서 진행

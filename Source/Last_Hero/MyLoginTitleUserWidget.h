@@ -4,8 +4,8 @@
 
 #include "EngineMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Network.h"
 #include "MyLoginTitleUserWidget.generated.h"
-
 /**
  * 
  */
@@ -18,11 +18,14 @@ public:
 		FString MyLoginTitleUserWidget;
 	void NativeConstruct();
 	void ChangeScene();
+	static DWORD WINAPI LoginThread(LPVOID arg);
 protected:
 	UPROPERTY()
 		class UButton* LoginButton;
 	UPROPERTY()
 		class UEditableTextBox* UserNameTextBox;
+	UPROPERTY()
+		class UEditableTextBox* UserPassTextBox;
 private:
 	bool bIsLogin;
 	FName TransferLevelName = "Test_map2";

@@ -13,6 +13,11 @@ class LAST_HERO_API AMyCharacter : public ACharacter
 	GENERATED_BODY()
 private:
 	int id;
+	FVector position;
+	FRotator rotation;
+	bool isSend;	// 좌표를 Set하기 전에 Send하는 것을 방지
+	bool isSetID;	// id가 Set되기 전에 Tick을 돌아 문제가 생기는 것을 방지?
+	// mutex idLock;
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
@@ -79,4 +84,7 @@ private:
 		
 	UPROPERTY()
 		class UMyAnimInstance* MyAnim;
+
+public:
+	void SetID(const int& id);
 };

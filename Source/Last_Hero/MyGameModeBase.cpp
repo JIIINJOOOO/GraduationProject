@@ -4,6 +4,7 @@
 #include "MyGameModeBase.h"
 #include "MyCharacter.h"
 #include "MyMonster.h"
+#include "MyBossGolem.h"
 #include "MyPlayerController.h"
 #include <thread>
 #include <map>
@@ -41,13 +42,14 @@ AMyGameModeBase::AMyGameModeBase()
 	p.type = login_packet;
 	strcpy_s(p.id, "test");
 	strcpy_s(p.password, "1234");
-	net.SendPacket(&p);
+	// net.SendPacket(&p);
 	// recv(net.m_sock, net.recvBuf, BUFSIZE, 0);
 	// net.ProcessPacket(net.recvBuf);
 }
 
 void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 {
+	// APlayerController * NewPlayer;
 	// 플레이어 스폰 위치 트랜스폼
 	FTransform PlayerSpawnTrans(FRotator::ZeroRotator, FVector(14410.0f, 77670.0f, -450.0f), FVector(1.0f, 1.0f, 1.0f));
 	// 플레이어 스폰 코드
@@ -95,6 +97,18 @@ void AMyGameModeBase::SpawnMonster(int oid, float x, float y, float z)
 
 }
 
+void AMyGameModeBase::SpawnBoss(int oid, float x, float y, float z) {
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = NULL;
+	SpawnInfo.bDeferConstruction = false;
+	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
+	FVector SpawnLocation = { x,y,z };
+	// 몬스터 스폰 코드
+	auto bossGolem = GetWorld()->SpawnActor<AMyBossGolem>(DefaultPawnClass, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+}
+
 void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z)
 {
 	FActorSpawnParameters SpawnInfo;
@@ -102,109 +116,27 @@ void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z)
 	SpawnInfo.Owner = this;
 	SpawnInfo.Instigator = NULL;
 	SpawnInfo.bDeferConstruction = false;
-	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
-	FVector MonSpawnLocation = { x,y,z };
-	// 몬스터 스폰 코드
-	AMyCharacter* SpawnMonster = GetWorld()->SpawnActor<AMyCharacter>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
-	// monsters.insert(oid, SpawnMonster);
-	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
-	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
-
+	FVector SpawnLocation = { 14410.0f, 77670.0f, -450.0f };
+	auto MyChar = GetWorld()->SpawnActor<AMyCharacter>(DefaultPawnClass, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+	MyChar->SetID(oid);
 }
 
 void AMyGameModeBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	ProcessEvent();
-	return;
-	// 송수신 및 packet 처리도 여기서 진행
-
-	if (net.GetStatus() != p_login) {
-		return;
-	}
-	// char error_code;
-	// int error_code_size = sizeof(error_code);
-	// getsockopt(net.m_sock, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
-	// if (error_code < 0) return;
-	// error_code = 0;
-	ProcessEvent();
-	return;
-	//int ret = recv(net.m_sock, net.recvBuf, BUFSIZE, 0);
-	//net.ProcessPacket(net.recvBuf);
-	if (num < 5) {
-
-		SpawnMonster();
-		num++;
-	}
-	if (net.gmb.type == sc_enter_obj) {
-		SpawnMonster();
-	}
-	net.gmb.type = NULL; 
-	return;
-	// auto& ev = net.gmb;
-	// if (ret == WAIT_OBJECT_0) {
-	// 	UE_LOG(LogTemp, Log, TEXT("type :: %d %d"), (int)ev.type, (int)ev.oid);
-	// }
-	// else return;
-	// UE_LOG(LogTemp, Log, TEXT("type :: %d %d"), (int)ev.type, (int)ev.oid);
-	if (net.gmb.type == sc_enter_obj) {
-		if (net.gmb.oid < NPC_ID_START) {
-			// Player Spawn
-			// SpawnPlayer(net.gmb.oid, net.gmb.pos.x, net.gmb.pos.y, net.gmb.pos.z);
-			// SpawnMonster(net.gmb.oid, net.gmb.pos.x, net.gmb.pos.y, net.gmb.pos.z);
-			// SpawnMonster();
-			// FTransform spawnPos{ FVector(ev.pos.x, ev.pos.y, ev.pos.z) };
-			// AController newPlayer;
-			// RestartPlayerAtTransform(&newPlayer, spawnPos);
-		}
-		else if (net.gmb.oid < NPC_ID_START + MAX_MONSTER) {
-			SpawnMonster(net.gmb.oid, net.gmb.pos.x, net.gmb.pos.y, net.gmb.pos.z);
-			// SpawnPlayer(net.gmb.oid, net.gmb.pos.x, net.gmb.pos.y, net.gmb.pos.z);
-			// APlayerController aa;
-			// PostLogin(&aa);
-			// auto& ev = net.gmb; 1.4
-			// SpawnMonster(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
-			// FTransform spawnPos{ FVector(ev.pos.x, ev.pos.y, ev.pos.z) };
-			// AController newPlayer;
-			// RestartPlayerAtTransform(&newPlayer, spawnPos);
-		}
-
-		net.gmb.type = -1;
-	}
-	if (net.gmb.type == sc_update_obj) {
-
-	}
-	CS_MOVE p;
-	p.destination = {};
-	p.size = sizeof(p);
-	p.type = move_packet;
-	net.SendPacket(&p);
+	// TEST
+	/*
+	static int aa = 0;
+	APlayerController * NewPlayer = UGameplayStatics::CreatePlayer(GetWorld(), 1, true);
+	FTransform PlayerSpawnTrans(FRotator::ZeroRotator, FVector(14410.0f, 77670.0f, -450.0f), FVector(1.0f, 1.0f, 1.0f));
+	// 플레이어 스폰 코드
+	RestartPlayerAtTransform(NewPlayer, PlayerSpawnTrans);
+	aa++;
+	Sleep(1000);
+	*/	
 }
 
-DWORD WINAPI AMyGameModeBase::GameThread(LPVOID arg) {
-	auto gmb = reinterpret_cast<AMyGameModeBase*>(arg);
-
-	while (true) {
-		int ret = WaitForSingleObject(net.hEvent, INFINITE);
-
-		if (ret == WAIT_OBJECT_0) { 
-			if (net.gmb.type == sc_enter_obj) {
-				//if (net.gmb.oid < NPC_ID_START) {
-
-				
-				// gmb->SpawnMonster(net.gmb.oid, net.gmb.pos.x, net.gmb.pos.y, net.gmb.pos.z);
-			//	}
-			}
-		}
-		else continue;
-		
-	}
-	return 0;
-}
-
-void AMyGameModeBase::Test() {
-	SpawnMonster();
-}
 
 void AMyGameModeBase::ProcessEvent() {
 	net.eventLock.lock();
@@ -217,18 +149,32 @@ void AMyGameModeBase::ProcessEvent() {
 	// net.eventQue.pop();
 
 	switch (ev.type) {
-	case sc_enter_obj:
+	case sc_enter_obj: {
 		if (ev.oid < NPC_ID_START) {
+			
+			//static int aa = 1;
 			// 플레이어 캐릭터 스폰
 			// SpawnMonster(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);	// 임시로 몬스터 사용
+			//APlayerController * NewPlayer = UGameplayStatics::CreatePlayer(GetWorld(), ev.oid, true);
+			//FTransform PlayerSpawnTrans(FRotator::ZeroRotator, FVector(14410.0f, 77670.0f, -450.0f), FVector(1.0f, 1.0f, 1.0f));
+			// 플레이어 스폰 코드	
+			// RestartPlayerAtTransform(NewPlayer, PlayerSpawnTrans);
+			//aa++;
+			SpawnPlayer(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+			
 		}
-		else if (ev.oid == 20000) {/*보스몬스터 스폰 관련*/}
-		else 
+		else if (ev.oid == 20000) {
+			UE_LOG(LogTemp, Log, TEXT("Boss Spawn in GMB"));
+			SpawnBoss(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+		}
+		else
 			SpawnMonster();
+		
 		net.eventLock.lock();
 		net.eventQue.pop();
 		net.eventLock.unlock();
-		break;
+	}break;
+	
 	// case sc_update_obj:
 	// 	/*
 	// 	각 오브젝트 클래스에서 자신에게 온 패킷인지를 검사 

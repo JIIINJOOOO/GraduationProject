@@ -107,8 +107,8 @@ struct SC_INIT {
 struct CS_MOVE {
 	char size;
 	char type;
-	unsigned short idx;
 	Position destination;
+	Position rotation;
 };
 struct SC_UPDATE_OBJ {
 	char size;
@@ -117,6 +117,7 @@ struct SC_UPDATE_OBJ {
 	short oid;
 	char state;
 	char usingPart;
+	Position rotation;
 };
 struct CS_ACT {
 	char size;

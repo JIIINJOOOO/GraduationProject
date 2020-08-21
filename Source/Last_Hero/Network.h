@@ -37,6 +37,7 @@ struct GMB_Event {
 	Position pos;
 	short hp;
 	short anim_id;
+	Position rotation;
 };
 
 private:
@@ -44,17 +45,17 @@ private:
 	char sendBuf[BUFSIZE];
 	P_STATE m_status;
 	string id, pass;
+	bool isHost;
+	int my_id;
 public:
 	SOCKET m_sock;
 	char recvBuf[BUFSIZE];
-	GMB_Event gmb;
 	mutex gmbLock;
-	HANDLE hEvent;
-	int objectID; // 오브젝트에 접근할때 사용한다
 	queue<GMB_Event> eventQue;
 	mutex eventLock;
 
-	HANDLE test1;
+	HANDLE loginEvent;
+
 public:
 	Network();
 	~Network() = default;
@@ -67,6 +68,7 @@ public:
 	// static void RecvThread(void* net);
 	static DWORD WINAPI RecvThread(LPVOID p);
 	int GetStatus() const;
+	int GetMyID() const;
 };
 
 int recvn(SOCKET s, char *buf, int len, int flags);

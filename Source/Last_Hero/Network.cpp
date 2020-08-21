@@ -3,13 +3,12 @@
 
 #include "Network.h"
 #include "MyGameModeBase.h"
-HANDLE loginEvent;
 HANDLE gmbEvent;
 // GMB_Event gmb;
 mutex gmbLock;
 
 Network::Network() {
-	hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	// hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	int retval;
 	WSAData wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return;
@@ -18,10 +17,11 @@ Network::Network() {
 	if (m_sock == INVALID_SOCKET) return;
 
 	// Set nagle algorithm off
-	// BOOL option = TRUE;
-	// setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (char*)& option, sizeof(option));
+	BOOL option = TRUE;
+	setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (char*)& option, sizeof(option));
 
 	m_status = p_free;
+	isHost = false;
 
 	//connect()
 	SOCKADDR_IN serveraddr;
@@ -36,8 +36,7 @@ Network::Network() {
 	loginEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	gmbEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	HANDLE rthread = CreateThread(NULL, 0, RecvThread, this, 0, NULL);
-	test1 = CreateEvent(NULL, FALSE, FALSE, NULL);
-
+	
 }
 
 DWORD WINAPI Network::RecvThread(LPVOID p) {
@@ -73,8 +72,16 @@ void Network::ProcessPacket(char* buf) {
 	switch (buf[1]) {
 	case sc_login_ok: {
 		SC_LOGIN_OK* pack = reinterpret_cast<SC_LOGIN_OK*>(buf);
+		my_id = pack->uid;
 		m_status = p_login;
-		
+		SetEvent(loginEvent);
+
+		GMB_Event ev;
+		ev.type = sc_login_ok;
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+
 	} break;
 	case sc_login_fail:
 		break;
@@ -93,7 +100,10 @@ void Network::ProcessPacket(char* buf) {
 		ev.pos = pack->pos;
 		ev.oid = pack->oid;
 		// gmbLock.lock();
+		eventLock.lock();
 		eventQue.push(ev);
+		eventLock.unlock();
+		
 		// gmb.type = sc_enter_obj;
 		// gmb.pos = pack->pos;
 		// gmb.oid = pack->oid;
@@ -108,7 +118,13 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = sc_update_obj;
 		ev.pos = pack->pos;
 		ev.oid = pack->oid;
+		ev.rotation = pack->rotation;
+		// ev.hp = pack->hp;
+		
+		eventLock.lock();
 		eventQue.push(ev);
+		eventLock.unlock();
+
 	}break;
 	case login_packet: {
 		SC_LOGIN* pack = reinterpret_cast<SC_LOGIN*>(buf);
@@ -130,6 +146,10 @@ void Network::SetAccountInfo(const char* id, const char* pass) {
 int Network::GetStatus() const {
 	// return (int)gmb.type;
 	return m_status;
+}
+
+int Network::GetMyID() const {
+	return my_id;
 }
 
 int recvn(SOCKET s, char *buf, int len, int flags) {
