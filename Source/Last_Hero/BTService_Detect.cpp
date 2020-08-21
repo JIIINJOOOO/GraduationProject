@@ -62,7 +62,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 				OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::GolemRotKey, BossGolem->GetActorRotation());
 
 				//OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, Dist);
-				if (Dist <= 900.0f)
+				if (Dist <= 900.0f) // Close Range
 				{
 					OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, Dist);
 					//OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true); // 이때가 true일때
@@ -83,11 +83,12 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 					}
 
 				}
-				else
+				else	// Long Range
 				{
 					OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, 10000.0f);
 					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false);
 					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
+					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, FMath::RandRange(0,1));
 				}
 
 

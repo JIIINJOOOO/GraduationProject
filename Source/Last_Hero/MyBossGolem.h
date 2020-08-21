@@ -48,21 +48,52 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
 		bool IsDown;
 
-	void Attack();
+	// bool var for broken parts
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
+		bool IsBreakLeftArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
+		bool IsBreakLeftLeg;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
+		bool IsHalfBreakLeftArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
+		bool IsBreakRightArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
+		bool IsBreakRightLeg;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
+		bool IsHalfBreakRightArm;
+
+	// Target Look Vector for set physics linear vel
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight)
+		FVector TargetLookVec;
+
+
+	void Attack_CloseRange();
+	void Attack_LongRange();
 	FOnAttackEndDelegate OnAttackEnd;
 
 
 	// c++ functions
 	bool getIsAttacking();
 	bool getIsDown();
-	int getRndDownAtk();
-	// random down attack
-	int RndDownAtk;
+	GOLEM_ANIM_MONTAGE getRndAtkMtg();
+	void Launcher();
+	void setGroundFrictionZero();
+	GOLEM_ANIM_MONTAGE setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, GOLEM_ANIM_MONTAGE Max);
+
+	// c++ variables
+	FTimerHandle TimerHandle;
+	GOLEM_ANIM_MONTAGE RndAtkMtg; // - Random Attack Pattern
+	float LaunchForce;
+
+
+
 private:
 	UFUNCTION()
 		void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Fight, Meta = (AllowPrivateAccess = true))
 		bool IsAttacking;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = BoneBreak, Meta = (AllowPrivateAccess = true))
+		bool IsFalling;
 	
 	UPROPERTY()
 		class UBossGolemAnimInstance* GolemAnim;

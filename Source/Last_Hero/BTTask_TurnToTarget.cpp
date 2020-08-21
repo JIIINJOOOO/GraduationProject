@@ -67,8 +67,10 @@ void UBTTask_TurnToTarget::TickTask(UBehaviorTreeComponent & OwnerComp, uint8 * 
 	//{
 	//	OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, true); // 이때가 true일때
 	//}
-	
-	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	if (!OwnerComp.GetBlackboardComponent()->GetValueAsBool(AMyAIController::IsTurningKey))
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
 }
 
 

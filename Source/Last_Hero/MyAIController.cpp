@@ -15,6 +15,8 @@ const FName AMyAIController::IsTurningKey(TEXT("IsTurning"));
 const FName AMyAIController::IsAttackingKey(TEXT("IsAttacking"));
 const FName AMyAIController::TargetRotKey(TEXT("TargetRot"));
 const FName AMyAIController::GolemRotKey(TEXT("GolemRot"));
+const FName AMyAIController::IsLongRangePatternKey(TEXT("IsLongRangePattern"));
+
 
 
 

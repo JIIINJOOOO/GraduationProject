@@ -16,16 +16,57 @@ class LAST_HERO_API UBossGolemAnimInstance : public UAnimInstance
 public:
 	UBossGolemAnimInstance();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	void PlayNormalAttackMontage();
-	void PlayDownAttack_1_Montage();
-	void PlayDownAttack_2_Montage();
-	void PlayGolemFallingDownMontage();
 
+	void PlayGolemMontage(GOLEM_ANIM_MONTAGE select);
+
+	// Stand Atk
+	// - Close Range
+	//void PlayNormalAttackMontage();
+	//void PlayHandClapAttackMontage();
+	//void PlaySweepAttackMontage();
+	//void PlayPunchAttackMontage();
+	//void PlayStompAttackMontage();
+	//void PlayWalkingAttackMontage();
+	//// - Long Range
+	//void PlayRushAttackMontage();
+	//void PlayThrowStoneMontage();
+
+
+
+	//// Down Atk
+	//void PlayDownAttack_1_Montage();
+	//void PlayDownAttack_2_Montage();
+	//void PlayGolemFallingDownMontage();
+private:
+	UFUNCTION()
+		void AnimNotify_Launch();
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 		float CurrentPawnSpeed;
+
+	// Stand Atk
+	// - Close Range
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* NormalAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* HandClapAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* SweepAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* PunchAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* StompAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* WalkingAttackMontage;
+	// - Long Range
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* RushAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* ThrowStoneMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* ThrowSpearMontage;
+
+	// Down Atk
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* DownAttack1Montage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))

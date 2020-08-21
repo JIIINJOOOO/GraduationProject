@@ -2,7 +2,6 @@
 
 
 #include "MyBossGolem.h"
-#include "MyAIController.h"
 #include "BossGolemAnimInstance.h"
 
 // Sets default values
@@ -19,27 +18,43 @@ AMyBossGolem::AMyBossGolem()
 	AIControllerClass = AMyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	IsAttacking = false;
+	IsDown = false;
 }
 
-void AMyBossGolem::Attack()
+void AMyBossGolem::Attack_CloseRange()
 {
 	if (IsAttacking) return;
+	if (IsFalling) return;
 	if (!IsDown)
 	{
-		GolemAnim->PlayNormalAttackMontage();
+		RndAtkMtg = setRandomAttackMontage(CLOSE_RANGE_START, CLOSE_RANGE_END);
 	}
 	else
 	{
-		RndDownAtk = FMath::RandRange(0, 1);
-		if (RndDownAtk == 0)
+		RndAtkMtg = setRandomAttackMontage(DOWN_START, DOWN_END);
+		/*if (RndDownAtk == 0)
 		{
 			GolemAnim->PlayDownAttack_1_Montage();
 		}
 		else
 		{
 			GolemAnim->PlayDownAttack_2_Montage();
-		}
+		}*/
 	}
+	GolemAnim->PlayGolemMontage(RndAtkMtg);
+
+	IsAttacking = true;
+}
+
+void AMyBossGolem::Attack_LongRange()
+{
+	if (IsAttacking) return;
+	if (IsFalling) return;
+	if (!IsDown)
+	{
+		RndAtkMtg = setRandomAttackMontage(LONG_RANGE_START, LONG_RANGE_END);
+	}
+	GolemAnim->PlayGolemMontage(RndAtkMtg);
 	IsAttacking = true;
 }
 
@@ -54,9 +69,78 @@ bool AMyBossGolem::getIsDown()
 	return IsDown;
 }
 
-int AMyBossGolem::getRndDownAtk()
+GOLEM_ANIM_MONTAGE AMyBossGolem::getRndAtkMtg()
 {
-	return RndDownAtk;
+	return RndAtkMtg;
+}
+
+void AMyBossGolem::Launcher()
+{
+	float JumpForce = 1.0f;
+	FVector LaunchVelocity = (GetActorForwardVector() * LaunchForce) + (GetActorUpVector() * JumpForce);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::setGroundFrictionZero, 2.5f, true, 0.0f);
+	LaunchCharacter(LaunchVelocity, false, false);
+	GetCharacterMovement()->GroundFriction = 8.0f;
+}
+
+void AMyBossGolem::setGroundFrictionZero()
+{
+	GetCharacterMovement()->GroundFriction = 0.0f;
+}
+
+GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, GOLEM_ANIM_MONTAGE Max)
+{
+	int rnd = FMath::RandRange(Min + 1, Max - 1);
+	switch (rnd)
+	{
+	case 1:
+		return NORMAL_ATTACK;
+	case 2:
+		if ((!IsBreakLeftArm || !IsBreakRightArm) && RndAtkMtg != HANDCLAP_ATTACK)
+			return HANDCLAP_ATTACK;
+		else
+	case 3:
+		if(IsBreakLeftArm)
+			return SWEEP_ATTACK;
+		else
+			return PUNCH_ATTACK;
+	case 4:
+		if(IsBreakRightArm)
+			return PUNCH_ATTACK;
+		else
+			return SWEEP_ATTACK;
+	case 5:
+		return STOMP_ATTACK;
+	case 6:
+		if (!IsBreakLeftArm && !IsBreakRightArm && RndAtkMtg != WALKING_ATTACK)
+		{
+			LaunchForce = 1000.0f;
+			return WALKING_ATTACK;
+		}
+		else
+			return STOMP_ATTACK;
+	case 9:
+		if (!IsBreakLeftArm && !IsBreakRightArm && RndAtkMtg != RUSH_ATTACK)
+		{
+			LaunchForce = 1000.0f;
+			return RUSH_ATTACK;
+		}
+	case 10:
+		return THROW_STONE;
+	case 11:
+		return THROW_SPEAR;
+	case 14:
+		if (IsBreakLeftArm)
+			return DOWN_ATTACK_1;
+		else
+			return DOWN_ATTACK_2;
+	case 15:
+		if(IsBreakRightArm)
+			return DOWN_ATTACK_2;
+		else
+			return DOWN_ATTACK_1;
+	}
+	return GOLEM_ANIM_MONTAGE();
 }
 
 
@@ -64,6 +148,7 @@ void AMyBossGolem::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupte
 {
 	ABCHECK(IsAttacking);
 	IsAttacking = false;
+	IsFalling = false;
 	OnAttackEnd.Broadcast();
 }
 
@@ -103,10 +188,10 @@ void AMyBossGolem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!IsDownInit && IsDown)
 	{
-		GolemAnim->PlayGolemFallingDownMontage();
+		GolemAnim->PlayGolemMontage(GOLEM_ANIM_MONTAGE::BROKENLEG_FALLING);
+		IsFalling = true;
 		IsDownInit = true;
 	}
-	
 }
 
 // Called to bind functionality to input

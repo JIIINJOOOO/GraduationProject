@@ -21,7 +21,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 
 
-	BossGolem->Attack();
+	BossGolem->Attack_CloseRange();
 	
 	IsAttacking = true;
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true); // 이때가 true일때
