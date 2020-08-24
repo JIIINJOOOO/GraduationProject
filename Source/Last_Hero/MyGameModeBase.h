@@ -4,6 +4,7 @@
 
 #include "Last_Hero.h"
 #include "GameFramework/GameModeBase.h"
+#include "Network.h"
 #include "MyGameModeBase.generated.h"
 
 /**
@@ -29,7 +30,16 @@ public:
 		UBlueprint* MonsterAIBP;
 	UPROPERTY(EditAnywhere, Category = "NetworkMonster")
 		TSubclassOf<class AMyMonster> MonToSpawn;
+	UPROPERTY(EditAnywhere, Category = "NetworkCharacter")
+		TSubclassOf<class AMyCharacter> CharToSpawn;
+	UPROPERTY(EditAnywhere, Category = "NetworkBoss")
+		TSubclassOf<class AMyBossGolem> BossToSpawn;
+	void ProcessEvent();
 protected:
 	UFUNCTION()
 	void SpawnMonster();
+	void SpawnMonster(int oid, float x, float y, float z);
+	UFUNCTION()
+	void SpawnPlayer(int oid, float x, float y, float z);
+	void SpawnBoss(int oid, float x, float y, float z);
 };

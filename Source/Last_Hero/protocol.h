@@ -7,10 +7,14 @@ enum Obj_Type {
 struct Position {
 	float x, y, z;
 };
+#define MAX_CHAT_LEN 80
+
 enum PACKET_TYPE {
-	login_packet, signup_packet, lobby_packet, player_packet, start_packet, init_packet, move_packet, attack_packet, act_packet, skill_packet,
+	cs_login, cs_signup, lobby_packet, player_packet, start_packet, init_packet, move_packet, attack_packet, act_packet, skill_packet,
 	sc_leave, sc_login, sc_signup, sc_login_fail, sc_login_ok,
-	sc_signup_ok, sc_signup_fail
+	sc_signup_ok, sc_signup_fail, sc_player_move, sc_update_obj, sc_enter_obj,
+	sc_leave_obj, cs_chat, sc_chat, cs_attack, cs_guard, sc_attack, sc_guard, cs_fireball, sc_fireball, sc_set_host, cs_jump, sc_jump,
+	cs_evade, cs_weapon_on, cs_weapon_off, sc_evade, sc_weapon_on, sc_weapon_off, cs_berserk, sc_berserk
 };
 
 enum Login_State {
@@ -26,9 +30,15 @@ enum Lobby_State {
 	standby = 10, ingame, full
 };
 
+enum OBJ_TYPE {
+	OBJ_PLAYER
+};
+
 enum P_STATE {
 	p_free, p_login,
 };
+
+#define MAX_CHAT_LEN 80
 
 #pragma pack(push, 1)
 struct CS_LOGIN {
@@ -98,20 +108,22 @@ struct SC_INIT {
 struct CS_MOVE {
 	char size;
 	char type;
-	unsigned short idx;
 	Position destination;
+	Position rotation;
 };
 struct SC_UPDATE_OBJ {
 	char size;
 	char type;
 	Position pos;
 	short oid;
+	char state;
+	char usingPart;
+	Position rotation;
 };
 struct CS_ACT {
 	char size;
 	char type;
 	char detailType;
-	unsigned short idx;
 };
 
 // New Packets
@@ -142,4 +154,136 @@ struct SC_SIGNUP_FAIL {
 	char size;
 	char type;
 };
+
+struct SC_PLAYER_MOVE {
+	char size;
+	char type;
+	short uid;
+	Position pos;
+};
+
+struct SC_OBJECT_ENTER {
+	char size;
+	char type;
+	char o_type;
+	char name[MAXLEN];
+	short oid;
+	Position pos;
+};
+
+struct SC_OBJECT_LEAVE {
+	char size;
+	char type;
+	int id;
+};
+
+struct CS_CHAT {
+	char size;
+	char type;
+	short uid;
+	char chat[MAX_CHAT_LEN];
+};
+
+struct SC_CHAT {
+	char size;
+	char type;
+	short uid;
+	char chat[MAX_CHAT_LEN];
+};
+
+struct CS_ATTACK {
+	char size;
+	char type;
+};
+
+struct CS_GUARD {
+	char size;
+	char type;
+};
+
+struct SC_OBJ_ATTACK {
+	char size;
+	char type;
+	short oid;
+};
+
+struct SC_OBJ_GUARD {
+	char size;
+	char type;
+	short oid;
+};
+
+struct CS_FIREBALL {
+	char size;
+	char type;
+};
+
+struct SC_FIREBALL {
+	char size;
+	char type;
+	short oid;
+};
+
+struct CS_JUMP {
+	char size;
+	char type;
+};
+
+struct SC_JUMP {
+	char size;
+	char type;
+	short oid;
+};
+
+struct CS_EVADE {
+	char size;
+	char type;
+};
+
+struct SC_EVADE {
+	char size;
+	char type;
+	short oid;
+};
+
+struct CS_WEAPON_ON {
+	char size;
+	char type;
+	char w_type;
+};
+
+struct SC_WEAPON_ON {
+	char size;
+	char type;
+	char w_type;
+	short oid;
+};
+
+struct CS_WEAPON_OFF {
+	char size;
+	char type;
+};
+
+struct SC_WEAPON_OFF {
+	char size;
+	char type;
+	short oid;
+};
+
+struct SC_SET_HOST {
+	char size;
+	char type;
+};
+
+struct CS_BERSERK {
+	char size;
+	char type;
+};
+
+struct SC_BERSERK {
+	char size;
+	char type;
+	short oid;
+};
+
 #pragma pack(pop)

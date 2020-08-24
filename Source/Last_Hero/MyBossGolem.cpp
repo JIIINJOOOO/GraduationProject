@@ -138,3 +138,7 @@ void AMyBossGolem::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		BreakLegsCpp(OtherActor);
 	}
 }
+
+void AMyBossGolem::SetID(const int& id) {
+	// this->id = id;
+}

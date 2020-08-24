@@ -14,6 +14,10 @@ class LAST_HERO_API AMyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+	AMyPlayerController();
 	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* aPawn) override;
+	virtual void Tick(float DeltaTime) override;
+	bool isBattle;
+	bool isInput;
 };

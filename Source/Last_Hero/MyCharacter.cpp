@@ -4,6 +4,8 @@
 #include "MyCharacter.h"
 #include "MyAnimInstance.h"
 #include "DrawDebugHelpers.h"
+#include "Network.h"
+extern Network net;
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -48,6 +50,7 @@ AMyCharacter::AMyCharacter()
 	//AttackRadius = 50.0f;
 
 	//AttackEndComboState();
+	id = -1;
 }
 //5/31: 290p 세팅까지 마친상태
 
@@ -61,7 +64,107 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	if (net.GetStatus() != p_login) return;
+	if (id == net.GetMyID()) {
+		position = GetActorLocation();
+		rotation = GetActorRotation();
+		CS_MOVE pack;
+		pack.size = sizeof(CS_MOVE);
+		pack.type = move_packet;
+		
+		pack.destination = { position.X, position.Y, position.Z };
+		pack.rotation = { rotation.Pitch, rotation.Yaw, rotation.Roll };
+		net.SendPacket(&pack);
+	}
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.type == sc_login_ok && id == -1) {
+		id = net.GetMyID();
+		net.PopEvent();
+		return;
+	}
+	if (ev.oid == net.GetMyID()) {
+		// 자신의 처리는 이미 끝났으니 일단 스킵 
+		net.PopEvent();
+		return;
+	}
+	if (ev.oid != id && id != -1) return;
 
+	switch (ev.type) {
+	case sc_login_ok:
+		if (id != -1) return;
+		id = net.GetMyID();
+		net.PopEvent();
+		break;
+	case sc_update_obj:
+		position = { ev.pos.x, ev.pos.y, ev.pos.z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		SetActorLocationAndRotation(position, rotation, false, 0, ETeleportType::None);
+		net.PopEvent();
+		break;
+	case sc_attack:
+		// 애니메이션 재생
+		net.PopEvent();
+		break;
+	case sc_weapon_on:
+		// 애니메이션 재생
+		net.PopEvent();
+		break;
+	case sc_weapon_off:
+		// 애니메이션 재생
+		net.PopEvent();
+		break;
+	case sc_guard:
+		net.PopEvent();
+		break;
+	case sc_berserk:
+		net.PopEvent();
+		break;
+	case sc_fireball:
+		net.PopEvent();
+		break;
+	case sc_evade:
+		net.PopEvent();
+		break;
+	case sc_jump:
+		net.PopEvent();
+		break;
+	default:
+		break;
+	}
+	/*
+	if (ev.type == sc_login_ok) {
+		if (id != -1) return;
+		// 새로 스폰되는 객체가 여길 지나가지 못해야함
+		id = net.GetMyID();
+		net.eventLock.lock();
+		net.eventQue.pop();
+		net.eventLock.unlock();
+	}
+	if (ev.type == sc_update_obj) {
+		if (ev.oid == net.GetMyID()) {
+			net.eventLock.lock();
+			net.eventQue.pop();
+			net.eventLock.unlock();
+			return;
+		}
+		else if (ev.oid == id) {
+			position = { ev.pos.x, ev.pos.y, ev.pos.z };
+			// SetActorLocation(destination);
+			rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+			// SetActorRotation(rotation);
+			SetActorLocationAndRotation(position, rotation, false, 0, ETeleportType::None);
+			net.eventLock.lock();
+			net.eventQue.pop();
+			net.eventLock.unlock();
+		}
+	}
+	*/
 }
 
 void AMyCharacter::PostInitializeComponents()
@@ -221,3 +324,6 @@ void AMyCharacter::PossessedBy(AController* NewController)
 //		}
 //	}
 //}
+void AMyCharacter::SetID(const int& id) {
+	this->id = id;
+}

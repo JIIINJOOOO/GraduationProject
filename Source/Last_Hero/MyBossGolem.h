@@ -22,7 +22,8 @@ UCLASS()
 class LAST_HERO_API AMyBossGolem : public ACharacter
 {
 	GENERATED_BODY()
-
+private:
+	// int id;
 public:
 	// Sets default values for this character's properties
 	AMyBossGolem();
@@ -69,4 +70,7 @@ private:
 
 	// c++ variables
 	bool IsDownInit;
+
+public:
+	void SetID(const int& id);
 };

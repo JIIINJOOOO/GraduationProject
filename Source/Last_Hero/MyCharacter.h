@@ -11,7 +11,11 @@ UCLASS()
 class LAST_HERO_API AMyCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+private:
+	int id;
+	FVector position;
+	FRotator rotation;
+	
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
@@ -78,4 +82,7 @@ public:
 		
 	/*UPROPERTY()
 		class UMyAnimInstance* MyAnim;*/
+
+public:
+	void SetID(const int& id);
 };

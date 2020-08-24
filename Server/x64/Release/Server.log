@@ -1,0 +1,67 @@
+﻿  Boss.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+c:\users\유재현\documents\github\lh_server\server\boss.cpp(66): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\boss.cpp(100): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\boss.cpp(100): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\boss.cpp(102): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\boss.cpp(102): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\boss.cpp(109): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\boss.cpp(110): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  BossState.cpp
+  CDBConnector.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(35): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(42): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(48): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(67): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(77): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(92): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(102): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(114): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(134): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(136): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(123): warning C4101: 'u_hp' :참조되지 않은 지역 변수입니다.
+  CMonster.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(95): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(95): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(97): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(97): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(104): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(105): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(137): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(138): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(190): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(191): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(197): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  CPlayer.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(40): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(41): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(161): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(162): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(163): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(165): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Event.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+  Lobby.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+  main.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+c:\users\유재현\documents\github\lh_server\server\main.cpp(30): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
+  state.cpp
+c:\users\유재현\documents\github\lh_server\server\cplayer.h(10): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
+  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+  코드를 생성하고 있습니다.
+  25 of 1536 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+    10 functions were new in current compilation
+    67 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  Server.vcxproj -> C:\Users\유재현\Documents\GitHub\LH_Server\x64\Release\Server.exe

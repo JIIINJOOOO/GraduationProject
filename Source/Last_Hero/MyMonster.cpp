@@ -2,7 +2,8 @@
 
 
 #include "MyMonster.h"
-
+#include "Network.h"
+extern Network net;
 // Sets default values
 AMyMonster::AMyMonster()
 {
@@ -39,6 +40,22 @@ void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.oid < NPC_ID_START) return;
+	if (ev.oid != id) return;
+	
+	switch (ev.type) {
+	case sc_update_obj:
+		SetActorLocationAndRotation(FVector(ev.pos.x, ev.pos.y, ev.pos.z), FRotator(ev.rotation.x, ev.rotation.y, ev.rotation.z), false, 0, ETeleportType::None);
+		net.PopEvent();
+		break;
+	}
 	
 }
 
@@ -60,5 +77,9 @@ float AMyMonster::TakeDamage(float DamageAmount, FDamageEvent const & DamageEven
 FVector AMyMonster::GetMonsterPos()
 {	
 	return MonPos;
+}
+
+void AMyMonster::SetID(const int& id) {
+	this->id = id;
 }
 

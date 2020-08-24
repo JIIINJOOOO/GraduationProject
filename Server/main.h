@@ -1,11 +1,21 @@
 #pragma once
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#pragma comment (lib, "mswsock.lib")
+#pragma comment (lib, "ws2_32.lib")
+
+#include <WS2tcpip.h>
+#include <vector>
+#include <thread>
+#include <map>
+#include <mutex>
 #include "globals.h"
 #include "CDBConnector.h"
 #include "CPlayer.h"
 #include "CMonster.h"
 #include "KDTree.h"
 
-enum ENUMOP { OP_RECV, OP_SEND, OP_ACCEPT };
+enum ENUMOP { OP_RECV, OP_SEND, OP_ACCEPT, EV_MONSTER, EV_BOSS, EV_LOGIN, EV_SIGN, EV_UPDATE
+};
 
 struct EXOVER {
 	WSAOVERLAPPED over;
@@ -24,7 +34,9 @@ struct CLIENT {
 	int prev_size;
 	char packet_buf[BUFSIZE];
 	bool isconnected;
+	mutex cLock;	// Client Lock
 };
+
 
 void recv_packet_construct(int uid, int io_byte);
 void ProcessPacket(int uid, char* buf);
@@ -35,3 +47,4 @@ void Login(const int& uid, const CS_LOGIN& pack);
 
 // Thread Function
 void worker_thread();
+void TimerThread();

@@ -12,6 +12,13 @@
 #define SQL_EXUTE_FAIL 0
 #define SQL_EXUTE_OK 1
 
+struct DB_EVENT {
+	int user_id;
+	int ev_id;
+	char name[10];
+	char pass[10];
+};
+
 class CDBConnector{
 	// connect MSSQL, Use ODBC
 private:
@@ -35,6 +42,12 @@ public:
 	void PrepareStatement(SQLCHAR* sql); // Excute SQL with prepare
 	void ExcuteStatement(); // Excute prepared SQL
 	bool RetrieveResult(std::string id, std::string pass); // Read SQL result
+
+	bool RetrieveResultLogin(int uid);
+
+	bool RetrieveResultUpdate(std::string id);
 	void DisconnectDataSource(); // free Handle
 };
 
+void DB_Thread();
+void AddQuary(int uid, int eid, const char name[], const char pass[]);

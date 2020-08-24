@@ -123,6 +123,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="BossState.cpp" />
     <ClCompile Include="CDBConnector.cpp" />
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CObject.cpp" />
@@ -130,11 +132,16 @@
     <ClCompile Include="CPlayer.cpp" />
     <ClCompile Include="CServer.cpp" />
     <ClCompile Include="CTerrain.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="KDTree.cpp" />
+    <ClCompile Include="Lobby.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="node.cpp" />
+    <ClCompile Include="state.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Boss.h" />
+    <ClInclude Include="BossState.h" />
     <ClInclude Include="CDBConnector.h" />
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CObject.h" />
@@ -142,11 +149,13 @@
     <ClInclude Include="CPlayer.h" />
     <ClInclude Include="CServer.h" />
     <ClInclude Include="CTerrain.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="KDTree.h" />
+    <ClInclude Include="Lobby.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="node.h" />
-    <ClInclude Include="packet.h" />
+    <ClInclude Include="protocol.h" />
     <ClInclude Include="Physics.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

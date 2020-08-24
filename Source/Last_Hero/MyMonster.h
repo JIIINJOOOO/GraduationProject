@@ -10,7 +10,8 @@ UCLASS()
 class LAST_HERO_API AMyMonster : public ACharacter
 {
 	GENERATED_BODY()
-
+private:
+	int id;
 public:
 	// Sets default values for this character's properties
 	AMyMonster();
@@ -33,5 +34,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 		FVector GetMonsterPos();
 
-
+	void SetID(const int& id);
 };
