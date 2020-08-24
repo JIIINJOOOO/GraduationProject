@@ -83,6 +83,7 @@ void AMyBossGolem::Launcher()
 	GetCharacterMovement()->GroundFriction = 8.0f;
 }
 
+
 void AMyBossGolem::setGroundFrictionZero()
 {
 	GetCharacterMovement()->GroundFriction = 0.0f;
@@ -143,6 +144,11 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 	return GOLEM_ANIM_MONTAGE();
 }
 
+void AMyBossGolem::ChargeSpear()
+{
+	GolemAnim->JumpToThrowSpearMontageSection(FName("LoopStart"));
+}
+
 
 void AMyBossGolem::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
 {
@@ -179,7 +185,6 @@ void AMyBossGolem::PostInitializeComponents()
 	GolemAnim->OnMontageEnded.AddDynamic(this, &AMyBossGolem::OnAttackMontageEnded);
 	// ¿©±â¼­ Ä¸½¶ ÄÄÆ÷³ÍÆ® ¾Öµå ´ÙÀÌ³»¹Í ¤¡¤¡
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyBossGolem::OnOverlapBegin);
-	
 }
 
 // Called every frame
@@ -192,6 +197,10 @@ void AMyBossGolem::Tick(float DeltaTime)
 		IsFalling = true;
 		IsDownInit = true;
 	}
+	/*if (IsCreatingSpear)
+	{
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::ChargeSpear, 2.5f, true, 0.0f);
+	}*/
 }
 
 // Called to bind functionality to input
@@ -212,6 +221,7 @@ void AMyBossGolem::BreakLegsCpp(AActor * Object)
 	FOutputDeviceNull ar;
 	Object->CallFunctionByNameWithArguments(*FString::Printf(TEXT("BreakLegs "),Object), ar, nullptr, true);
 }
+
 
 void AMyBossGolem::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {

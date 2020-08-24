@@ -127,6 +127,9 @@ void UBossGolemAnimInstance::PlayGolemMontage(GOLEM_ANIM_MONTAGE select)
 	case THROW_STONE:
 		Montage_Play(ThrowStoneMontage, 1.0f);
 		break;
+	case THROW_SPEAR:
+		Montage_Play(ThrowSpearMontage, 1.0f);
+		break;
 	// - Down State
 	case DOWN_ATTACK_1:
 		Montage_Play(DownAttack1Montage, 1.0f);
@@ -140,11 +143,27 @@ void UBossGolemAnimInstance::PlayGolemMontage(GOLEM_ANIM_MONTAGE select)
 	}
 
 }
+void UBossGolemAnimInstance::JumpToThrowSpearMontageSection(FName section)
+{
+	ABCHECK(Montage_IsPlaying(ThrowSpearMontage));
+	Montage_JumpToSection(section, ThrowSpearMontage);
+}
 void UBossGolemAnimInstance::AnimNotify_Launch()
 {
 	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
 	BossGolem->Launcher();
 }
+void UBossGolemAnimInstance::AnimNotify_CreateSpear()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->CreateSpear();
+	OnCreateSpear.Broadcast();
+}
+//FName UBossGolemAnimInstance::GetThrowSpearMontageSectionName(int32 Section)
+//{
+//	/*ABCHECK(FMath::IsWithinInclusive<int32>(Section, 1, 3), NAME_None);*/
+//	return FName(*FString::Printf(TEXT("));
+//}
 //
 //void UBossGolemAnimInstance::PlayNormalAttackMontage()
 //{

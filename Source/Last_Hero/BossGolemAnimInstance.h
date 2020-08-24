@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "BossGolemAnimInstance.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE(FOnCreateSpearDelegate);
 /**
  * 
  */
@@ -18,7 +20,10 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 	void PlayGolemMontage(GOLEM_ANIM_MONTAGE select);
+	void JumpToThrowSpearMontageSection(FName section);
 
+public:
+	FOnCreateSpearDelegate OnCreateSpear;
 	// Stand Atk
 	// - Close Range
 	//void PlayNormalAttackMontage();
@@ -40,6 +45,9 @@ public:
 private:
 	UFUNCTION()
 		void AnimNotify_Launch();
+	UFUNCTION()
+		void AnimNotify_CreateSpear();
+	//FName GetThrowSpearMontageSectionName(int32 Section);
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 		float CurrentPawnSpeed;

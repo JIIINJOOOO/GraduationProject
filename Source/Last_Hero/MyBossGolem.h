@@ -41,7 +41,8 @@ public:
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION(BlueprintCallable)
 		static void BreakLegsCpp(AActor* Object);
-	
+	UFUNCTION(BlueprintImplementableEvent) // CreateSpear custom event
+		void CreateSpear();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak) 
 		TMap<FName, int32> BoneMap; // <본이름,피격횟수>
@@ -65,7 +66,9 @@ public:
 	// Target Look Vector for set physics linear vel
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight)
 		FVector TargetLookVec;
-
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = Fight)
+		bool IsCreatingSpear;
+	
 
 	void Attack_CloseRange();
 	void Attack_LongRange();
@@ -79,6 +82,7 @@ public:
 	void Launcher();
 	void setGroundFrictionZero();
 	GOLEM_ANIM_MONTAGE setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, GOLEM_ANIM_MONTAGE Max);
+	void ChargeSpear();
 
 	// c++ variables
 	FTimerHandle TimerHandle;
