@@ -43,6 +43,16 @@ public:
 		static void BreakLegsCpp(AActor* Object);
 	UFUNCTION(BlueprintImplementableEvent) // CreateSpear custom event
 		void CreateSpear();
+	UFUNCTION(BlueprintImplementableEvent) // CreateSpear custom event
+		void ThrowSpear();
+	UFUNCTION(BlueprintImplementableEvent) // CreateSpear custom event
+		void ChargeSpear();
+
+	UFUNCTION(BlueprintCallable)
+		void ChargeSpearLoopStart();
+	UFUNCTION(BlueprintCallable)
+		void ChargeSpearLoopEnd();
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak) 
 		TMap<FName, int32> BoneMap; // <본이름,피격횟수>
@@ -66,8 +76,16 @@ public:
 	// Target Look Vector for set physics linear vel
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight)
 		FVector TargetLookVec;
+	// Ice Spear
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = Fight)
 		bool IsCreatingSpear;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = Fight)
+		bool IsChargingSpear;
+	// Arm-Weapon IsOverlapping var 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = BoneBreak)
+		bool IsOverlapping_RArm;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = BoneBreak)
+		bool IsOverlapping_LArm;
 	
 
 	void Attack_CloseRange();
@@ -82,7 +100,7 @@ public:
 	void Launcher();
 	void setGroundFrictionZero();
 	GOLEM_ANIM_MONTAGE setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, GOLEM_ANIM_MONTAGE Max);
-	void ChargeSpear();
+	
 
 	// c++ variables
 	FTimerHandle TimerHandle;

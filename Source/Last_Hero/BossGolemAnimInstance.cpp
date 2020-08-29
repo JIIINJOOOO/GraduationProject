@@ -157,7 +157,17 @@ void UBossGolemAnimInstance::AnimNotify_CreateSpear()
 {
 	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
 	BossGolem->CreateSpear();
-	OnCreateSpear.Broadcast();
+	/*OnCreateSpear.Broadcast();*/
+}
+void UBossGolemAnimInstance::AnimNotify_ThrowSpear()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->ThrowSpear();
+}
+void UBossGolemAnimInstance::AnimNotify_ChargeSpear()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->ChargeSpear();
 }
 //FName UBossGolemAnimInstance::GetThrowSpearMontageSectionName(int32 Section)
 //{

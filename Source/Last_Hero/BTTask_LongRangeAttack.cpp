@@ -26,10 +26,15 @@ EBTNodeResult::Type UBTTask_LongRangeAttack::ExecuteTask(UBehaviorTreeComponent 
 	if(nullptr == Target)
 		return EBTNodeResult::Failed;
 
+	if(BossGolem->getIsDown())
+		return EBTNodeResult::Failed;
+
+
 	FVector LookVector = Target->GetActorLocation() - BossGolem->GetActorLocation();
 	FRotator LookRot = UKismetMathLibrary::FindLookAtRotation(BossGolem->GetActorLocation(), Target->GetActorLocation());
 	BossGolem->TargetLookVec = UKismetMathLibrary::GetForwardVector(LookRot);
 	//BossGolem->TargetLookVec = LookVector.ForwardVector;
+
 
 	LookVector.Z = 0.0f;
 	FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();

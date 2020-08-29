@@ -20,24 +20,94 @@ class LAST_HERO_API UMyAnimInstance : public UAnimInstance
 public:
 	UMyAnimInstance();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	void PlayAttackMontage();
-	void JumpToAttackMontageSection(int32 NewSection);
+	void PlayPlayerAnimMontage(UAnimMontage* Mtg);
+	//void JumpToAttackMontageSection(int32 NewSection);
 
 public:
-	FOnNextAttackCheckDelegate OnNextAttackCheck;
-	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimNotify_EnableMovement();
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimNotify_DissableMovement();
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimNotify_CheckHit();
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimNotify_CheckunblockableHit();
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimNotify_AttackMove();
+	UFUNCTION(BlueprintImplementableEvent)
+		void AnimNotify_MoveBack();
+//public:
+//	FOnNextAttackCheckDelegate OnNextAttackCheck;
+//	FOnAttackHitCheckDelegate OnAttackHitCheck;
+//private:
+//	UFUNCTION()
+//		void AnimNotify_AttackHitCheck();
+//	UFUNCTION()
+//		void AnimNotify_NextAttackCheck();
+//
+//	FName GetAttackMontageSectionName(int32 Section);
 private:
-	UFUNCTION()
-		void AnimNotify_AttackHitCheck();
-	UFUNCTION()
-		void AnimNotify_NextAttackCheck();
-
-	FName GetAttackMontageSectionName(int32 Section);
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
-		float CurrentPawnSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
+		float speedSide_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
+		float speedForward_cpp;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-		UAnimMontage* AttackMontage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character, Meta = (AllowPrivateAccess = true))
-		bool IsDead;
+		UAnimMontage* PlayerAnimMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
+		bool isCrouched_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
+		bool Armed_Sword_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
+		bool Armed_Hammer_cpp;
+private: // Montages
+	// Sword&Shield Montages
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Out_Sword_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* In_Sword_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Shield_Block_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* SwordShield_Impact_Mtg; // get hit
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* SwordShield_Impact_1_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* SwordShield_Block_Idle_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Shield_Strike_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* SwordShield_Berserker_Mtg;
+	// Hammer Montages
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Out_Hammer_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* In_Hammer_Mtg;
+	
+	
+
+	// Movement Montages
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Movement, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Jump_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Stable_Sword_Inward_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Death_Wait_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Standing_Turn_Left_90_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Unarmed_Turn_Right_90_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Movement, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* PickUp_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Movement, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Standing_Dive_Forward_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Movement, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Evade_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Movement, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Braced_Hang_To_Crouch_Mtg;
+
+	// Climb Montages
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Climb_End_Mtg;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* Walk_Backwards_1_Mtg;
 };

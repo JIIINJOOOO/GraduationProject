@@ -9,29 +9,13 @@ AMyMonster::AMyMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	/*static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
-	if (SK_GOBLIN.Succeeded())
-	{
-		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
-	}
-
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-
-	static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Animation/Monster/Goblin_Monster_AnimBp.Goblin_Monster_AnimBp"));
-
-	if (GOB_ANIM.Succeeded())
-	{
-		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
-	}*/
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
-	
 }
 
 // Called when the game starts or when spawned
 void AMyMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MonPos = GetActorLocation();
 }
 
 // Called every frame
@@ -39,7 +23,6 @@ void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
-	
 }
 
 // Called to bind functionality to input
@@ -47,18 +30,5 @@ void AMyMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-float AMyMonster::TakeDamage(float DamageAmount, FDamageEvent const & DamageEvent, AController * EventInstigator, AActor * DamageCauser)
-{
-	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	ABLOG(Warning, TEXT("Actor: %s took Damage: %f"), *GetName(), FinalDamage);
-	return FinalDamage;
-}
-
-
-FVector AMyMonster::GetMonsterPos()
-{	
-	return MonPos;
 }
 

@@ -35,7 +35,7 @@ void UABGameplayWidget::NativeConstruct()
 void UABGameplayWidget::OnResumeClicked()
 {
 
-	auto MyPlayerController = Cast< AMyPlayerController>(GetOwningPlayer());
+	auto MyPlayerController = Cast<AMyPlayerController>(GetOwningPlayer());
 
 	RemoveFromParent();
 	MyPlayerController->ChangeInputMode(true);
@@ -49,7 +49,7 @@ void UABGameplayWidget::OnReturnToTitleClicked()
 
 void UABGameplayWidget::OnRetryGameClicked()
 {
-	auto MyPlayerController = Cast< AMyPlayerController>(GetOwningPlayer());
+	auto MyPlayerController = Cast<AMyPlayerController>(GetOwningPlayer());
 
 	MyPlayerController->RestartLevel();
 }

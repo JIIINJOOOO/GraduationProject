@@ -54,7 +54,8 @@ void AMyBossGolem::Attack_LongRange()
 	{
 		RndAtkMtg = setRandomAttackMontage(LONG_RANGE_START, LONG_RANGE_END);
 	}
-	GolemAnim->PlayGolemMontage(RndAtkMtg);
+	GolemAnim->PlayGolemMontage(THROW_SPEAR);
+	//GolemAnim->PlayGolemMontage(RndAtkMtg);
 	IsAttacking = true;
 }
 
@@ -144,10 +145,17 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 	return GOLEM_ANIM_MONTAGE();
 }
 
-void AMyBossGolem::ChargeSpear()
+void AMyBossGolem::ChargeSpearLoopStart()
 {
-	GolemAnim->JumpToThrowSpearMontageSection(FName("LoopStart"));
+	GolemAnim->JumpToThrowSpearMontageSection(FName("Loop"));
 }
+
+void AMyBossGolem::ChargeSpearLoopEnd()
+{
+	GolemAnim->JumpToThrowSpearMontageSection(FName("End"));
+}
+
+
 
 
 void AMyBossGolem::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)

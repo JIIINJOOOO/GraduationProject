@@ -3,7 +3,7 @@
 
 #include "MyGameModeBase.h"
 #include "MyCharacter.h"
-#include "MyMonster.h"
+#include "MyMonster_Goblin.h"
 #include "MyPlayerController.h"
 
 AMyGameModeBase::AMyGameModeBase()
@@ -58,7 +58,7 @@ void AMyGameModeBase::SpawnMonster()
 	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
 	FVector MonSpawnLocation = { 19266.0f,78928.0f,-440.0f };
 	// 몬스터 스폰 코드
-	AMyMonster* SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
+	AMyMonster_Goblin* SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
 

@@ -23,7 +23,7 @@ public:
 	void JumpToThrowSpearMontageSection(FName section);
 
 public:
-	FOnCreateSpearDelegate OnCreateSpear;
+	/*FOnCreateSpearDelegate OnCreateSpear;*/
 	// Stand Atk
 	// - Close Range
 	//void PlayNormalAttackMontage();
@@ -47,6 +47,10 @@ private:
 		void AnimNotify_Launch();
 	UFUNCTION()
 		void AnimNotify_CreateSpear();
+	UFUNCTION()
+		void AnimNotify_ThrowSpear();
+	UFUNCTION()
+		void AnimNotify_ChargeSpear();
 	//FName GetThrowSpearMontageSectionName(int32 Section);
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
