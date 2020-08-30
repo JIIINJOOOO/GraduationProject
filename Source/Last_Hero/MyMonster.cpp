@@ -10,14 +10,15 @@ AMyMonster::AMyMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	/*static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
 	if (SK_GOBLIN.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
 	}
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-
+	
+	/*
 	static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Animation/Monster/Goblin_Monster_AnimBp.Goblin_Monster_AnimBp"));
 
 	if (GOB_ANIM.Succeeded())
@@ -25,7 +26,7 @@ AMyMonster::AMyMonster()
 		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
 	}*/
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
-	
+	id = -1;
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +56,22 @@ void AMyMonster::Tick(float DeltaTime)
 		SetActorLocationAndRotation(FVector(ev.pos.x, ev.pos.y, ev.pos.z), FRotator(ev.rotation.x, ev.rotation.y, ev.rotation.z), false, 0, ETeleportType::None);
 		net.PopEvent();
 		break;
+	case sc_dead:
+		SetActorLocation(FVector(0,0,0));
+		net.PopEvent();
+		break;
+	case sc_attack:
+		net.PopEvent();
+		break;
+	case sc_damaged:
+		net.PopEvent();
+		break;
+	case sc_level_up:
+		net.PopEvent();
+		break;
+	case sc_block:
+		net.PopEvent();
+		break;
 	}
 	
 }
@@ -80,6 +97,7 @@ FVector AMyMonster::GetMonsterPos()
 }
 
 void AMyMonster::SetID(const int& id) {
+	UE_LOG(LogTemp, Log, TEXT("Monster Set ID %d  %d"), this->id, id);
 	this->id = id;
 }
 

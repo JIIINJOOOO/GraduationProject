@@ -4,6 +4,8 @@
 #include "MyBossGolem.h"
 #include "MyAIController.h"
 #include "BossGolemAnimInstance.h"
+#include "Network.h"
+extern Network net;
 
 // Sets default values
 AMyBossGolem::AMyBossGolem()
@@ -106,7 +108,16 @@ void AMyBossGolem::Tick(float DeltaTime)
 		GolemAnim->PlayGolemFallingDownMontage();
 		IsDownInit = true;
 	}
-	
+	if (net.isHost == true) {
+		auto pos = GetActorLocation();
+		auto rot = GetActorRotation();
+		CS_BOSS_MOVE pack;
+		pack.size = sizeof(CS_BOSS_MOVE);
+		pack.type = cs_boss_move;
+		pack.destination = { pos.X, pos.Y, pos.Z };
+		pack.rotation = { rot.Pitch, rot.Yaw, rot.Roll };
+		net.SendPacket(&pack);
+	}
 }
 
 // Called to bind functionality to input

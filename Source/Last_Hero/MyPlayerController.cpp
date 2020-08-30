@@ -35,56 +35,61 @@ void AMyPlayerController::Tick(float DeltaTime) {
 		pack.size = sizeof(CS_WEAPON_ON);
 		pack.type = cs_weapon_on;
 		net.SendPacket(&pack);
-		Sleep(1000);
 	}
 	if (IsInputKeyDown(EKeys::Two)) {
 		CS_WEAPON_ON pack;
 		pack.size = sizeof(CS_WEAPON_ON);
 		pack.type = cs_weapon_on;
 		net.SendPacket(&pack);
-		Sleep(1000);
 	}
 	if (IsInputKeyDown(EKeys::Three)) {
 		CS_BERSERK pack;
 		pack.size = sizeof(CS_BERSERK);
 		pack.type = cs_berserk;
 		net.SendPacket(&pack);
-		Sleep(1000);
 	}
 	if (IsInputKeyDown(EKeys::Eight)) {
 		CS_FIREBALL pack;
 		pack.size = sizeof(CS_FIREBALL);
 		pack.type = cs_fireball;
 		net.SendPacket(&pack);
-		Sleep(1000);
 	}
 	if (IsInputKeyDown(EKeys::LeftMouseButton)) {
 		CS_ATTACK pack;
 		pack.size = sizeof(CS_ATTACK);
 		pack.type = cs_attack;
 		net.SendPacket(&pack);
-		Sleep(1000);
 	}
 	if (IsInputKeyDown(EKeys::RightMouseButton)) {
 		CS_GUARD pack;
 		pack.size = sizeof(CS_GUARD);
 		pack.type = cs_guard;
 		net.SendPacket(&pack);
-		Sleep(1000);
 	}
 	if (IsInputKeyDown(EKeys::SpaceBar)) {
-		if (isBattle) {
+		//if (isBattle) {
 			CS_EVADE pack;
 			pack.size = sizeof(CS_EVADE);
 			pack.type = cs_evade;
 			net.SendPacket(&pack);
-		}
-		else {
-			CS_JUMP pack;
-			pack.size = sizeof(CS_JUMP);
-			pack.type = cs_jump;
-			net.SendPacket(&pack);
-		}
+		//}
+		//else {
+		//	CS_JUMP pack;
+		//	pack.size = sizeof(CS_JUMP);
+		//	pack.type = cs_jump;
+		//	net.SendPacket(&pack);
+		//}
 	}
-	Sleep(1000);
+	if (IsInputKeyDown(EKeys::C)) {
+		CS_HIDE pack;
+		pack.size = sizeof(CS_HIDE);
+		pack.type = cs_hide;
+		net.SendPacket(&pack);
+	}
+	if (IsInputKeyDown(EKeys::E)) {
+		CS_ASSASSIN pack;
+		pack.size = sizeof(CS_ASSASSIN);
+		pack.type = cs_assassin;
+		net.SendPacket(&pack);
+	}
 }

@@ -36,7 +36,9 @@ class LAST_HERO_API Network {
 		short oid;
 		Position pos;
 		short hp;
-		short anim_id;
+		short mp;
+		short level;
+		short exp;
 		Position rotation;
 	};
 
@@ -45,9 +47,9 @@ private:
 	char sendBuf[BUFSIZE];
 	P_STATE m_status;
 	string id, pass;
-	bool isHost;
 	int my_id;
 public:
+	bool isHost;
 	SOCKET m_sock;
 	char recvBuf[BUFSIZE];
 	mutex gmbLock;

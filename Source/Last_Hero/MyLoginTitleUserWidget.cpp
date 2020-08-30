@@ -33,6 +33,8 @@ void UMyLoginTitleUserWidget::OnLoginClicked()
 	strcpy_s(pack.id, (char*)TCHAR_TO_ANSI(*UserName));
 	strcpy_s(pack.password, (char*)TCHAR_TO_ANSI(*UserPass));
 	net.SendPacket(&pack);
+
+	// UE_LOG(LogTemp, Log, TEXT("Character FName :: %s %s"), UserName, UserPass);
 	int ret = WaitForSingleObject(net.loginEvent, 5000);
 	if (ret == WAIT_OBJECT_0 && net.GetStatus() == p_login) {
 		UE_LOG(LogTemp, Log, TEXT("SCENE CHANGE"));

@@ -54,7 +54,7 @@ DWORD WINAPI Network::RecvThread(LPVOID p) {
 
 		arg->recvBuf[retval] = '\0';
 		arg->ProcessPacket(arg->recvBuf);
-		Sleep(1000 / 60);
+		// Sleep(1000 / 60);
 		// SetEvent(gmbEvent);
 	}
 	return 0;
@@ -130,10 +130,6 @@ void Network::ProcessPacket(char* buf) {
 		eventLock.unlock();
 
 	}break;
-	case login_packet: {
-		SC_LOGIN* pack = reinterpret_cast<SC_LOGIN*>(buf);
-		if (pack->state) m_status = p_login;
-	}break;
 	case sc_attack: {
 		SC_OBJ_ATTACK* pack = reinterpret_cast<SC_OBJ_ATTACK*>(buf);
 		GMB_Event ev;
@@ -204,6 +200,43 @@ void Network::ProcessPacket(char* buf) {
 		eventQue.push(ev);
 		eventLock.unlock();
 	}break;
+	case sc_level_up: {
+		SC_LEVEL_UP* pack = reinterpret_cast<SC_LEVEL_UP*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.hp = pack->hp;
+		ev.mp = pack->mp;
+		ev.level = pack->level;
+		ev.exp = pack->exp;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_dead: {
+		SC_DEAD* pack = reinterpret_cast<SC_DEAD*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_block: {
+		SC_BLOCK* pack = reinterpret_cast<SC_BLOCK*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_set_host:
+		isHost = true;
+		break;
 	default:
 		break;
 	}

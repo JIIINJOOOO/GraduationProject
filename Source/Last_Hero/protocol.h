@@ -14,7 +14,7 @@ enum PACKET_TYPE {
 	sc_leave, sc_login, sc_signup, sc_login_fail, sc_login_ok,
 	sc_signup_ok, sc_signup_fail, sc_player_move, sc_update_obj, sc_enter_obj,
 	sc_leave_obj, cs_chat, sc_chat, cs_attack, cs_guard, sc_attack, sc_guard, cs_fireball, sc_fireball, sc_set_host, cs_jump, sc_jump,
-	cs_evade, cs_weapon_on, cs_weapon_off, sc_evade, sc_weapon_on, sc_weapon_off, cs_berserk, sc_berserk
+	cs_evade, cs_weapon_on, cs_weapon_off, sc_evade, sc_weapon_on, sc_weapon_off, cs_berserk, sc_berserk, cs_ready, sc_ready, cs_game_start, sc_game_start, sc_level_up, sc_dead, sc_damaged, sc_get_exp, sc_block, cs_boss_move, sc_fireball_off, sc_fireball_move, cs_hide, sc_hide, cs_hide_off, sc_hide_off, cs_assassin, sc_assassin
 };
 
 enum Login_State {
@@ -44,7 +44,6 @@ enum P_STATE {
 struct CS_LOGIN {
 	char size;
 	char type;
-	short userIdx;
 	char id[MAXLEN];
 	char password[MAXLEN];
 };
@@ -286,4 +285,93 @@ struct SC_BERSERK {
 	short oid;
 };
 
+struct SC_LEVEL_UP {
+	char size;
+	char type;
+	short oid;
+	short level;
+	short exp;
+	short hp;
+	short mp;
+};
+
+struct SC_DEAD {
+	char size;
+	char type;
+	short oid;
+};
+
+struct SC_DAMAGED {
+	char size;
+	char type;
+	short oid;
+	short hp;
+};
+
+struct SC_GET_EXP {
+	char size;
+	char type;
+	short exp;
+};
+
+struct SC_BLOCK {
+	char size;
+	char type;
+	short oid;
+};
+
+struct CS_BOSS_MOVE {
+	char size;
+	char type;
+	Position destination;
+	Position rotation;
+};
+
+struct SC_FIREBALL_OFF {
+	char size;
+	char type;
+	short owner;
+};
+
+struct SC_FIREBALL_MOVE {
+	char size;
+	char type;
+	short owner;
+	Position pos;
+	Position rotation;
+};
+
+struct CS_HIDE {
+	char size;
+	char type;
+};
+
+struct SC_HIDE {
+	char size;
+	char type;
+	short oid;
+};
+
+struct CS_HIDE_OFF {
+	char size;
+	char type;
+};
+
+struct SC_HIDE_OFF {
+	char size;
+	char type;
+	short oid;
+};
+
+struct CS_ASSASSIN {
+	char size;
+	char type;
+	// short target;
+};
+
+struct SC_ASSASSIN {
+	char size;
+	char type;
+	short oid;
+};
 #pragma pack(pop)

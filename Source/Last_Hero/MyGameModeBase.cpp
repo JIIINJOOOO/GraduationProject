@@ -6,7 +6,7 @@
 #include "MyMonster.h"
 #include "MyBossGolem.h"
 #include "MyPlayerController.h"
-
+#define MAX_PLAYER 10
 // Global Values
 Network net;	// 다른 소스파일에서 extern으로 가져다 씀
 
@@ -48,7 +48,6 @@ void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 void AMyGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	// SpawnMonster();
 }
 
 void AMyGameModeBase::Tick(float DeltaSeconds)
@@ -71,6 +70,7 @@ void AMyGameModeBase::SpawnMonster()
 	AMyMonster* SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
+	// UE_LOG(LogTemp, Log, TEXT("Mon Spawn in GMB"));
 }
 
 void AMyGameModeBase::SpawnMonster(int oid, float x, float y, float z) {
@@ -84,6 +84,7 @@ void AMyGameModeBase::SpawnMonster(int oid, float x, float y, float z) {
 	// 몬스터 스폰 코드
 	AMyMonster* SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	SpawnMonster->SetID(oid);
+	UE_LOG(LogTemp, Log, TEXT("Spawn Monster Use Pos"));
 	// monsters.insert(oid, SpawnMonster);
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
@@ -125,7 +126,7 @@ void AMyGameModeBase::ProcessEvent() {
 	switch (ev.type) {
 	case sc_enter_obj: {
 		// UE_LOG(LogTemp, Log, TEXT("OBJ Spawn in GMB"));
-		if (ev.oid < NPC_ID_START) {
+		if (ev.oid < MAX_PLAYER) {
 			SpawnPlayer(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
 		}
 		else if (ev.oid == 20000) {
@@ -133,6 +134,7 @@ void AMyGameModeBase::ProcessEvent() {
 			// SpawnBoss(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
 		}
 		else {
+			SpawnMonster(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
 			// SpawnMonster();
 		}
 		net.eventLock.lock();

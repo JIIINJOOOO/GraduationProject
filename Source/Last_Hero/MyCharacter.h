@@ -15,7 +15,9 @@ private:
 	int id;
 	FVector position;
 	FRotator rotation;
-	
+	int hp;
+	int mp;
+
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();

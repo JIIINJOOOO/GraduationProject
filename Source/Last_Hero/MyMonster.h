@@ -12,6 +12,7 @@ class LAST_HERO_API AMyMonster : public ACharacter
 	GENERATED_BODY()
 private:
 	int id;
+	int hp;
 public:
 	// Sets default values for this character's properties
 	AMyMonster();

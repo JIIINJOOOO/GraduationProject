@@ -134,6 +134,21 @@ void AMyCharacter::Tick(float DeltaTime)
 	case sc_jump:
 		net.PopEvent();
 		break;
+	case sc_level_up:
+		net.PopEvent();
+		break;
+	case sc_dead:
+		net.PopEvent();
+		break;
+	case sc_damaged:
+		net.PopEvent();
+		break;
+	case sc_get_exp:
+		net.PopEvent();
+		break;
+	case sc_block:
+		net.PopEvent();
+		break;
 	default:
 		break;
 	}
