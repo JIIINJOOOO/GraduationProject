@@ -11,7 +11,7 @@ UCyclopsAnimInstance::UCyclopsAnimInstance()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> HITREACTION_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Cyclops/anim/Cyclops_Hit_Montage.Cyclops_Hit_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_1_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Cyclops/anim/Cyclops_Attack1_Montage.Cyclops_Attack1_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_2_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Cyclops/anim/Cyclops_Attack2_Montage.Cyclops_Attack2_Montage"));
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_3_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Cyclops/anim/Cyclops_Attack3_Montage.Cyclops_Attack3Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_3_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Cyclops/anim/Cyclops_Attack3_Montage.Cyclops_Attack3_Montage"));
 
 	if (HITREACTION_MONTAGE.Succeeded())
 	{

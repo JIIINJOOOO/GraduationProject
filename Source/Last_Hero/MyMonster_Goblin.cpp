@@ -9,20 +9,10 @@ AMyMonster_Goblin::AMyMonster_Goblin()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
-	if (SK_GOBLIN.Succeeded())
-	{
-		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
-	}
+	
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin"));
-
-	if (GOB_ANIM.Succeeded())
-	{
-		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
-	}
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
 	
 }
@@ -31,7 +21,17 @@ AMyMonster_Goblin::AMyMonster_Goblin()
 void AMyMonster_Goblin::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
+	if (SK_GOBLIN.Succeeded())
+	{
+		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
+	}
+	static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin"));
+
+	if (GOB_ANIM.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
+	}
 }
 
 // Called every frame

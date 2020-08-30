@@ -9,7 +9,7 @@ UBeetleAnimInstance::UBeetleAnimInstance()
 	speedForward_cpp = 0.0f;
 
 
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> HITREACTION_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_BeetleWarrior/anim/BeetleWarrior_Hit_Montage.BeetleWarrior_Hit_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HITREACTION_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_BeetleWarrior/anim/Beetle_Warrior_Hit_Montage.Beetle_Warrior_Hit_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_1_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_BeetleWarrior/anim/Beetle_Warrior_Attack1_Montage.Beetle_Warrior_Attack1_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_2_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_BeetleWarrior/anim/Beetle_Warrior_Attack2_Montage.Beetle_Warrior_Attack2_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_3_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_BeetleWarrior/anim/Beetle_Warrior_Attack3_Montage.Beetle_Warrior_Attack3_Montage"));

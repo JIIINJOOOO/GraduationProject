@@ -9,9 +9,9 @@ ULazardAnimInstance::ULazardAnimInstance()
 	speedForward_cpp = 0.0f;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> HITREACTION_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Lazardman/anim/Lizarman_Hit_Montage.Lizarman_Hit_Montage"));
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_1_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Lazardman/anim/Lizarman_Attack1_Montage.Lizarman_Attack1_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_1_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Lazardman/anim/Lizarman_Attack_Montage.Lizarman_Attack_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_2_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Lazardman/anim/Lizarman_Attack2_Montage.Lizarman_Attack2_Montage"));
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_3_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Lazardman/anim/Lizarman_Attack3_Montage.Lizarman_Attack3Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_3_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Lazardman/anim/Lizarman_Attack3_Montage.Lizarman_Attack3_Montage"));
 
 	if (HITREACTION_MONTAGE.Succeeded())
 	{
