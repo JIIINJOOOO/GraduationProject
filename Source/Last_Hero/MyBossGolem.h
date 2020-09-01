@@ -122,4 +122,7 @@ private:
 
 	// c++ variables
 	bool IsDownInit;
+
+public:
+	void SetID(const int& id);
 };

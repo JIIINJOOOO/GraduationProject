@@ -3,6 +3,8 @@
 
 #include "MyBossGolem.h"
 #include "BossGolemAnimInstance.h"
+#include "Network.h"
+extern Network net;
 
 // Sets default values
 AMyBossGolem::AMyBossGolem()
@@ -209,6 +211,7 @@ void AMyBossGolem::Tick(float DeltaTime)
 	{
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::ChargeSpear, 2.5f, true, 0.0f);
 	}*/
+	
 }
 
 // Called to bind functionality to input
@@ -240,4 +243,8 @@ void AMyBossGolem::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		this->CallFunctionByNameWithArguments(*FString::Printf(TEXT("BreakLegs "), OtherActor), ar, nullptr, true);*/
 		BreakLegsCpp(OtherActor);
 	}
+}
+
+void AMyBossGolem::SetID(const int& id) {
+	// this->id = id;
 }

@@ -2,6 +2,8 @@
 
 
 #include "Monster_Goblin.h"
+#include "Network.h"
+extern Network net;
 
 // Sets default values
 AMonster_Goblin::AMonster_Goblin()
@@ -45,3 +47,6 @@ void AMonster_Goblin::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+void AMonster_Goblin::SetID(const int& id) {
+	this->id = id;
+}

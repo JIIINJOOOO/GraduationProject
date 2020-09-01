@@ -4,6 +4,8 @@
 #include "MyCharacter.h"
 #include "MyAnimInstance.h"
 #include "DrawDebugHelpers.h"
+#include "Network.h"
+extern Network net;
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -22,7 +24,7 @@ AMyCharacter::AMyCharacter()
 
 	//// static을 주석 처리 해놨었는데 왤까 -> 자꾸 71% 무한로딩 걸림
 	///*static*/ ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ADAM(TEXT("/Game/Game/Mesh/Player_Character/Adam_Adventurer/Meshes/Character/SK_AdamAdventurer"));
-
+	
 
 
 	//if (SK_ADAM.Succeeded())
@@ -48,6 +50,11 @@ AMyCharacter::AMyCharacter()
 	//AttackRadius = 50.0f;
 
 	//AttackEndComboState();
+	// animInstance = Cast<UMyAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	id = -1;
+	velocity = { 0,0,0 };
+	speed = 0.f;
 }
 //5/31: 290p 세팅까지 마친상태
 
@@ -61,12 +68,176 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	// auto v = GetVelocity();
+	// AddMovementInput(GetVelocity(), speed);
+	// if (GetActorLocation().X > 16000.f) speed = 0.f;
+	/*
+	Velocity 보내서 이동 및 이동 애니메이션 출력하면 되는데
+	도착 지점에 도착했을때 스피드를 0으로 만들어줘야한다
+	wasd인풋이 있는 경우 각 버튼에 할당된 bool을 true로 셋
+	키를 떼면 다시 false로 셋 
+	하나라도 true라면 speed를 200.f로 설정 
+	아니면 speed를 0.f로 셋
+	*/
+	// static int a = 0;
+	// if (a == 300) {
+	// 	UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>// (animInstance);
+	// 	if (myAnimInst != nullptr) myAnimInst->Move(100.f, 3000.f);
+	// 	a = 0;
+	// 	
+	// 	// AddMovementInput(FRotationMatrix(FRotator (0.0f, /100.f, /0.0f)).GetUnitAxis(EAxis::X), 200.f);
+	// }
+	// a++;
+	// SetActorRotation(FRotator(0, -90, 0));
+	// AddMovementInput(FVector(1, 0, 0));
+	// UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance> (animInstance);
+	// if (myAnimInst != nullptr) myAnimInst->Move(100.f, 3000.f);
+	/*
+	AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), NewAxisValue);
+	*/
+	// AddMovementInput(FRotationMatrix(FRotator(0.f, rotation.Yaw, 0.f)).GetUnitAxis(EAxis::X), 200.f);
+	// UE_LOG(LogTemp, Log, TEXT("%d %d %d"), (int)v.X, (int)v.Y, (int)v.Z);
+	// velocity = GetVelocity();
+	AddMovementInput(velocity, speed, true);
 
+	if (net.GetStatus() != p_login) return;
+	if (id == net.GetMyID()) {
+		if (net.isMoving == false) return;
+		position = GetActorLocation();
+		rotation = GetActorRotation();
+		auto vel = GetVelocity();
+		CS_MOVE pack;
+		pack.size = sizeof(CS_MOVE);
+		pack.type = move_packet;
+
+		pack.destination = { position.X, position.Y, position.Z };
+		pack.rotation = { rotation.Pitch, rotation.Yaw, rotation.Roll };
+		pack.velocity = { vel.X, vel.Y, vel.Z };
+		
+	
+		// velocity
+		// speed
+		net.SendPacket(&pack);
+	}
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.type == sc_login_ok && id == -1) {
+		id = net.GetMyID();
+		net.PopEvent();
+		return;
+	}
+	if (ev.oid == net.GetMyID()) {
+		// 자신의 처리는 이미 끝났으니 일단 스킵 
+		net.PopEvent();
+		return;
+	}
+	if (ev.oid != id && id != -1) return;
+
+	switch (ev.type) {
+	case sc_login_ok:
+		if (id != -1) return;
+		id = net.GetMyID();
+		net.PopEvent();
+		break;
+	case sc_update_obj: {
+		position = { ev.pos.x, ev.pos.y, ev.pos.z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		velocity = { ev.velocity.x,ev.velocity.y ,ev.velocity.z };
+		// UE_LOG(LogTemp, Log, TEXT("%d %d %d"), ev.velocity.x, ev.velocity.y, ev.velocity.z);
+		// SetActorRotation(rotation);
+		// auto currentPos = GetActorLocation();
+		// if ((int)currentPos.X == (int)position.X) {
+		// 	UE_LOG(LogTemp, Log, TEXT("C Movesaddsa"));
+		// 	break;
+		// }
+		speed = 200.f;
+		SetActorRotation(rotation);
+		// speed = 0.f;
+		// GetVelocity();
+		// UE_LOG(LogTemp, Log, TEXT("C Move"));
+		// AddMovementInput(position);
+		// AddMovementInput(FRotationMatrix(rotation).GetUnitAxis(EAxis::Y), 200.f);
+		// AddMovementInput(GetVelocity(), 200.f);
+		SetActorLocationAndRotation(position, rotation, false, 0, ETeleportType::None);
+		net.PopEvent();
+	}break;
+	case sc_attack:
+		// 애니메이션 재생
+		net.PopEvent();
+		break;
+	case sc_weapon_on: {
+		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->OutSword();
+		net.PopEvent();
+	}break;
+	case sc_weapon_off: {
+		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->InSword();
+		net.PopEvent();
+	}break;
+	case sc_guard: {
+		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->SwordShieldIdle();
+		net.PopEvent();
+	}break;
+	case sc_berserk: {
+		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->Berserker();
+		net.PopEvent();
+	}break;
+	case sc_fireball:
+		net.PopEvent();
+		break;
+	case sc_evade: {
+		//UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		//if (myAnimInst != nullptr) myAnimInst->Evade();
+		net.PopEvent();
+	}break;
+	case sc_jump: {
+		//UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		//if (myAnimInst != nullptr) myAnimInst->Jump();
+		net.PopEvent();
+	}break;
+	case sc_level_up:
+		net.PopEvent();
+		break;
+	case sc_dead: {
+		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->Pickup();
+		net.PopEvent();
+	}break;
+	case sc_damaged: {
+		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->SwordShieldImpact1();
+		hp = ev.hp;
+		net.PopEvent();
+	}break;
+	case sc_get_exp:
+		net.PopEvent();
+		break;
+	case sc_block:
+		net.PopEvent();
+		break;
+	case sc_move_stop:
+		speed = 0.f;
+		velocity = { 0,0,0 };
+		net.PopEvent();
+		break;
+	default:
+		break;
+	}
 }
 
 void AMyCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	animInstance = Cast<UMyAnimInstance>(GetMesh()->GetAnimInstance());
 	/*MyAnim = Cast<UMyAnimInstance>(GetMesh()->GetAnimInstance());
 	ABCHECK(nullptr != MyAnim);
 	MyAnim->OnMontageEnded.AddDynamic(this, &AMyCharacter::OnAttackMontageEnded);
@@ -221,3 +392,8 @@ void AMyCharacter::PossessedBy(AController* NewController)
 //		}
 //	}
 //}
+
+void AMyCharacter::SetID(const int& id) {
+	SpawnDefaultController();
+	this->id = id;
+}

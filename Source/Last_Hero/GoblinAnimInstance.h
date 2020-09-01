@@ -42,6 +42,17 @@ private:
 		UAnimMontage* Block_React_Mtg;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* GettingUp_Mtg;
+public:
+	void StandingBlockIdle();
+	void Death();
+	void Slash();
+	void AttackBackhand();
+	void AttackDownward();
+	void Attack3Combo();
+	void HitReaction();
+	void BlockReact();
+	void GettingUp();
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
 		float speedSide_cpp;

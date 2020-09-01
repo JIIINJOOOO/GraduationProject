@@ -4,6 +4,7 @@
 
 #include "EngineMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Network.h"
 #include "MyLoginTitleUserWidget.generated.h"
 
 /**
@@ -22,6 +23,8 @@ protected:
 		class UButton* LoginButton;
 	UPROPERTY()
 		class UEditableTextBox* UserNameTextBox;
+	UPROPERTY()
+		class UEditableTextBox* UserPassTextBox;
 private:
 	bool bIsLogin;
 	FName TransferLevelName = "Test_map2";

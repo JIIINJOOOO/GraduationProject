@@ -14,10 +14,20 @@ class LAST_HERO_API AMyPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
+	bool isBattle;
+	bool isInput;
+
+	bool isInput_W;
+	bool isInput_A;
+	bool isInput_S;
+	bool isInput_D;
+	bool isInput_Space;
+public:
 	AMyPlayerController();
 
 	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* aPawn) override;
+	virtual void Tick(float DeltaTime) override;
 	void ChangeInputMode(bool bGameMode = true);
 	void ShowResultUI();
 protected:

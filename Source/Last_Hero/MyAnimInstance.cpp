@@ -34,7 +34,7 @@ UMyAnimInstance::UMyAnimInstance()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> EVADE_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Evade_Montage.Evade_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> BRACED_HANG_TO_CROUCH_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Evade_Montage.Evade_Montage"));
 
-	
+
 	if (STABLE_SWORD_INWARD_MONTAGE.Succeeded())
 	{
 		Stable_Sword_Inward_Mtg = STABLE_SWORD_INWARD_MONTAGE.Object;
@@ -119,6 +119,7 @@ UMyAnimInstance::UMyAnimInstance()
 	{
 		Evade_Mtg = EVADE_MONTAGE.Object;
 	}
+
 }
 
 void UMyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -132,6 +133,7 @@ void UMyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	{
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
 	}*/
+	
 }
 
 void UMyAnimInstance::PlayPlayerAnimMontage(UAnimMontage * Mtg)
@@ -139,6 +141,97 @@ void UMyAnimInstance::PlayPlayerAnimMontage(UAnimMontage * Mtg)
 	Montage_Play(Mtg, 1.0f);
 }
 
+void UMyAnimInstance::StableSwordInward() {
+	Montage_Play(Stable_Sword_Inward_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::Jump() {
+	Montage_Play(Jump_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::OutSword(){
+	Armed_Sword_cpp = true;
+	Montage_Play(Out_Sword_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::InSword() {
+	Armed_Sword_cpp = false;
+	Montage_Play(In_Sword_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::Death() {
+	Montage_Play(Death_Wait_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::OutHammer() {
+	Montage_Play(Out_Hammer_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::InHammer() {
+	Montage_Play(In_Hammer_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::ClimbEnd() {
+	Montage_Play(Climb_End_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::StandingTurnLeft() {
+	Montage_Play(Standing_Turn_Left_90_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::UnarmedTurnRight() {
+	Montage_Play(Unarmed_Turn_Right_90_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::WalkBackwards() {
+	Montage_Play(Walk_Backwards_1_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::SwordShieldIdle() {
+	Montage_Play(SwordShield_Block_Idle_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::SwordShieldImpact1() {
+	Montage_Play(SwordShield_Impact_1_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::SwordShieldImpact() {
+	Montage_Play(SwordShield_Impact_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::ShieldBlock() {
+	Montage_Play(Shield_Block_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::Pickup() {
+	Montage_Play(PickUp_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::BracedHangToCrouch() {
+	Montage_Play(Braced_Hang_To_Crouch_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::ShieldStrike() {
+	Montage_Play(Shield_Strike_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::Berserker() {
+	Montage_Play(SwordShield_Berserker_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::StandingDibeForward() {
+	Montage_Play(Standing_Dive_Forward_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::Evade() {
+	Montage_Play(Evade_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::Move(float speedSide, float speedForward) {
+	speedSide_cpp += speedSide;
+	speedForward_cpp = 600.f;
+	
+}
 //void UMyAnimInstance::AnimNotify_EnableMovement()
 //{
 //	// call Toggle Movement(Enable)
