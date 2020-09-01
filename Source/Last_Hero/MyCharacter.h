@@ -7,6 +7,15 @@
 #include "UObject/ConstructorHelpers.h"
 #include "MyCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class EMovementStateCPP : uint8
+{
+	MS_WALKING UMETA(DisplayName = "Walking"),
+	MS_ONWALL UMETA(DisplayName = "OnWall"),
+	MS_JUMPING UMETA(DisplayName = "Jumping"),
+	MS_FALING UMETA(DisplayName = "Faling")
+};
+
 UCLASS()
 class LAST_HERO_API AMyCharacter : public ACharacter
 {
@@ -25,26 +34,60 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
 	virtual void PossessedBy(AController* NewController) override;
+
 	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	// Called to bind functionality to input
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	/*UPROPERTY(BlueprintReadWrite,VisibleAnywhere, Category = Camera)
-		USpringArmComponent* SpringArm;
+	//UPROPERTY(BlueprintReadWrite,VisibleAnywhere, Category = Camera)
+	//	USpringArmComponent* SpringArm;
 
-	UPROPERTY(BlueprintReadWrite,VisibleAnywhere, Category = Camera)
-		UCameraComponent* Camera;
+	//UPROPERTY(BlueprintReadWrite,VisibleAnywhere, Category = Camera)
+	//	UCameraComponent* Camera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
-		bool bIsCasting;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
-		bool bIsLooting;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Utilities)
-		float MaxWalkSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
-		bool bIsDead;*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool Running_cpp;								  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool Sprinting_cpp;								   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool CanMove_cpp;								   
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool Crouching_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool IsCasting_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool CanCounter_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool underAttack_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool bersuckermode_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		EMovementStateCPP MovementState_cpp;
+	
+	// attack count
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		int AtkCount_cpp;
 
+	// sockets
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		USceneComponent* HandSocket1_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		USceneComponent* swordStrap_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		USceneComponent* HandSocket2_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		USceneComponent* HandSocket3_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		USceneComponent* HammerStrap_cpp;
+
+	// child actors : weapons
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		UChildActorComponent* BPSword_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		UChildActorComponent* BPShield_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		UChildActorComponent* BPHammer_cpp;
 	
 //private:
 //	void MoveForward(float NewAxisValue);

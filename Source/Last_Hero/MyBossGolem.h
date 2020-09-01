@@ -81,6 +81,8 @@ public:
 		bool IsCreatingSpear;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = Fight)
 		bool IsChargingSpear;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = Fight)
+		FVector OrgScale;
 	// Arm-Weapon IsOverlapping var 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = BoneBreak)
 		bool IsOverlapping_RArm;

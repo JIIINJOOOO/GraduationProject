@@ -22,7 +22,34 @@ AMyCharacter::AMyCharacter()
 
 	//// static을 주석 처리 해놨었는데 왤까 -> 자꾸 71% 무한로딩 걸림
 	///*static*/ ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ADAM(TEXT("/Game/Game/Mesh/Player_Character/Adam_Adventurer/Meshes/Character/SK_AdamAdventurer"));
+	static ConstructorHelpers::FObjectFinder<UClass> SWORD_BP(TEXT("/Game/Game/BluePrints/player/BP_Sword"));
+	static ConstructorHelpers::FObjectFinder<UClass> SHIELD_BP(TEXT("/Game/Game/BluePrints/player/BP_sheild"));
 
+
+	HandSocket1_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("HANDSOCKET1_CPP"));
+	HandSocket1_cpp->SetupAttachment(GetMesh());
+
+	swordStrap_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("SWORDSTRAP_CPP"));
+	swordStrap_cpp->SetupAttachment(GetMesh());
+	
+	BPSword_cpp = CreateDefaultSubobject<UChildActorComponent>(TEXT("BPSWORD_CPP"));
+	BPSword_cpp->SetupAttachment(swordStrap_cpp);
+	BPShield_cpp = CreateDefaultSubobject<UChildActorComponent>(TEXT("BPSHEILD_CPP"));
+	BPShield_cpp->SetupAttachment(swordStrap_cpp);
+
+	HandSocket2_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("HANDSOCKET2_CPP"));
+	HandSocket2_cpp->SetupAttachment(GetMesh());
+
+	HandSocket3_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("HANDSOCKET3_CPP"));
+	HandSocket3_cpp->SetupAttachment(GetMesh());
+	
+	HammerStrap_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("HAMMERSTRAP_CPP"));
+	HammerStrap_cpp->SetupAttachment(GetMesh());
+	BPSword_cpp = CreateDefaultSubobject<UChildActorComponent>(TEXT("BPHAMMER_CPP"));
+	BPSword_cpp->SetupAttachment(HammerStrap_cpp);
+
+	BPSword_cpp->SetChildActorClass(SWORD_BP.Object);
+	BPShield_cpp->SetChildActorClass(SHIELD_BP.Object);
 
 
 	//if (SK_ADAM.Succeeded())
@@ -48,6 +75,8 @@ AMyCharacter::AMyCharacter()
 	//AttackRadius = 50.0f;
 
 	//AttackEndComboState();
+	CanMove_cpp = true;
+
 }
 //5/31: 290p 세팅까지 마친상태
 

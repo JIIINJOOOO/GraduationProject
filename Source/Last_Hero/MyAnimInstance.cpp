@@ -10,7 +10,7 @@ UMyAnimInstance::UMyAnimInstance()
 	isCrouched_cpp = false;
 	Armed_Sword_cpp = false;
 	Armed_Hammer_cpp = false;
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> STABLE_SWORD_INWARD_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Stable_Sword_Inward_Slash_Montage.Stable_Sword_Inward_Slash_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_INWARD_SLASH_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Stable_Sword_Inward_Slash_Montage.Stable_Sword_Inward_Slash_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> JUMP_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Jump_Montage.Jump_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> OUT_SWORD_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/sword_shiend/outWeapon_Montage.outWeapon_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> IN_SWORD_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/sword_shiend/inWeapon_Montage.inWeapon_Montage")); 
@@ -34,10 +34,15 @@ UMyAnimInstance::UMyAnimInstance()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> EVADE_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Evade_Montage.Evade_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> BRACED_HANG_TO_CROUCH_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Evade_Montage.Evade_Montage"));
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_SLASH_1_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Sword_And_Shield_Slash_Montage.Sword_And_Shield_Slash_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_SLASH_2_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Sword_And_Shield_Slash__1__Montage.Sword_And_Shield_Slash__1__Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_SLASH_3_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/sword_shiend/Shield_Strike_Montage.Shield_Strike_Montage"));
+
+
 	
-	if (STABLE_SWORD_INWARD_MONTAGE.Succeeded())
+	if (SWORD_INWARD_SLASH_MONTAGE.Succeeded())
 	{
-		Stable_Sword_Inward_Mtg = STABLE_SWORD_INWARD_MONTAGE.Object;
+		Sword_Inward_Slash_Mtg = SWORD_INWARD_SLASH_MONTAGE.Object;
 	}
 	if (JUMP_MONTAGE.Succeeded())
 	{
@@ -119,6 +124,19 @@ UMyAnimInstance::UMyAnimInstance()
 	{
 		Evade_Mtg = EVADE_MONTAGE.Object;
 	}
+	if (SWORD_SLASH_1_MONTAGE.Succeeded())
+	{
+		Sword_Slash_Combo1_Mtg = SWORD_SLASH_1_MONTAGE.Object;
+	}
+	if (SWORD_SLASH_2_MONTAGE.Succeeded())
+	{
+		Sword_Slash_Combo2_Mtg = SWORD_SLASH_2_MONTAGE.Object;
+	}
+	if (SWORD_SLASH_3_MONTAGE.Succeeded())
+	{
+		Sword_Slash_Combo3_Mtg = SWORD_SLASH_3_MONTAGE.Object;
+	}
+
 }
 
 void UMyAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
