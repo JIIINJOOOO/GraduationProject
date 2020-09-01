@@ -33,5 +33,8 @@ public:
 		TArray<UAnimMontage*> Hammer_regularattacks_cpp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		TArray<UAnimMontage*> Hammer_comboattacks_cpp;
+	
+	UPROPERTY()
+		class UMyAnimInstance* PlayerAnim;
 
 };

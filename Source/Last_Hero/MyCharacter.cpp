@@ -22,8 +22,8 @@ AMyCharacter::AMyCharacter()
 
 	//// static을 주석 처리 해놨었는데 왤까 -> 자꾸 71% 무한로딩 걸림
 	///*static*/ ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ADAM(TEXT("/Game/Game/Mesh/Player_Character/Adam_Adventurer/Meshes/Character/SK_AdamAdventurer"));
-	static ConstructorHelpers::FObjectFinder<UClass> SWORD_BP(TEXT("/Game/Game/BluePrints/player/BP_Sword"));
-	static ConstructorHelpers::FObjectFinder<UClass> SHIELD_BP(TEXT("/Game/Game/BluePrints/player/BP_sheild"));
+	/*static ConstructorHelpers::FObjectFinder<UClass> SWORD_BP(TEXT("Blueprint'/Game/Game/BluePrints/player/BP_Sword.BP_Sword'"));
+	static ConstructorHelpers::FObjectFinder<UClass> SHIELD_BP(TEXT("Blueprint'/Game/Game/BluePrints/player/BP_Hammer.BP_Hammer'"));*/
 
 
 	HandSocket1_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("HANDSOCKET1_CPP"));
@@ -48,8 +48,8 @@ AMyCharacter::AMyCharacter()
 	BPSword_cpp = CreateDefaultSubobject<UChildActorComponent>(TEXT("BPHAMMER_CPP"));
 	BPSword_cpp->SetupAttachment(HammerStrap_cpp);
 
-	BPSword_cpp->SetChildActorClass(SWORD_BP.Object);
-	BPShield_cpp->SetChildActorClass(SHIELD_BP.Object);
+	/*BPSword_cpp->SetChildActorClass(SWORD_BP.Object);
+	BPShield_cpp->SetChildActorClass(SHIELD_BP.Object);*/
 
 
 	//if (SK_ADAM.Succeeded())
