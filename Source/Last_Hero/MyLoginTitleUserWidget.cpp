@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 
 
-/*void UMyLoginTitleUserWidget::NativeConstruct()
+void UMyLoginTitleUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	LoginButton = Cast<UButton>(GetWidgetFromName(TEXT("LoginButton")));;
@@ -25,4 +25,4 @@ void UMyLoginTitleUserWidget::OnLoginClicked()
 		UGameplayStatics::OpenLevel(this, TransferLevelName);
 	}
 	if (UserName.Len() <= 0 || UserName.Len() > 10) return;
-}*/
+}
