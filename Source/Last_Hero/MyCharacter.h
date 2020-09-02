@@ -64,6 +64,25 @@ public:
 		bool bersuckermode_cpp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		EMovementStateCPP MovementState_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		float RunningSpeed_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		float WalkingSpeed_cpp;
+
+	// fight
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ServerFight)
+		bool WeaponEquipped_cpp;								 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ServerFight)
+		bool Blocking_cpp;										
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ServerFight)
+		bool Dodging_cpp;										 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ServerFight)
+		bool Charged_cpp;										 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ServerFight)
+		bool Charging_cpp;										
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = ServerFight)
+		bool HammerEquipped_cpp;									 
+
 	
 	// attack count
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
