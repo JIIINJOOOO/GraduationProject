@@ -26,7 +26,7 @@ UBossGolemAnimInstance::UBossGolemAnimInstance()
 	// Down State
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DOWN_ATTACK_1_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/DownState/Golem_DownAttack1_Anim_Montage.Golem_DownAttack1_Anim_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DOWN_ATTACK_2_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/DownState/Golem_DownAttack2_Anim_Montage.Golem_DownAttack2_Anim_Montage"));
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> GOLEM_BROKENLEG_FALLING(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/DownState/Golem_Down_Anim_Montage.Golem_Down_Anim_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> GOLEM_BROKENLEG_FALLING(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/DownState/Golem_FallDown_Anim_Montage.Golem_FallDown_Anim_Montage"));
 
 
 	// Stand State

@@ -102,6 +102,63 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 			return HANDCLAP_ATTACK;
 		else
 	case 3:
+		if (IsBreakLeftArm)
+			return SWEEP_ATTACK;
+		else
+			return PUNCH_ATTACK;
+	case 4:
+		if (IsBreakRightArm)
+			return PUNCH_ATTACK;
+		else
+			return SWEEP_ATTACK;
+	case 5:
+		if (RndAtkMtg != STOMP_ATTACK)
+		{
+			LaunchForce = 1000.0f;
+			return STOMP_ATTACK;
+		}
+	case 6:
+		if (RndAtkMtg != WALKING_ATTACK)
+		{
+			LaunchForce = 1000.0f;
+			return WALKING_ATTACK;
+		}
+	case 7:
+		if (RndAtkMtg != RUSH_CLOSE)
+		{
+			LaunchForce = 1000.0f;
+			return RUSH_CLOSE;
+		}
+	case 10:
+		if (RndAtkMtg != RUSH_ATTACK)
+		{
+			LaunchForce = 1000.0f;
+			return RUSH_ATTACK;
+		}
+	case 11:
+		if (!IsHalfBreakLeftArm && !IsBreakLeftArm && !IsHalfBreakRightArm && !IsBreakRightArm && RndAtkMtg != THROW_STONE)
+			return THROW_STONE;
+	case 12:
+		if (!IsHalfBreakRightArm && !IsBreakRightArm && RndAtkMtg != THROW_SPEAR)
+			return THROW_SPEAR;
+	case 15:
+		if (IsBreakLeftArm)
+			return DOWN_ATTACK_1;
+		else
+			return DOWN_ATTACK_2;
+	case 16:
+		if (IsBreakRightArm)
+			return DOWN_ATTACK_2;
+		else
+			return DOWN_ATTACK_1;
+	// 이전 오류 안나던 case문
+	/*case 1:
+		return NORMAL_ATTACK;
+	case 2:
+		if ((!IsBreakLeftArm || !IsBreakRightArm) && RndAtkMtg != HANDCLAP_ATTACK)
+			return HANDCLAP_ATTACK;
+		else
+	case 3:
 		if(IsBreakLeftArm)
 			return SWEEP_ATTACK;
 		else
@@ -140,7 +197,7 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 		if(IsBreakRightArm)
 			return DOWN_ATTACK_2;
 		else
-			return DOWN_ATTACK_1;
+			return DOWN_ATTACK_1;*/
 	}
 	return GOLEM_ANIM_MONTAGE();
 }
