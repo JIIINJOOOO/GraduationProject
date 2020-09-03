@@ -26,7 +26,7 @@ public:
 	/*UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "NetworkMonster")
 		UBlueprint* MonsterBP;*/
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "NetworkMonster")
-		UBlueprint* MonsterAIBP;
+		TSubclassOf<class AMyMonsterAIController> MonsterAIBP;
 	UPROPERTY(EditAnywhere, Category = "NetworkMonster")
 		TSubclassOf<class AMyMonster_Goblin> MonToSpawn;
 protected:

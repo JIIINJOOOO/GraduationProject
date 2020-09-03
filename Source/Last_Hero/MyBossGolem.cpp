@@ -54,8 +54,8 @@ void AMyBossGolem::Attack_LongRange()
 	{
 		RndAtkMtg = setRandomAttackMontage(LONG_RANGE_START, LONG_RANGE_END);
 	}
-	GolemAnim->PlayGolemMontage(THROW_SPEAR);
-	//GolemAnim->PlayGolemMontage(RndAtkMtg);
+	//GolemAnim->PlayGolemMontage(THROW_SPEAR);
+	GolemAnim->PlayGolemMontage(RndAtkMtg);
 	IsAttacking = true;
 }
 

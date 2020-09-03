@@ -14,9 +14,10 @@ AMyGameModeBase::AMyGameModeBase()
 	if (GOBLIN.Object) {
 		MonsterBP = GOBLIN.Object;
 	}*/
-	static ConstructorHelpers::FObjectFinder<UBlueprint> GOBLIN_AI(TEXT("Blueprint'/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin'"));
-	if (GOBLIN_AI.Object) {
-		MonsterAIBP = GOBLIN_AI.Object;
+
+	static ConstructorHelpers::FClassFinder<UObject> GOBLIN_AI(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin_C"));
+	if (GOBLIN_AI.Succeeded()) {
+		MonsterAIBP = GOBLIN_AI.Class;
 	}
 	//static ConstructorHelpers::FClassFinder<ACharacter> BP_CHARACTER_C(TEXT("/Game/Game/BluePrints/ThirdPersonCharacter.ThirdPersonCharacter_C"));
 
@@ -57,9 +58,8 @@ void AMyGameModeBase::SpawnMonster()
 	SpawnInfo.bDeferConstruction = false;
 	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
 	FVector MonSpawnLocation = { 19266.0f,78928.0f,-440.0f };
-	// 몬스터 스폰 코드
+	// 몬스터 스폰 코드 -> 컨트롤러를 가져와야 할 듯
 	AMyMonster_Goblin* SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
-
 }

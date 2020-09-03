@@ -2,6 +2,7 @@
 
 
 #include "MyMonster_Goblin.h"
+#include "MyMonsterAIController.h"
 
 // Sets default values
 AMyMonster_Goblin::AMyMonster_Goblin()
@@ -9,19 +10,28 @@ AMyMonster_Goblin::AMyMonster_Goblin()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	/*static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
-	if (SK_GOBLIN.Succeeded())
+	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko_C"));
+	//if (SK_GOBLIN.Succeeded())
+	//{
+	//	GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
+	//}
+
+	//GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	//static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin_C"));
+
+	//if (GOB_ANIM.Succeeded())
+	//{
+	//	GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
+	//}
+
+	static ConstructorHelpers::FClassFinder<UObject> GOB_AICONTROLLER(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin_C"));
+
+
+	if (GOB_AICONTROLLER.Succeeded())
 	{
-		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
+		AIControllerClass = GOB_AICONTROLLER.Class;
+		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	}
-
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin"));
-
-	if (GOB_ANIM.Succeeded())
-	{
-		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
-	}*/
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
 	
