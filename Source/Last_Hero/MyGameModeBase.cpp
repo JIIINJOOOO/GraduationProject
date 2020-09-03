@@ -50,7 +50,7 @@ void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 
 void AMyGameModeBase::BeginPlay()
 {
-	SpawnMonster();
+	// SpawnMonster();
 	// SpawnBoss(5, 0, 0, 0);
 }
 

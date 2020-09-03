@@ -15,6 +15,7 @@ class LAST_HERO_API UGoblinAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 public:
 	UGoblinAnimInstance();
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	void PlayGoblinAnimMontage(UAnimMontage* Mtg);
 public:
 	UFUNCTION(BlueprintImplementableEvent)

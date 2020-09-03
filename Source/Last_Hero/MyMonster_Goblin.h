@@ -17,14 +17,17 @@ private:
 	int id;
 	int hp;
 	UGoblinAnimInstance* animInstance;
-
+	FVector velocity;
+	float speed;
 public:
 	// Sets default values for this character's properties
 	AMyMonster_Goblin();
+	virtual void PostInitializeComponents() override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		FVector MonPos;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterInfo)

@@ -17,7 +17,7 @@ AMyMonster_Goblin::AMyMonster_Goblin()
 		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
 	}
 
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	// GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	// static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin"));
 	
 	// if (GOB_ANIM.Succeeded())
@@ -25,26 +25,37 @@ AMyMonster_Goblin::AMyMonster_Goblin()
 	// 	GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
 	// }
 
-	static ConstructorHelpers::FClassFinder<UObject> GOB_AICONTROLLER(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin_C"));
+	// static ConstructorHelpers::FClassFinder<UObject> GOB_AICONTROLLER(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin_C"));
 
 
-	if (GOB_AICONTROLLER.Succeeded())
-	{
-		AIControllerClass = GOB_AICONTROLLER.Class;
-		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	}
+	// if (GOB_AICONTROLLER.Succeeded())
+	// {
+	// 	AIControllerClass = GOB_AICONTROLLER.Class;
+	// 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	// }
 
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
 
-	animInstance = Cast<UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
-	id = -1;
+	
+	id = 10000;
+	velocity = { 0,0,0 };
+	speed = 0.f;
 }
 
 // Called when the game starts or when spawned
 void AMyMonster_Goblin::BeginPlay()
 {
 	Super::BeginPlay();
+	SpawnDefaultController();
+	// animInstance = Cast<UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
+
+}
+
+void AMyMonster_Goblin::PostInitializeComponents() {
+	Super::PostInitializeComponents();
+	animInstance = Cast<UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
+	// animInstance = Cast<UGoblinAnimInstance>(UGoblinAnimInstance::StaticClass);
 	
 }
 
@@ -52,18 +63,22 @@ void AMyMonster_Goblin::BeginPlay()
 void AMyMonster_Goblin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	FVector v = { 11330.0, 77830.0,0.f };
+	v.X -= GetActorLocation().X;
+	v.Y -= GetActorLocation().Y;
 
+	AddMovementInput(velocity, speed);
+	// static int r = 0;
+	// r = (r + 1) % 360;
+	// SetActorRotation(FRotator(0, r, 0));
 	static int a = 0;
-	if (a == 300) {
-		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
-		if (myAnimInst != nullptr) {
-			myAnimInst->Slash();
-		}
+	if (a == 200) {
+		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
+		if (myAnimInst != nullptr) myAnimInst->Slash();
 		a = 0;
 	}
 	a++;
-
-
 	MonPos = GetActorLocation();
 	net.eventLock.lock();
 	if (net.eventQue.empty()) {
@@ -78,20 +93,30 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 	switch (ev.type) {
 	case sc_update_obj:
 		SetActorLocationAndRotation(FVector(ev.pos.x, ev.pos.y, ev.pos.z), FRotator(ev.rotation.x, ev.rotation.y, ev.rotation.z), false, 0, ETeleportType::None);
+		velocity = { ev.rotation.x,ev.rotation.y,ev.rotation.z };
+		speed = 200.f;
 		net.PopEvent();
 		break;
-	case sc_dead:
+	case sc_dead: {
 		SetActorLocation(FVector(0, 0, 0));
+		velocity = { 0,0,0 };
+		speed = 0.f;
 		net.PopEvent();
-		break;
+	}break;
 	case sc_attack: {
 		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->Slash();
+		velocity = { 0,0,0 };
+		speed = 0.f;
 		net.PopEvent();
 	}break;
-	case sc_damaged:
+	case sc_damaged: {
+		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->HitReaction();
+		velocity = { 0,0,0 };
+		speed = 0.f;
 		net.PopEvent();
-		break;
+	}break;
 	case sc_block:
 		net.PopEvent();
 		break;

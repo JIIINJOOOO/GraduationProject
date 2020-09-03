@@ -56,6 +56,19 @@ UGoblinAnimInstance::UGoblinAnimInstance()
 
 }
 
+void UGoblinAnimInstance::NativeUpdateAnimation(float DeltaSeconds) {
+	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	auto Pawn = TryGetPawnOwner();
+	if (!::IsValid(Pawn)) return;
+	static int a = 0;
+	if (a == 300) {
+		Attack3Combo();
+		a = 0;
+	}
+	++a;
+}
+
 void UGoblinAnimInstance::PlayGoblinAnimMontage(UAnimMontage * Mtg)
 {
 	Montage_Play(Mtg, 1.0f);
