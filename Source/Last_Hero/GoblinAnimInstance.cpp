@@ -60,3 +60,39 @@ void UGoblinAnimInstance::PlayGoblinAnimMontage(UAnimMontage * Mtg)
 {
 	Montage_Play(Mtg, 1.0f);
 }
+
+void UGoblinAnimInstance::StandingBlockIdle() {
+	Montage_Play(Standing_Block_Idle_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::Death() {
+	Montage_Play(Death_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::Slash() {
+	Montage_Play(Slash_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::AttackBackhand() {
+	Montage_Play(Attack_Backhand_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::AttackDownward() {
+	Montage_Play(Attack_Downward_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::Attack3Combo() {
+	Montage_Play(Attack_3Combo_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::HitReaction() {
+	Montage_Play(HitReaction_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::BlockReact() {
+	Montage_Play(Block_React_Mtg, 1.f);
+}
+
+void UGoblinAnimInstance::GettingUp() {
+	Montage_Play(GettingUp_Mtg, 1.f);
+}

@@ -3,6 +3,8 @@
 
 #include "MyBossGolem.h"
 #include "BossGolemAnimInstance.h"
+#include "Network.h"
+extern Network net;
 
 // Sets default values
 AMyBossGolem::AMyBossGolem()
@@ -240,4 +242,8 @@ void AMyBossGolem::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		this->CallFunctionByNameWithArguments(*FString::Printf(TEXT("BreakLegs "), OtherActor), ar, nullptr, true);*/
 		BreakLegsCpp(OtherActor);
 	}
+}
+
+void AMyBossGolem::SetID(const int& id) {
+	this->id = id;
 }

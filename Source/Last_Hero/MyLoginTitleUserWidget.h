@@ -22,6 +22,8 @@ protected:
 		class UButton* LoginButton;
 	UPROPERTY()
 		class UEditableTextBox* UserNameTextBox;
+	UPROPERTY()
+		class UEditableTextBox* UserPassTextBox;
 private:
 	bool bIsLogin;
 	FName TransferLevelName = "Test_map2";

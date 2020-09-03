@@ -11,6 +11,10 @@ class LAST_HERO_API AMyMonster : public ACharacter
 {
 	GENERATED_BODY()
 
+private:
+	int id;
+	int hp;
+
 public:
 	// Sets default values for this character's properties
 	AMyMonster();
@@ -40,4 +44,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void SetID(const int& id);
 };

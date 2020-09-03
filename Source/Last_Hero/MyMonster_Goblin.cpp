@@ -2,6 +2,8 @@
 
 
 #include "MyMonster_Goblin.h"
+#include "Network.h"
+extern Network net;
 
 // Sets default values
 AMyMonster_Goblin::AMyMonster_Goblin()
@@ -9,22 +11,34 @@ AMyMonster_Goblin::AMyMonster_Goblin()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	/*static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
 	if (SK_GOBLIN.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
 	}
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin"));
+	// static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin"));
+	
+	// if (GOB_ANIM.Succeeded())
+	// {
+	// 	GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
+	// }
 
-	if (GOB_ANIM.Succeeded())
+	static ConstructorHelpers::FClassFinder<UObject> GOB_AICONTROLLER(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin_C"));
+
+
+	if (GOB_AICONTROLLER.Succeeded())
 	{
-		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
-	}*/
+		AIControllerClass = GOB_AICONTROLLER.Class;
+		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	}
+
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
-	
+
+	animInstance = Cast<UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
+	id = -1;
 }
 
 // Called when the game starts or when spawned
@@ -38,8 +52,50 @@ void AMyMonster_Goblin::BeginPlay()
 void AMyMonster_Goblin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	static int a = 0;
+	if (a == 300) {
+		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) {
+			myAnimInst->Slash();
+		}
+		a = 0;
+	}
+	a++;
+
+
 	MonPos = GetActorLocation();
-	
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.oid < NPC_ID_START) return;
+	if (ev.oid != id) return;
+
+	switch (ev.type) {
+	case sc_update_obj:
+		SetActorLocationAndRotation(FVector(ev.pos.x, ev.pos.y, ev.pos.z), FRotator(ev.rotation.x, ev.rotation.y, ev.rotation.z), false, 0, ETeleportType::None);
+		net.PopEvent();
+		break;
+	case sc_dead:
+		SetActorLocation(FVector(0, 0, 0));
+		net.PopEvent();
+		break;
+	case sc_attack: {
+		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
+		if (myAnimInst != nullptr) myAnimInst->Slash();
+		net.PopEvent();
+	}break;
+	case sc_damaged:
+		net.PopEvent();
+		break;
+	case sc_block:
+		net.PopEvent();
+		break;
+	}
 }
 
 // Called to bind functionality to input
@@ -61,3 +117,6 @@ FVector AMyMonster_Goblin::GetMonsterPos()
 	return MonPos;
 }
 
+void AMyMonster_Goblin::SetID(const int& id) {
+	this->id = id;
+}

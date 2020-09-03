@@ -22,6 +22,7 @@ AMonster_Goblin::AMonster_Goblin()
 	{
 		GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
 	}*/
+	id = -1;
 }
 
 // Called when the game starts or when spawned
@@ -45,3 +46,6 @@ void AMonster_Goblin::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+// void AMonster_Goblin::SetID(const int& id) {
+// 	this->id = id;
+// }
