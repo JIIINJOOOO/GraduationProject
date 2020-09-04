@@ -46,6 +46,8 @@ private:
 	UFUNCTION()
 		void AnimNotify_Launch();
 	UFUNCTION()
+		void AnimNotify_Launch_Backward();
+	UFUNCTION()
 		void AnimNotify_CreateSpear();
 	UFUNCTION()
 		void AnimNotify_ThrowSpear();

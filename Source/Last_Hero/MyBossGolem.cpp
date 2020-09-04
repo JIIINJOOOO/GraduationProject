@@ -84,6 +84,15 @@ void AMyBossGolem::Launcher()
 	GetCharacterMovement()->GroundFriction = 8.0f;
 }
 
+void AMyBossGolem::Launcher_Backward()
+{
+	float JumpForce = 1.0f;
+	FVector LaunchVelocity = ((GetActorForwardVector()*-1) * LaunchForce) + (GetActorUpVector() * JumpForce);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::setGroundFrictionZero, 2.5f, true, 0.0f);
+	LaunchCharacter(LaunchVelocity, false, false);
+	GetCharacterMovement()->GroundFriction = 8.0f;
+}
+
 
 void AMyBossGolem::setGroundFrictionZero()
 {
@@ -117,37 +126,42 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 			LaunchForce = 1000.0f;
 			return STOMP_ATTACK;
 		}
+		else
 	case 6:
 		if (RndAtkMtg != WALKING_ATTACK)
 		{
 			LaunchForce = 1000.0f;
 			return WALKING_ATTACK;
 		}
-	case 7:
+		else 
+	case 7: 
 		if (RndAtkMtg != RUSH_CLOSE)
 		{
 			LaunchForce = 1000.0f;
 			return RUSH_CLOSE;
 		}
-	case 10:
+		else
+			return STOMP_ATTACK;
+	case 10: // Long Range
 		if (RndAtkMtg != RUSH_ATTACK)
 		{
 			LaunchForce = 1000.0f;
 			return RUSH_ATTACK;
 		}
+		else
 	case 11:
 		if (!IsHalfBreakLeftArm && !IsBreakLeftArm && !IsHalfBreakRightArm && !IsBreakRightArm && RndAtkMtg != THROW_STONE)
 			return THROW_STONE;
 	case 12:
 		if (!IsHalfBreakRightArm && !IsBreakRightArm && RndAtkMtg != THROW_SPEAR)
 			return THROW_SPEAR;
-	case 15:
-		if (IsBreakLeftArm)
+	case 15: // Down State
+		if (!IsHalfBreakLeftArm && !IsBreakLeftArm)
 			return DOWN_ATTACK_1;
 		else
 			return DOWN_ATTACK_2;
 	case 16:
-		if (IsBreakRightArm)
+		if (!IsHalfBreakRightArm && !IsBreakRightArm)
 			return DOWN_ATTACK_2;
 		else
 			return DOWN_ATTACK_1;

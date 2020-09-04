@@ -76,8 +76,7 @@ AMyCharacter::AMyCharacter()
 
 	//AttackEndComboState();
 	CanMove_cpp = true;
-	RunningSpeed_cpp = 600.0f;
-	WalkingSpeed_cpp = 300.0f;
+
 }
 //5/31: 290p 세팅까지 마친상태
 

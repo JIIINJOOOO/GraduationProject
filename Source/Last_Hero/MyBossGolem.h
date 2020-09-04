@@ -100,6 +100,7 @@ public:
 	bool getIsDown();
 	GOLEM_ANIM_MONTAGE getRndAtkMtg();
 	void Launcher();
+	void Launcher_Backward();
 	void setGroundFrictionZero();
 	GOLEM_ANIM_MONTAGE setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, GOLEM_ANIM_MONTAGE Max);
 	

@@ -88,7 +88,10 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 					OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, 10000.0f);
 					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false);
 					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
-					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, FMath::RandRange(0,1));
+					if(!BossGolem->getIsDown())
+						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, FMath::RandRange(0, 1));
+					else
+						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, false);
 				}
 
 
@@ -106,5 +109,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 		}
 	}
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, nullptr);
+	// montage 보는 코드
+	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::GolemMontageKey,BossGolem->RndAtkMtg);
 	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
  }

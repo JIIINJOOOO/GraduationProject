@@ -153,6 +153,12 @@ void UBossGolemAnimInstance::AnimNotify_Launch()
 	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
 	BossGolem->Launcher();
 }
+void UBossGolemAnimInstance::AnimNotify_Launch_Backward()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->LaunchForce = 500.0f;
+	BossGolem->Launcher_Backward();
+}
 void UBossGolemAnimInstance::AnimNotify_CreateSpear()
 {
 	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());

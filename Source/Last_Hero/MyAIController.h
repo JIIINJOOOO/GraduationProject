@@ -27,6 +27,7 @@ public:
 	static const FName TargetRotKey;
 	static const FName GolemRotKey;
 	static const FName IsLongRangePatternKey;
+	static const FName GolemMontageKey;
 
 
 
