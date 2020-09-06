@@ -96,6 +96,8 @@ public:
 		bool IsBreakRightLeg;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
 		bool IsHalfBreakRightArm;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BoneBreak)
+		bool IsDead_cpp;
 
 	// Target Look Vector for set physics linear vel
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fight)
@@ -114,7 +116,6 @@ public:
 		bool IsStomping;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = Fight)
 		bool IsWalkingAtk;
-
 
 	void Attack_CloseRange();
 	void Attack_LongRange();

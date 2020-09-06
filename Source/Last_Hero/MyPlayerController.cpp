@@ -77,7 +77,6 @@ void AMyPlayerController::ShowResultUI()
 {
 	auto  AmyGameState = Cast<AMyGameStateBase> ( UGameplayStatics::GetGameState(this));
 	ResultWidget->BindGameState(AmyGameState);
-
 	ResultWidget->AddToViewport();
 	ChangeInputMode(false);
 }

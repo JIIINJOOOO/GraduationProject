@@ -152,7 +152,7 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 		return WALKING_ATTACK;
 		break;
 	case 7: 
-		LaunchForce = 1500.0f;
+		LaunchForce = 1000.0f;
 		IsRushing = true;
 		return RUSH_CLOSE;
 		break;
@@ -278,15 +278,15 @@ void AMyBossGolem::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupte
 void AMyBossGolem::BeginPlay()
 {
 	Super::BeginPlay();
-	BoneMap.Emplace("Bip001-R-Hand", 3);
-	BoneMap.Emplace("Bip001-R-Forearm", 5);
-	BoneMap.Emplace("Bip001-R-UpperArm", 7);
+	BoneMap.Emplace("Bip001-R-Hand", 20);
+	BoneMap.Emplace("Bip001-R-Forearm", 22);
+	BoneMap.Emplace("Bip001-R-UpperArm", 24);
 	BoneMap.Emplace("Bip001-R-Foot", 20);
 	BoneMap.Emplace("Bip001-R-Calf", 22);
 	BoneMap.Emplace("Bip001-R-Thigh", 24);
-	BoneMap.Emplace("Bip001-L-Hand", 3);
-	BoneMap.Emplace("Bip001-L-Forearm", 5);
-	BoneMap.Emplace("Bip001-L-UpperArm", 7);
+	BoneMap.Emplace("Bip001-L-Hand", 5);
+	BoneMap.Emplace("Bip001-L-Forearm", 7);
+	BoneMap.Emplace("Bip001-L-UpperArm", 9);
 	BoneMap.Emplace("Bip001-L-Foot", 20);
 	BoneMap.Emplace("Bip001-L-Calf", 22);
 	BoneMap.Emplace("Bip001-L-Thigh", 24);

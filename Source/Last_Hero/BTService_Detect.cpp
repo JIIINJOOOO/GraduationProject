@@ -24,7 +24,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
 	float DetectRadius = 2000.0f;
-	float RecogRadius = 3000.0f; // 처음 발견하고 나서만 인지 영역 생성
+	float RecogRadius = 4000.0f; // 처음 발견하고 나서만 인지 영역 생성
 
 	if (nullptr == World) return;
 
