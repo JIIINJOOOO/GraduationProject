@@ -13,7 +13,8 @@ enum class EMovementStateCPP : uint8
 	MS_WALKING UMETA(DisplayName = "Walking"),
 	MS_ONWALL UMETA(DisplayName = "OnWall"),
 	MS_JUMPING UMETA(DisplayName = "Jumping"),
-	MS_FALING UMETA(DisplayName = "Faling")
+	MS_FALING UMETA(DisplayName = "Faling"),
+	MS_HANGING UMETA(DisplayName = "Hanging")
 };
 
 UCLASS()
