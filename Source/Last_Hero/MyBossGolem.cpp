@@ -18,7 +18,13 @@ AMyBossGolem::AMyBossGolem()
 	AIControllerClass = AMyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	IsAttacking = false;
+	IsRushing = false;
+	IsWalkingAtk = false;
+	IsStomping = false;
 	IsDown = false;
+	IsFalling = false;
+	IsDetectInit = false;
+	IsPlayerInDetRange = false;
 }
 
 void AMyBossGolem::Attack_CloseRange()
@@ -42,6 +48,8 @@ void AMyBossGolem::Attack_CloseRange()
 		}*/
 	}
 	GolemAnim->PlayGolemMontage(RndAtkMtg);
+	//GolemAnim->PlayGolemMontage(STOMP_ATTACK);
+
 
 	IsAttacking = true;
 }
@@ -68,6 +76,11 @@ bool AMyBossGolem::getIsAttacking()
 bool AMyBossGolem::getIsDown()
 {
 	return IsDown;
+}
+
+bool AMyBossGolem::getIsFalling()
+{
+	return IsFalling;
 }
 
 GOLEM_ANIM_MONTAGE AMyBossGolem::getRndAtkMtg()
@@ -105,66 +118,78 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 	switch (rnd)
 	{
 	case 1:
-		return NORMAL_ATTACK;
+		if (!IsBreakLeftArm)
+			return NORMAL_ATTACK;
+		break;
 	case 2:
-		if ((!IsBreakLeftArm || !IsBreakRightArm) && RndAtkMtg != HANDCLAP_ATTACK)
+		if ((!IsBreakLeftArm && !IsBreakRightArm) && RndAtkMtg != HANDCLAP_ATTACK)
 			return HANDCLAP_ATTACK;
-		else
+		else if (IsBreakLeftArm)
+			return SWEEP_ATTACK;
+		else if (IsBreakRightArm)
+			return PUNCH_ATTACK;
+		break;
 	case 3:
-		if (IsBreakLeftArm)
+		if (!IsBreakRightArm)
 			return SWEEP_ATTACK;
 		else
 			return PUNCH_ATTACK;
+		break;
 	case 4:
-		if (IsBreakRightArm)
+		if (!IsBreakLeftArm)
 			return PUNCH_ATTACK;
 		else
 			return SWEEP_ATTACK;
+		break;
 	case 5:
-		if (RndAtkMtg != STOMP_ATTACK)
-		{
-			LaunchForce = 1000.0f;
-			return STOMP_ATTACK;
-		}
-		else
+		LaunchForce = 2000.0f;
+		IsStomping = true;
+		return STOMP_ATTACK;
+		break;
 	case 6:
-		if (RndAtkMtg != WALKING_ATTACK)
-		{
-			LaunchForce = 1000.0f;
-			return WALKING_ATTACK;
-		}
-		else 
+		LaunchForce = 1000.0f;
+		IsWalkingAtk = true;
+		return WALKING_ATTACK;
+		break;
 	case 7: 
-		if (RndAtkMtg != RUSH_CLOSE)
-		{
-			LaunchForce = 1000.0f;
-			return RUSH_CLOSE;
-		}
-		else
-			return STOMP_ATTACK;
-	case 10: // Long Range
-		if (RndAtkMtg != RUSH_ATTACK)
-		{
-			LaunchForce = 1000.0f;
-			return RUSH_ATTACK;
-		}
-		else
-	case 11:
+		LaunchForce = 1500.0f;
+		IsRushing = true;
+		return RUSH_CLOSE;
+		break;
+	case 8:
+		return ICE_EXPLO;
+		break;
+	case 11: // Long Range
+		LaunchForce = 1500.0f;
+		IsRushing = true;
+		return RUSH_ATTACK;
+		break;
+	case 12:
 		if (!IsHalfBreakLeftArm && !IsBreakLeftArm && !IsHalfBreakRightArm && !IsBreakRightArm && RndAtkMtg != THROW_STONE)
 			return THROW_STONE;
-	case 12:
+		break;
+	case 13:
 		if (!IsHalfBreakRightArm && !IsBreakRightArm && RndAtkMtg != THROW_SPEAR)
 			return THROW_SPEAR;
-	case 15: // Down State
-		if (!IsHalfBreakLeftArm && !IsBreakLeftArm)
+		break;
+	case 16: // Down State
+		if (!IsBreakLeftArm && !IsHalfBreakLeftArm)
 			return DOWN_ATTACK_1;
 		else
 			return DOWN_ATTACK_2;
-	case 16:
-		if (!IsHalfBreakRightArm && !IsBreakRightArm)
+		break;
+	case 17:
+		if (!IsBreakRightArm && !IsHalfBreakRightArm)
 			return DOWN_ATTACK_2;
 		else
 			return DOWN_ATTACK_1;
+		break;
+	default:
+		if (IsDown)
+			return SWEEP_ATTACK;
+		else
+			return NORMAL_ATTACK;
+		break;
 	// 이전 오류 안나던 case문
 	/*case 1:
 		return NORMAL_ATTACK;
@@ -226,6 +251,15 @@ void AMyBossGolem::ChargeSpearLoopEnd()
 	GolemAnim->JumpToThrowSpearMontageSection(FName("End"));
 }
 
+void AMyBossGolem::ChargeStompingLoopStart()
+{
+	GolemAnim->JumpToStompAttackMontageSection(FName("Loop"));
+}
+void AMyBossGolem::ChargeStompingLoopEnd()
+{
+	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
+}
+
 
 
 
@@ -233,7 +267,10 @@ void AMyBossGolem::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupte
 {
 	ABCHECK(IsAttacking);
 	IsAttacking = false;
-	IsFalling = false;
+	IsRushing = false;
+	IsStomping = false;
+	IsWalkingAtk = false;
+	//IsFalling = false;
 	OnAttackEnd.Broadcast();
 }
 
@@ -244,15 +281,15 @@ void AMyBossGolem::BeginPlay()
 	BoneMap.Emplace("Bip001-R-Hand", 3);
 	BoneMap.Emplace("Bip001-R-Forearm", 5);
 	BoneMap.Emplace("Bip001-R-UpperArm", 7);
-	BoneMap.Emplace("Bip001-R-Foot", 7);
-	BoneMap.Emplace("Bip001-R-Calf", 9);
-	BoneMap.Emplace("Bip001-R-Thigh", 11);
+	BoneMap.Emplace("Bip001-R-Foot", 20);
+	BoneMap.Emplace("Bip001-R-Calf", 22);
+	BoneMap.Emplace("Bip001-R-Thigh", 24);
 	BoneMap.Emplace("Bip001-L-Hand", 3);
 	BoneMap.Emplace("Bip001-L-Forearm", 5);
 	BoneMap.Emplace("Bip001-L-UpperArm", 7);
-	BoneMap.Emplace("Bip001-L-Foot", 7);
-	BoneMap.Emplace("Bip001-L-Calf", 9);
-	BoneMap.Emplace("Bip001-L-Thigh", 11);
+	BoneMap.Emplace("Bip001-L-Foot", 20);
+	BoneMap.Emplace("Bip001-L-Calf", 22);
+	BoneMap.Emplace("Bip001-L-Thigh", 24);
 }
 
 void AMyBossGolem::PostInitializeComponents()
@@ -270,12 +307,12 @@ void AMyBossGolem::PostInitializeComponents()
 void AMyBossGolem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (!IsDownInit && IsDown)
+	/*if (!IsDownInit && IsDown)
 	{
 		GolemAnim->PlayGolemMontage(GOLEM_ANIM_MONTAGE::BROKENLEG_FALLING);
 		IsFalling = true;
 		IsDownInit = true;
-	}
+	}*/
 	/*if (IsCreatingSpear)
 	{
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::ChargeSpear, 2.5f, true, 0.0f);

@@ -24,20 +24,40 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
 	float DetectRadius = 2000.0f;
+	float RecogRadius = 3000.0f; // 처음 발견하고 나서만 인지 영역 생성
 
 	if (nullptr == World) return;
-	TArray<FOverlapResult> OverlapResults;
-	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
-	bool bResult = World->OverlapMultiByChannel(
-		OverlapResults,
-		Center,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
-		FCollisionShape::MakeSphere(DetectRadius),
-		CollisionQueryParam
-	);
 
 	auto BossGolem = Cast<AMyBossGolem>(OwnerComp.GetAIOwner()->GetPawn());
+	
+	TArray<FOverlapResult> OverlapResults;
+
+	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
+	bool bResult = false;
+	if (BossGolem->IsDetectInit == false)
+	{
+		bResult = World->OverlapMultiByChannel(
+			OverlapResults,
+			Center,
+			FQuat::Identity,
+			ECollisionChannel::ECC_GameTraceChannel2,
+			FCollisionShape::MakeSphere(DetectRadius),
+			CollisionQueryParam
+		);
+	}
+	else // 이미 발견한 상태일 때
+	{
+		bResult = World->OverlapMultiByChannel(
+			OverlapResults,
+			Center,
+			FQuat::Identity,
+			ECollisionChannel::ECC_GameTraceChannel2,
+			FCollisionShape::MakeSphere(RecogRadius),
+			CollisionQueryParam
+		);
+	}
+
+
 	if (bResult)
 	{
 		for (auto const& OverlapResult : OverlapResults)
@@ -58,40 +78,48 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 				{
 					OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::AttackTargetKey, nullptr);
 				}*/
+				if (BossGolem->IsDetectInit == false) // 처음 플레이어를 발견한거면
+				{
+					BossGolem->IsDetectInit = true;
+				}
 				float Dist = MyCharacter->GetDistanceTo(ControllingPawn);
+				BossGolem->Distance = Dist;
 				OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::GolemRotKey, BossGolem->GetActorRotation());
 
 				//OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, Dist);
-				if (Dist <= 900.0f) // Close Range
+				if (!BossGolem->getIsFalling())
 				{
-					OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, Dist);
-					//OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true); // 이때가 true일때
-					FVector LookVector = MyCharacter->GetActorLocation() - BossGolem->GetActorLocation();
-					LookVector.Z = 0.0f;
-					FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
-					if (BossGolem->getIsAttacking() == true)
+					if (Dist <= 900.0f) // Close Range
 					{
-						OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::TargetRotKey, TargetRot);
+						OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, Dist);
+						//OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true); // 이때가 true일때
+						FVector LookVector = MyCharacter->GetActorLocation() - BossGolem->GetActorLocation();
+						LookVector.Z = 0.0f;
+						FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
+						if (BossGolem->getIsAttacking() == true)
+						{
+							OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::TargetRotKey, TargetRot);
+
+						}
+						float result = FMath::Abs(BossGolem->GetActorRotation().Yaw - TargetRot.Yaw);
+						if (result <= 20.0f)
+						{
+							OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::TargetRotKey, FRotator(0.0f, 0.0f, 0.0f));
+							OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
+							OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true);
+						}
 
 					}
-					float result = FMath::Abs(BossGolem->GetActorRotation().Yaw - TargetRot.Yaw);
-					if (result <= 20.0f)
+					else	// Long Range
 					{
-						OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::TargetRotKey, FRotator(0.0f, 0.0f, 0.0f));
+						OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, 10000.0f);
+						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false);
 						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
-						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true);
+						if (!BossGolem->getIsDown())
+							OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, FMath::RandRange(0, 1));
+						else
+							OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, false);
 					}
-
-				}
-				else	// Long Range
-				{
-					OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, 10000.0f);
-					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false);
-					OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
-					if(!BossGolem->getIsDown())
-						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, FMath::RandRange(0, 1));
-					else
-						OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsLongRangePatternKey, false);
 				}
 
 
@@ -100,7 +128,9 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, MyCharacter);
 
+
 				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+				//DrawDebugSphere(World, Center, RecogRadius, 16, FColor::Green, false, 0.2f);
 
 				DrawDebugPoint(World, MyCharacter->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
 				DrawDebugLine(World, ControllingPawn->GetActorLocation(), MyCharacter->GetActorLocation(), FColor::Blue, false, 0.27f);
@@ -109,7 +139,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 		}
 	}
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, nullptr);
-	// montage 보는 코드
-	OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::GolemMontageKey,BossGolem->RndAtkMtg);
+
 	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+	DrawDebugSphere(World, Center, RecogRadius, 16, FColor::Yellow, false, 0.2f);
  }

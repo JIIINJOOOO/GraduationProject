@@ -22,6 +22,8 @@ protected:
 	/*virtual void OnTaskFinished(UBehaviorTreeComponent & OwnerComp,
 		uint8 * NodeMemory,
 		EBTNodeResult::Type TaskResult);*/
+	FTimerHandle TimerHandle;
 private:
 	bool IsAttacking = false;
+	bool bCanAttackAgain = false;
 };

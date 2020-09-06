@@ -19,7 +19,8 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	auto BossGolem = Cast<AMyBossGolem>(OwnerComp.GetAIOwner()->GetPawn());
 	if (nullptr == BossGolem)
 		return EBTNodeResult::Failed;
-
+	if(BossGolem->getIsFalling())
+		return EBTNodeResult::Failed;
 
 	BossGolem->Attack_CloseRange();
 	
@@ -29,6 +30,9 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	BossGolem->OnAttackEnd.AddLambda([this]() -> void {
 		IsAttacking = false;
 	});
+	/*GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]() {
+		bCanAttackAgain = true;
+	}, 2.0f, 1);*/
 
 	return EBTNodeResult::InProgress;
 }
@@ -36,17 +40,23 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 void UBTTask_Attack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-	if (!IsAttacking && (OwnerComp.GetBlackboardComponent()->GetValueAsRotator(AMyAIController::TargetRotKey) != FRotator(0.0f,0.0f,0.0f)))
+	if (!IsAttacking && (OwnerComp.GetBlackboardComponent()->GetValueAsRotator(AMyAIController::TargetRotKey) != FRotator(0.0f,0.0f,0.0f))) // 플레이어 로테이션 바뀌었을때
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false); 
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, true);
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		/*if (bCanAttackAgain)
+		{*/
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, false);
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, true);
+			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		//}
 	}
-	else if (!IsAttacking && (OwnerComp.GetBlackboardComponent()->GetValueAsRotator(AMyAIController::TargetRotKey) == FRotator(0.0f, 0.0f, 0.0f)))
+	else if (!IsAttacking && (OwnerComp.GetBlackboardComponent()->GetValueAsRotator(AMyAIController::TargetRotKey) == FRotator(0.0f, 0.0f, 0.0f))) // 플레이어 로테이션 안바뀌었을때
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true);
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		/*if (bCanAttackAgain)
+		{*/
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsAttackingKey, true);
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(AMyAIController::IsTurningKey, false);
+			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		//}
 	}
 
 }

@@ -28,6 +28,8 @@ EBTNodeResult::Type UBTTask_LongRangeAttack::ExecuteTask(UBehaviorTreeComponent 
 
 	if(BossGolem->getIsDown())
 		return EBTNodeResult::Failed;
+	if(BossGolem->getIsFalling())
+		return EBTNodeResult::Failed;
 
 
 	FVector LookVector = Target->GetActorLocation() - BossGolem->GetActorLocation();

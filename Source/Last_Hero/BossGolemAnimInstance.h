@@ -21,6 +21,8 @@ public:
 
 	void PlayGolemMontage(GOLEM_ANIM_MONTAGE select);
 	void JumpToThrowSpearMontageSection(FName section);
+	void JumpToStompAttackMontageSection(FName section);
+
 
 public:
 	/*FOnCreateSpearDelegate OnCreateSpear;*/
@@ -53,6 +55,10 @@ private:
 		void AnimNotify_ThrowSpear();
 	UFUNCTION()
 		void AnimNotify_ChargeSpear();
+	UFUNCTION()
+		void AnimNotify_ChargeStomping();
+	UFUNCTION()
+		void AnimNotify_StompDamage();
 	//FName GetThrowSpearMontageSectionName(int32 Section);
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
@@ -72,6 +78,8 @@ private:
 		UAnimMontage* StompAttackMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* WalkingAttackMontage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* IceExploMontage;
 	// - Long Range
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* RushAttackMontage;

@@ -15,6 +15,7 @@ UBossGolemAnimInstance::UBossGolemAnimInstance()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> PUNCH_ATTACK_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/Golem_Punch_Anim_Montage.Golem_Punch_Anim_Montage")); // 애니메이션 똑같은데 조금 빠른 어택 애니메이션
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> STOMP_ATTACK_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/Golem_Stomping_Anim_Montage.Golem_Stomping_Anim_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> WALKING_ATTACK_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/Golem_Walking_Attack_Anim_Montage.Golem_Walking_Attack_Anim_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ICE_EXPLO_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/Golem_IceExplo_Mont.Golem_IceExplo_Mont"));
 
 	// - Long Range
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> RUSH_ATTACK_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Golem_Mesh/Montage/Golem_Rush_Anim_Montage.Golem_Rush_Anim_Montage"));
@@ -54,6 +55,10 @@ UBossGolemAnimInstance::UBossGolemAnimInstance()
 	if (WALKING_ATTACK_MONTAGE.Succeeded())
 	{
 		WalkingAttackMontage = WALKING_ATTACK_MONTAGE.Object;
+	}
+	if (ICE_EXPLO_MONTAGE.Succeeded())
+	{
+		IceExploMontage = ICE_EXPLO_MONTAGE.Object;
 	}
 	// - Long Range
 	if (RUSH_ATTACK_MONTAGE.Succeeded())
@@ -120,6 +125,12 @@ void UBossGolemAnimInstance::PlayGolemMontage(GOLEM_ANIM_MONTAGE select)
 	case WALKING_ATTACK:
 		Montage_Play(WalkingAttackMontage, 1.0f);
 		break;
+	case RUSH_CLOSE:
+		Montage_Play(RushAttackMontage, 1.0f);
+		break;
+	case ICE_EXPLO:
+		Montage_Play(IceExploMontage, 1.0f);
+		break;
 	// - Long Range
 	case RUSH_ATTACK:
 		Montage_Play(RushAttackMontage, 1.0f);
@@ -148,6 +159,11 @@ void UBossGolemAnimInstance::JumpToThrowSpearMontageSection(FName section)
 	ABCHECK(Montage_IsPlaying(ThrowSpearMontage));
 	Montage_JumpToSection(section, ThrowSpearMontage);
 }
+void UBossGolemAnimInstance::JumpToStompAttackMontageSection(FName section)
+{
+	ABCHECK(Montage_IsPlaying(StompAttackMontage));
+	Montage_JumpToSection(section, StompAttackMontage);
+}
 void UBossGolemAnimInstance::AnimNotify_Launch()
 {
 	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
@@ -174,6 +190,16 @@ void UBossGolemAnimInstance::AnimNotify_ChargeSpear()
 {
 	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
 	BossGolem->ChargeSpear();
+}
+void UBossGolemAnimInstance::AnimNotify_ChargeStomping()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->ChargeStomping();
+}
+void UBossGolemAnimInstance::AnimNotify_StompDamage()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->StompDamage();
 }
 //FName UBossGolemAnimInstance::GetThrowSpearMontageSectionName(int32 Section)
 //{
