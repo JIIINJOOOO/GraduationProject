@@ -120,4 +120,34 @@ public: // Montages
 		UAnimMontage* Climb_End_Mtg;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* Walk_Backwards_1_Mtg;
+
+public:
+	// Animation Func
+	void StableSwordInward();	// 암살
+	void Jump();
+	void OutSword();	// 
+	void InSword();
+	void Death();
+	void OutHammer();
+	void InHammer();
+	void ClimbEnd();
+	void StandingTurnLeft();
+	void UnarmedTurnRight();
+	void WalkBackwards();
+	void SwordShieldIdle();	// 이거도 방어?
+	void SwordShieldImpact1();	// 공격 받았을때 같은데
+	void SwordShieldImpact();	// ???
+	void ShieldBlock(); // 방어
+	void Pickup();
+	void ShieldStrike();	// 방패러 ㅊ;ㄴ,ㄴ가
+	void Berserker();
+	void StandingDibeForward();
+	void Evade();
+	void BracedHangToCrouch();
+	void SwordInwardSlash();
+	void SwordShieldBlockIdle();
+	void SwordSlashCombo1();
+	void SwordSlashCombo2();
+	void SwordSlashCombo3();
+	void Move(float speedSide = 0.f, float speedForward = 200.f);
 };

@@ -4,12 +4,21 @@
 #include "MyGameModeBase.h"
 #include "MyCharacter.h"
 #include "MyMonster_Goblin.h"
+#include "MyBossGolem.h"
 #include "MyPlayerController.h"
+
+#define MAX_PLAYER 10
+
+// Global Values
+Network net;	// 다른 소스파일에서 extern으로 가져다 씀
 
 AMyGameModeBase::AMyGameModeBase()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	DefaultPawnClass = AMyCharacter::StaticClass();
 	PlayerControllerClass = AMyPlayerController::StaticClass();
+	MonToSpawn = AMyMonster_Goblin::StaticClass();
+	
 	/*static ConstructorHelpers::FObjectFinder<UBlueprint> GOBLIN(TEXT("Blueprint'/Game/Game/BluePrints/Goblin/Monster_BP_2.Monster_BP_2'"));
 	if (GOBLIN.Object) {
 		MonsterBP = GOBLIN.Object;
@@ -19,6 +28,9 @@ AMyGameModeBase::AMyGameModeBase()
 	if (GOBLIN_AI.Succeeded()) {
 		MonsterAIBP = GOBLIN_AI.Class;
 	}
+
+
+	// GetMesh()->SetAnimInstanceClass(AnimBP.Class);
 	//static ConstructorHelpers::FClassFinder<ACharacter> BP_CHARACTER_C(TEXT("/Game/Game/BluePrints/ThirdPersonCharacter.ThirdPersonCharacter_C"));
 
 	/*if (BP_CHARACTER_C.Succeeded())
@@ -40,12 +52,18 @@ void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 
 void AMyGameModeBase::BeginPlay()
 {
-	SpawnMonster();
+	// SpawnMonster();
+	// UE_LOG(LogTemp, Log, TEXT("GMB BeginPlay"));
+	if (net.GetStatus() != p_login) {
+		CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234" };
+		net.SendPacket(&p);
+	}
 }
 
 void AMyGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	ProcessEvent();
 }
 
 
@@ -62,4 +80,43 @@ void AMyGameModeBase::SpawnMonster()
 	AMyMonster_Goblin* SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
+}
+
+void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z) {
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = NULL;
+	SpawnInfo.bDeferConstruction = false;
+	FVector SpawnLocation = { x,y,z };
+	auto MyChar = GetWorld()->SpawnActor<AMyCharacter>(DefaultPawnClass, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+	MyChar->SetID(oid);
+}
+
+void AMyGameModeBase::ProcessEvent() {
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+
+	switch (ev.type) {
+	case sc_enter_obj: {
+		if (ev.oid < MAX_PLAYER) {
+			SpawnPlayer(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+		}
+		else if (ev.oid == 20000) {
+			// SpawnBoss(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+		}
+		else {
+			// SpawnMonster(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+		}
+		net.PopEvent();
+	}break;
+
+	default:
+		break;
+	}
 }

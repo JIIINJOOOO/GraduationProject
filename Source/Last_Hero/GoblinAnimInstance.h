@@ -47,4 +47,15 @@ private:
 		float speedSide_cpp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
 		float speedForward_cpp;
+
+public:
+	void StandingBlockIdle();
+	void Death();
+	void Slash();
+	void AttackBackhand();
+	void AttackDownward();
+	void Attack3Combo();
+	void HitReaction();
+	void BlockReact();
+	void GettingUp();
 };

@@ -2,8 +2,11 @@
 
 
 #include "Network.h"
-HANDLE loginEvent;
+#include "MyGameModeBase.h"
+
+
 Network::Network() {
+	// hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	int retval;
 	WSAData wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return;
@@ -12,9 +15,13 @@ Network::Network() {
 	if (m_sock == INVALID_SOCKET) return;
 
 	// Set nagle algorithm off
-	// BOOL option = TRUE;
-	// setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (char*)& option, sizeof(option));
+	BOOL option = TRUE;
+	setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (char*)& option, sizeof(option));
+
 	m_status = p_free;
+	isHost = false;
+	isMoving = false;
+	wpnType = wpn_none;
 
 	//connect()
 	SOCKADDR_IN serveraddr;
@@ -27,28 +34,33 @@ Network::Network() {
 
 	m_sendEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	loginEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-
 	HANDLE rthread = CreateThread(NULL, 0, RecvThread, this, 0, NULL);
 
+	gob_num = 0;
+	cyclops_num = 0;
+	mini_num = 0;
+	lazard_num = 0;
+	beetle_num = 0;
+	mon_num = 0;
 }
 
 DWORD WINAPI Network::RecvThread(LPVOID p) {
-	int retval;
+	int retval = 0;
 	Network* arg = reinterpret_cast<Network*>(p);
 	SOCKET sock = arg->m_sock;
 	int recvBytes = 0;
 	while (true) {
-
 		// retval = recv(sock, (char*)&recvBytes, sizeof(int), 0);
 		// retval = recv(sock, arg->recvBuf, recvBytes, 0);
 
-		retval = recvn(sock, arg->recvBuf, BUFSIZE, 0);
+		retval = recv(sock, arg->recvBuf, BUFSIZE, 0);
 		// if (retval == SOCKET_ERROR) break;
 		// if (retval == 0) break;
 
 		arg->recvBuf[retval] = '\0';
-
 		arg->ProcessPacket(arg->recvBuf);
+		// Sleep(1000 / 60);
+		// SetEvent(gmbEvent);
 	}
 	return 0;
 }
@@ -65,25 +77,257 @@ void Network::ProcessPacket(char* buf) {
 	switch (buf[1]) {
 	case sc_login_ok: {
 		SC_LOGIN_OK* pack = reinterpret_cast<SC_LOGIN_OK*>(buf);
+		my_id = pack->uid;
 		m_status = p_login;
-	}
-					  break;
+		SetEvent(loginEvent);
+
+		GMB_Event ev;
+		ev.type = sc_login_ok;
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+
+	} break;
 	case sc_login_fail:
 		break;
 	case sc_signup_ok:
 		break;
 	case sc_signup_fail:
 		break;
-	case sc_leave:
+	case sc_leave: {
+		SC_LEAVE* pack = reinterpret_cast<SC_LEAVE*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->id;
+	}break;
+	case sc_enter_obj: {
+		SC_OBJECT_ENTER* pack = reinterpret_cast<SC_OBJECT_ENTER*>(buf);
+
+		// 	if (pack->oid == 0) break;
+		//	if (pack->oid < 10) {
+		GMB_Event ev;
+		ev.type = sc_enter_obj;
+		ev.pos = pack->pos;
+		ev.oid = pack->oid;
+		// gmbLock.lock();
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+
+		// gmb.type = sc_enter_obj;
+		// gmb.pos = pack->pos;
+		// gmb.oid = pack->oid;
+		// gmbLock.unlock();
+			// myGame.PostLogin(&players[pack->oid]);
+			// players[pack->oid];
+	//	}
+	}break;
+	case sc_update_obj: {
+		SC_UPDATE_OBJ* pack = reinterpret_cast<SC_UPDATE_OBJ*>(buf);
+		GMB_Event ev;
+		ev.type = sc_update_obj;
+		ev.pos = pack->pos;
+		ev.oid = pack->oid;
+		UE_LOG(LogTemp, Log, TEXT("wnr313 -- %d"), ev.oid)
+			ev.rotation = pack->rotation;
+		ev.velocity = pack->velocity;
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+
+	}break;
+	case sc_attack: {
+		SC_OBJ_ATTACK* pack = reinterpret_cast<SC_OBJ_ATTACK*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.mp = static_cast<short>(pack->combo);	// 
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_fireball: {
+		SC_FIREBALL* pack = reinterpret_cast<SC_FIREBALL*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_guard: {
+		SC_OBJ_GUARD* pack = reinterpret_cast<SC_OBJ_GUARD*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_jump: {
+		SC_JUMP* pack = reinterpret_cast<SC_JUMP*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_evade: {
+		SC_EVADE* pack = reinterpret_cast<SC_EVADE*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_weapon_on: {
+		SC_WEAPON_ON* pack = reinterpret_cast<SC_WEAPON_ON*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_weapon_off: {
+		SC_WEAPON_OFF* pack = reinterpret_cast<SC_WEAPON_OFF*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_level_up: {
+		SC_LEVEL_UP* pack = reinterpret_cast<SC_LEVEL_UP*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.hp = pack->hp;
+		ev.mp = pack->mp;
+		ev.level = pack->level;
+		ev.exp = pack->exp;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_dead: {
+		SC_DEAD* pack = reinterpret_cast<SC_DEAD*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_block: {
+		SC_BLOCK* pack = reinterpret_cast<SC_BLOCK*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_set_host:
+		isHost = true;
 		break;
-	case login_packet: {
-		SC_LOGIN* pack = reinterpret_cast<SC_LOGIN*>(buf);
-		if (pack->state) m_status = p_login;
-	}
-					   break;
+	case sc_berserk: {
+		SC_BERSERK* pack = reinterpret_cast<SC_BERSERK*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_move_stop: {
+		SC_MOVE_STOP* pack = reinterpret_cast<SC_MOVE_STOP*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_sword_on: {
+		SC_SWORD_ON * pack = reinterpret_cast<SC_SWORD_ON*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		wpnType = wpn_sword;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_sword_off: {
+		SC_SWORD_ON * pack = reinterpret_cast<SC_SWORD_ON*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		wpnType = wpn_none;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_hammer_on: {
+		SC_HAMMER_ON * pack = reinterpret_cast<SC_HAMMER_ON*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		wpnType = wpn_hammer;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_hammer_off: {
+		SC_HAMMER_ON * pack = reinterpret_cast<SC_HAMMER_ON*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		wpnType = wpn_none;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
+	case sc_set_npc_target: {
+		SC_SET_NPC_TARGET* pack = reinterpret_cast<SC_SET_NPC_TARGET*>(buf);
+		GMB_Event ev;
+		if (pack->oid == 10000) {
+			ev.type = pack->type;
+			ev.oid = pack->target;
+			ev.hp = pack->oid;
+		}
+		// ev.type = pack->type;
+		// ev.oid = pack->oid;
+		// ev.pos = pack->pos;
+
+		eventLock.lock();
+		eventQue.push(ev);
+		eventLock.unlock();
+	}break;
 	default:
 		break;
 	}
+	// SetEvent(gmbEvent);
 }
 
 void Network::SetAccountInfo(const char* id, const char* pass) {
@@ -94,7 +338,18 @@ void Network::SetAccountInfo(const char* id, const char* pass) {
 }
 
 int Network::GetStatus() const {
+	// return (int)gmb.type;
 	return m_status;
+}
+
+int Network::GetMyID() const {
+	return my_id;
+}
+
+void Network::PopEvent() {
+	eventLock.lock();
+	eventQue.pop();
+	eventLock.unlock();
 }
 
 int recvn(SOCKET s, char *buf, int len, int flags) {

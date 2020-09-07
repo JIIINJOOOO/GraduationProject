@@ -36,3 +36,19 @@ void UCyclopsAnimInstance::PlayCyclopsAnimMontage(UAnimMontage * Mtg)
 {
 	Montage_Play(Mtg, 1.0f);
 }
+
+void UCyclopsAnimInstance::Hitreaction() {
+	Montage_Play(HitReaction_Mtg, 1.0f);
+}
+
+void UCyclopsAnimInstance::Attack1() {
+	Montage_Play(Attack_1_Mtg, 1.0f);
+}
+
+void UCyclopsAnimInstance::Attack2() {
+	Montage_Play(Attack_2_Mtg, 1.0f);
+}
+
+void UCyclopsAnimInstance::Attack3() {
+	Montage_Play(Attack_3_Mtg, 1.0f);
+}

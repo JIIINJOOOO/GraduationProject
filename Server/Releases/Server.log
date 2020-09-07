@@ -1,0 +1,25 @@
+﻿  CDBConnector.cpp
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(19): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(26): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(32): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(51): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(61): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(76): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(86): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cdbconnector.cpp(98): warning C4244: '인수': 'SQLINTEGER'에서 'SQLSMALLINT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  CMonster.cpp
+  CObject.cpp
+c:\users\유재현\documents\github\lh_server\server\cobject.cpp(40): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cobject.cpp(41): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cobject.cpp(42): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cobject.cpp(44): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  CPlayer.cpp
+  CServer.cpp
+c:\users\유재현\documents\github\lh_server\server\cserver.cpp(401): warning C4477: 'printf' : 서식 문자열 '%s'에 'char *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'std::string'입니다.
+c:\users\유재현\documents\github\lh_server\server\cserver.cpp(425): warning C4477: 'printf' : 서식 문자열 '%s'에 'char *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'std::string'입니다.
+  CLobby.cpp
+  main.cpp
+  코드를 생성하고 있습니다.
+  All 175 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  코드를 생성했습니다.
+  Server.vcxproj -> C:\Users\유재현\Documents\GitHub\LH_Server\Release\Server.exe

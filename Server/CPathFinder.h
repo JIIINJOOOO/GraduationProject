@@ -1,6 +1,7 @@
 #pragma once
+#include "CTerrain.h"
 #include "node.h"
-#define WAY_DIR 4
+#define WAY_DIR 8
 
 
 #define MAX_LIST_LEN 1000
@@ -9,23 +10,30 @@ class CPathFinder {
 private:
 	list<Node*> openList;
 	list<Node*> closedList; 
-	list<Position> pathList;
-	Position start, end;
-	Position direction[WAY_DIR];
-	// Position current;
+	// list<Position> pathList;
+	POS_2D start, end;
+	POS_2D direction[WAY_DIR];
 	int idx;
 
+	// POS_2D
+	list<POS_2D> pathList;
+
+
 	// A* 2
-	list<Position>::iterator iter;
+	// list<POS_2D>::iterator iter;
 
 public:
 	CPathFinder() = default;
 	~CPathFinder() = default;
 
-	bool IsOutMap(const Position& pos, int direction);
+	
+	// bool IsOutMap(const Position& pos, int direction);
+	bool IsOutMap(const POS_2D& pos, int direction);
 	bool IsOverlap(Node* node);
-	list<Position> GetPath(Position start, Position end);
-	Node* PathFind(Node* parent, Position end);
+	// list<Position> GetPath(Position start, Position end);
+	list<POS_2D> GetPath(POS_2D start, POS_2D end);
+
+	Node* PathFind(Node* parent, POS_2D end);
 
 	// Test
 	//void FindPath();

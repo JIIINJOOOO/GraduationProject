@@ -4,12 +4,27 @@
 
 #include "Last_Hero.h"
 #include "GameFramework/Character.h"
+#include "UObject/ConstructorHelpers.h"
+#include "MyAnimInstance.h"
+#include "GoblinAnimInstance.h"
 #include "MyMonster_Goblin.generated.h"
 
 UCLASS()
 class LAST_HERO_API AMyMonster_Goblin : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	int id;
+	int hp;
+	UGoblinAnimInstance* animInstance;
+	FVector velocity;
+	float speed;
+	FRotator rotation;
+	bool isMoving;
+
+	bool isDead;
+	int deadCnt;
 
 public:
 	// Sets default values for this character's properties
@@ -42,5 +57,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 		FVector GetMonsterPos();
 
-
+	void SetID(const int& id);
 };

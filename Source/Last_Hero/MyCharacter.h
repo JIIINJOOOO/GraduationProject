@@ -5,6 +5,7 @@
 #include "Last_Hero.h"
 #include "GameFramework/Character.h"
 #include "UObject/ConstructorHelpers.h"
+#include "MyAnimInstance.h"
 #include "MyCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -21,6 +22,15 @@ UCLASS()
 class LAST_HERO_API AMyCharacter : public ACharacter
 {
 	GENERATED_BODY()
+private:
+	int id;
+	FVector position;
+	FRotator rotation;
+	int hp;
+	int mp;
+	float speed;
+	FVector velocity;
+	UMyAnimInstance* animInstance;
 
 public:
 	// Sets default values for this character's properties
@@ -122,4 +132,6 @@ public:
 		
 	/*UPROPERTY()
 		class UMyAnimInstance* MyAnim;*/
+public:
+	void SetID(const int& id);
 };

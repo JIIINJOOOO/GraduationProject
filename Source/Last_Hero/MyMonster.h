@@ -6,10 +6,30 @@
 #include "GameFramework/Character.h"
 #include "MyMonster.generated.h"
 
+#define CYCLOPS_ID 11000
+#define BEETLE_ID 12000
+#define MINI_GOLEM_ID 13000
+#define LAZARD_ID 14000
+
 UCLASS()
 class LAST_HERO_API AMyMonster : public ACharacter
 {
 	GENERATED_BODY()
+private:
+	// 몬스터 이름들 다 하드코딩해서 가져오고 호스트한테서 물리값, 좌표 등 받아와서 중계만 해보자
+	FString monName1 = "BP_Cyclops";
+	FString monName2 = "BP_Beetle_Warrior";
+	FString monName3 = "Mini_golem";
+	FString monName4 = "BP_Lazardman";
+
+	int id;
+
+	FRotator rotation;
+	FVector velocity;
+	float speed;
+	bool isDead;
+	int hp;
+
 
 public:
 	// Sets default values for this character's properties
@@ -40,4 +60,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	bool IsCyclops();
+	bool IsBeetle();
+	bool IsMiniGolem();
+	bool IsLazard();
 };

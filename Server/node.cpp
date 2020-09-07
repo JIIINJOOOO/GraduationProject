@@ -1,6 +1,6 @@
 #include "node.h"
-
-bool Overlap_Start_End(Position s, Position e) {
+short board[SIDE_LEN][SIDE_LEN];
+bool Overlap_Start_End(POS_2D s, POS_2D e) {
 	if (s == e) return true;
 	return false;
 }
@@ -19,18 +19,30 @@ bool IsBlock(Position p) {
 	if (board[(int)p.x][(int)p.y-1] - 20 > p.z) return true;
 	return false;
 }
-Node::Node(Position pos, Node* parent, int g, Position h) {
+//Node::Node(Position pos, Node* parent, int g, Position h) {
+//	currentPos = pos;
+//	this->parent = parent;
+//	endPos = h;
+//
+//	// 임시로 g 자리에 방향을 받아서 처리해보자
+//	if (parent == nullptr) costG = 0;
+//	else if (g == X_UP || g == X_DOWN || g == Y_UP || g == Y_DOWN)
+//		costG = this->parent->GetCostG() + 10;
+//	else
+//		costG = this->parent->GetCostG() + 14;
+//
+//	SetCostH(h);
+//}
+
+Node::Node(POS_2D pos, Node* parent, int dir, POS_2D h) {
 	currentPos = pos;
 	this->parent = parent;
 	endPos = h;
 
-	// 임시로 g 자리에 방향을 받아서 처리해보자
-	if (parent == nullptr) costG = 0;
-	else if (g == X_UP || g == X_DOWN || g == Y_UP || g == Y_DOWN)
+	if (parent == NULL) costG = 0;
+	else if (dir == X_UP || dir == X_DOWN || dir == Y_UP || dir == Y_DOWN)
 		costG = this->parent->GetCostG() + 10;
-	else
-		costG = this->parent->GetCostG() + 14;
-
+	else costG = this->parent->GetCostG() + 14;
 	SetCostH(h);
 }
 
@@ -50,8 +62,9 @@ Node* Node::GetParent() const {
 	return parent;
 }
 
-Position Node::GetPosition() const {
+POS_2D Node::GetPosition() const {
 	return currentPos;
+	// return currentPos;
 }
 
 void Node::SetParent(Node* n) {
@@ -96,8 +109,16 @@ void Node::SetCostH(Position p, const int block) {
 				break;
 			}
 		}*/
-	costH = (abs(p.x - currentPos.x) + abs(p.y - currentPos.y));
+	
+	// 이거만
+	// costH = (abs(p.x - currentPos.x) + abs(p.y - currentPos.y));
 
+}
+
+void Node::SetCostH(POS_2D p) {
+	auto x = static_cast<unsigned short>(abs(p.x - currentPos.x));
+	auto y = static_cast<unsigned short>(abs(p.y - currentPos.y));
+	costH = (x + y) * 10;
 }
 
 void Node::SetCostH(Position p) {
@@ -109,7 +130,7 @@ void Node::SetCostH(Position p) {
 	
 
 
-	//
+	// ....---...
 	/*
 	여기서 높이를 고려해야 한다라...
 	중간값들을 고려해야하는데
