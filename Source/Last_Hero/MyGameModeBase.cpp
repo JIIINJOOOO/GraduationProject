@@ -52,7 +52,7 @@ void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 
 void AMyGameModeBase::BeginPlay()
 {
-	// SpawnMonster();
+	SpawnMonster();
 	// UE_LOG(LogTemp, Log, TEXT("GMB BeginPlay"));
 	if (net.GetStatus() != p_login) {
 		CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234" };
@@ -63,7 +63,7 @@ void AMyGameModeBase::BeginPlay()
 void AMyGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	ProcessEvent();
+	ProcessEvent2();
 }
 
 
@@ -75,7 +75,8 @@ void AMyGameModeBase::SpawnMonster()
 	SpawnInfo.Instigator = NULL;
 	SpawnInfo.bDeferConstruction = false;
 	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
-	FVector MonSpawnLocation = { 19266.0f,78928.0f,-440.0f };
+	FVector MonSpawnLocation = { 15429.8f,78471.57f,-445.6f };
+	// 15429.818359   78471.570312   -445.642273
 	// 몬스터 스폰 코드 -> 컨트롤러를 가져와야 할 듯
 	AMyMonster_Goblin* SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
@@ -93,7 +94,7 @@ void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z) {
 	MyChar->SetID(oid);
 }
 
-void AMyGameModeBase::ProcessEvent() {
+void AMyGameModeBase::ProcessEvent2() {
 	net.eventLock.lock();
 	if (net.eventQue.empty()) {
 		net.eventLock.unlock();

@@ -17,7 +17,7 @@
 #include "protocol.h"
 
 #define MAXLEN 10
-#define SERVERIP "192.168.10.30"
+#define SERVERIP "1.11.57.96"
 #define SERVERPORT 9000
 #define BUFSIZE 512
 #define MAX_USERS 4

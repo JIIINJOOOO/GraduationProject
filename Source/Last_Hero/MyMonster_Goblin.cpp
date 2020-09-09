@@ -17,13 +17,23 @@ AMyMonster_Goblin::AMyMonster_Goblin()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko_C"));
-	//if (SK_GOBLIN.Succeeded())
-	//{
-	//	GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
-	//}
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_GOBLIN(TEXT("/Game/Game/Mesh/Monster/Monster_Goblin_Mesh/goblin_d_shareyko.goblin_d_shareyko"));
+	if (SK_GOBLIN.Succeeded())
+	{
+		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
+	}
 
-	//GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	// --------------------------------------------------------------------------------------
+	// 프로젝트 켜진 상태에서 컴파일돌리면 문제가 없는데 언리얼 재시작할때는 73%에서 무한로딩걸림	
+	// static ConstructorHelpers::FClassFinder<UAnimInstance> AnimBP(TEXT("AnimBlueprint'/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin_C'"));
+	// if (AnimBP.Succeeded()) {
+	// 	GetMesh()->SetAnimInstanceClass(AnimBP.Class);
+	// }
+	// --------------------------------------------------------------------------------------
+
+	GetMesh()->SetRelativeTransform(FTransform(FVector(0.f, 0.f, -88.f)));
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin_C"));
 
 	//if (GOB_ANIM.Succeeded())
@@ -31,20 +41,19 @@ AMyMonster_Goblin::AMyMonster_Goblin()
 	//	GetMesh()->SetAnimInstanceClass(GOB_ANIM.Class);
 	//}
 
-	static ConstructorHelpers::FClassFinder<UObject> GOB_AICONTROLLER(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin_C"));
+	// static ConstructorHelpers::FClassFinder<UObject> GOB_AICONTROLLER(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin_C"));
 
 
-	if (GOB_AICONTROLLER.Succeeded())
-	{
-		AIControllerClass = GOB_AICONTROLLER.Class;
-		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	}
+	// if (GOB_AICONTROLLER.Succeeded())
+	// {
+	// 	AIControllerClass = GOB_AICONTROLLER.Class;
+	// 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	// }
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
 
 	id = -1;
 	id = 10000;
-	// velocity = { 1000.f,0.f,0.f };
 	velocity = { 0,0,0 };
 	speed = 1.f;
 	isMoving = false;

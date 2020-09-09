@@ -27,12 +27,12 @@ void AMyMonster::BeginPlay()
 	MonPos = GetActorLocation();
 	
 	
-	id = 10000 + net.mon_num;
-	if (net.isHost) {
-		CS_SPAWN_NPC pack{ sizeof(pack), cs_spawn_npc, id };
-		pack.pos = { MonPos.X, MonPos.Y, MonPos.Z };
-		net.SendPacket(&pack);
-	}
+	// id = 10000 + net.mon_num;
+	// if (net.isHost) {
+	// 	CS_SPAWN_NPC pack{ sizeof(pack), cs_spawn_npc, id };
+	// 	pack.pos = { MonPos.X, MonPos.Y, MonPos.Z };
+	// 	net.SendPacket(&pack);
+	// }
 }
 
 // Called every frame
