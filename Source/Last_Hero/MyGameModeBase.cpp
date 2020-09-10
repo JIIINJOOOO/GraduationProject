@@ -63,7 +63,7 @@ void AMyGameModeBase::BeginPlay()
 void AMyGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	ProcessEvent();
+	ProcessEvent3();
 }
 
 
@@ -93,7 +93,8 @@ void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z) {
 	MyChar->SetID(oid);
 }
 
-void AMyGameModeBase::ProcessEvent() {
+void AMyGameModeBase::ProcessEvent3() 
+{
 	net.eventLock.lock();
 	if (net.eventQue.empty()) {
 		net.eventLock.unlock();

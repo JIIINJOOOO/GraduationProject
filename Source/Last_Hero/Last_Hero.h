@@ -2,7 +2,13 @@
 
 #pragma once
 
+#include "UMG.h"
+#include "UMGStyle.h"
+#include "Slate/SObjectWidget.h"
+#include "IUMGModule.h"
+#include "Blueprint/UserWidget.h"
 #include "EngineMinimal.h"
+
 
 DECLARE_LOG_CATEGORY_EXTERN(Last_Hero, Log, All);
 #define ABLOG_CALLINFO (FString(__FUNCTION__) + TEXT("(") + FString::FromInt(__LINE__) + TEXT(")"))
