@@ -138,7 +138,8 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 			}
 		}
 	}
-	OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, nullptr);
+	if(!BossGolem->IsDetectInit)
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, nullptr);
 
 	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 	DrawDebugSphere(World, Center, RecogRadius, 16, FColor::Yellow, false, 0.2f);
