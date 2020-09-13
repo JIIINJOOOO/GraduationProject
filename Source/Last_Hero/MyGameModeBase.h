@@ -27,7 +27,9 @@ public:
 	/*UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "NetworkMonster")
 		UBlueprint* MonsterBP;*/
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "NetworkMonster")
-		TSubclassOf<class AMyMonsterAIController> MonsterAIBP;
+		TSubclassOf<class AMyMonsterAIController> MonsterAIBP; // goblin
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "NetworkMonster")
+		TSubclassOf<class AMyMonsterAIController> OtherMonstersAIBP; // other monsters : 다 mini_golem AI 컨트롤러 사용중
 	UPROPERTY(EditAnywhere, Category = "NetworkMonster")
 		TSubclassOf<class AMyMonster_Goblin> MonToSpawn;
 protected:

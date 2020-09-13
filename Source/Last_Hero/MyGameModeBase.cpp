@@ -29,6 +29,11 @@ AMyGameModeBase::AMyGameModeBase()
 		MonsterAIBP = GOBLIN_AI.Class;
 	}
 
+	static ConstructorHelpers::FClassFinder<UObject> MON_AI(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin"));
+	if (MON_AI.Succeeded()) {
+		OtherMonsterAIBP = MON_AI.Class;
+	}
+
 
 	// GetMesh()->SetAnimInstanceClass(AnimBP.Class);
 	//static ConstructorHelpers::FClassFinder<ACharacter> BP_CHARACTER_C(TEXT("/Game/Game/BluePrints/ThirdPersonCharacter.ThirdPersonCharacter_C"));
