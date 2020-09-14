@@ -6,7 +6,7 @@
 UCyclopsAnimInstance::UCyclopsAnimInstance()
 {
 	speedSide_cpp = 0.0f;
-	speedForward_cpp = 0.0f; 
+	speedForward_cpp = 200.0f; 
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> HITREACTION_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Cyclops/anim/Cyclops_Hit_Montage.Cyclops_Hit_Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATK_1_MONTAGE(TEXT("/Game/Game/Mesh/Monster/Monster_Cyclops/anim/Cyclops_Attack1_Montage.Cyclops_Attack1_Montage"));

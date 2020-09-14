@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 
+
 #pragma comment(lib, "ws2_32")
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "Windows/PreWindowsApi.h" // winnt.h(536): warning C4005: 'TEXT': macro redefinition
@@ -14,7 +15,10 @@
 #include <vector>
 #include <mutex>
 #include <queue>
+#undef UpdateResource
+#undef PlaySound
 #include "protocol.h"
+
 
 #define MAXLEN 10
 #define SERVERIP "1.11.57.96"
@@ -39,6 +43,7 @@ class LAST_HERO_API Network {
 		short mp;	// 공격시 콤보 카운트 용도로도 사용
 		short level;
 		short exp;
+		char o_type;
 		Position rotation;
 		Position velocity;
 	};
@@ -62,7 +67,7 @@ public:
 	bool isMoving;
 
 	int gob_target{ -100 };
-	Position gob_target_pos;
+	Position my_pos;
 
 	int gob_num;
 	int cyclops_num;

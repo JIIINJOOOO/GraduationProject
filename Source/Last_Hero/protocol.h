@@ -1,8 +1,8 @@
 
 #pragma once
 #define MAXLEN 10
-enum Obj_Type {
-	obj_player, obj_monster
+enum OBJ_TYPE {
+	OBJ_PLAYER, OBJ_GOBLIN, OBJ_CYCLOPS, OBJ_BEETLE, OBJ_MINI_GOLEM, OBJ_LAZARD
 };
 struct Position {
 	float x, y, z;
@@ -34,9 +34,6 @@ enum Lobby_State {
 	standby = 10, ingame, full
 };
 
-enum OBJ_TYPE {
-	OBJ_PLAYER
-};
 
 enum P_STATE {
 	p_free, p_login,
@@ -445,8 +442,6 @@ struct CS_NPC_MOVE {
 	char type;
 	short oid;
 	Position pos;
-	Position roatation;
-	Position velocity;
 };
 
 struct SC_NPC_MOVE {

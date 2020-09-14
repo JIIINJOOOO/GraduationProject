@@ -29,6 +29,10 @@ private:
 	float speed;
 	bool isDead;
 	int hp;
+	int type;
+	int deadCnt;
+	bool isMoving;
+	bool isMoving2;
 
 
 public:
@@ -64,4 +68,12 @@ public:
 	bool IsBeetle();
 	bool IsMiniGolem();
 	bool IsLazard();
+
+	void SetID(const int& new_id);
+	void SetType(const int& mon_type);
+
+	void CyclopsUpdate();
+	void BeetleUpdate();
+	void MiniGolemUpdate();
+	void LazardUpdate();
 };

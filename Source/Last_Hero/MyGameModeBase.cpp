@@ -18,7 +18,7 @@ AMyGameModeBase::AMyGameModeBase()
 	DefaultPawnClass = AMyCharacter::StaticClass();
 	PlayerControllerClass = AMyPlayerController::StaticClass();
 	MonToSpawn = AMyMonster_Goblin::StaticClass();
-	
+	CycToSpawn = AMyMonster::StaticClass();
 	/*static ConstructorHelpers::FObjectFinder<UBlueprint> GOBLIN(TEXT("Blueprint'/Game/Game/BluePrints/Goblin/Monster_BP_2.Monster_BP_2'"));
 	if (GOBLIN.Object) {
 		MonsterBP = GOBLIN.Object;
@@ -53,6 +53,12 @@ void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 void AMyGameModeBase::BeginPlay()
 {
 	SpawnMonster();
+	// SpawnGoblin(0, 8195.728516, 75672.898438, -443.441223);
+	// SpawnCyclops(0, 15429.8f, 78471.57f, -385.f);
+	// SpawnBeetle(0, 15429.8f, 78471.57f, -445.6f);
+	// SpawnMiniGolem(0, 15429.8f, 78471.57f, -445.6f);
+	// SpawnLazard(0, 15429.8f, 78471.57f, -445.6f);
+
 	// UE_LOG(LogTemp, Log, TEXT("GMB BeginPlay"));
 	if (net.GetStatus() != p_login) {
 		CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234" };
@@ -69,6 +75,8 @@ void AMyGameModeBase::Tick(float DeltaSeconds)
 
 void AMyGameModeBase::SpawnMonster()
 {
+	FName path = TEXT("Blueprint'/Game/Game/BluePrints/Goblin/Monster_BP_3.Monster_BP_3'");
+	auto obj = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, *path.ToString()));
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.bNoFail = true;
 	SpawnInfo.Owner = this;
@@ -78,9 +86,84 @@ void AMyGameModeBase::SpawnMonster()
 	FVector MonSpawnLocation = { 15429.8f,78471.57f,-445.6f };
 	// 15429.818359   78471.570312   -445.642273
 	// 몬스터 스폰 코드 -> 컨트롤러를 가져와야 할 듯
-	AMyMonster_Goblin* SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(MonToSpawn, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
+
+	auto SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(obj->GeneratedClass, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
+	SpawnMonster->SetID(-1);
+}
+
+void AMyGameModeBase::SpawnGoblin(const int& oid, float x, float y, float z) {
+	FName path = TEXT("Blueprint'/Game/Game/BluePrints/Goblin/Monster_BP_3.Monster_BP_3'");
+	auto obj = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, *path.ToString()));
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = NULL;
+	SpawnInfo.bDeferConstruction = false;
+	FVector MonSpawnLocation = { x, y, z };
+	auto SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(obj->GeneratedClass, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+	SpawnMonster->SetID(oid);
+}
+
+void AMyGameModeBase::SpawnCyclops(const int& oid, float x, float y, float z) {
+	FName path = TEXT("Blueprint'/Game/Game/BluePrints/Cyclops/BP_Cyclops.BP_Cyclops'");
+	auto obj = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, *path.ToString()));
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = NULL;
+	SpawnInfo.bDeferConstruction = false;
+	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
+	FVector MonSpawnLocation = { x, y, z };
+	auto SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(obj->GeneratedClass, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+	SpawnMonster->SetType(OBJ_CYCLOPS);
+	SpawnMonster->SetID(oid);
+}
+
+void AMyGameModeBase::SpawnBeetle(const int& oid, float x, float y, float z) {
+	FName path = TEXT("Blueprint'/Game/Game/BluePrints/Beetle_Warrior/BP_Beetle_Warrior.BP_Beetle_Warrior'");
+	auto obj = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, *path.ToString()));
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = NULL;
+	SpawnInfo.bDeferConstruction = false;
+	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
+	FVector MonSpawnLocation = { x, y, z };
+	auto SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(obj->GeneratedClass, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+	SpawnMonster->SetType(OBJ_BEETLE);
+	SpawnMonster->SetID(oid);
+}
+
+void AMyGameModeBase::SpawnMiniGolem(const int& oid, float x, float y, float z) {
+	FName path = TEXT("Blueprint'/Game/Game/BluePrints/mini_golem/Mini_golem.Mini_golem'");
+	auto obj = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, *path.ToString()));
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = NULL;
+	SpawnInfo.bDeferConstruction = false;
+	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
+	FVector MonSpawnLocation = { x, y, z };
+	auto SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(obj->GeneratedClass, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+	SpawnMonster->SetType(OBJ_MINI_GOLEM);
+	SpawnMonster->SetID(oid);
+}
+
+void AMyGameModeBase::SpawnLazard(const int& oid, float x, float y, float z) {
+	FName path = TEXT("Blueprint'/Game/Game/BluePrints/Lazardman/BP_Lazardman.BP_Lazardman'");
+	auto obj = Cast<UBlueprint>(StaticLoadObject(UBlueprint::StaticClass(), NULL, *path.ToString()));
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.bNoFail = true;
+	SpawnInfo.Owner = this;
+	SpawnInfo.Instigator = NULL;
+	SpawnInfo.bDeferConstruction = false;
+	// 몬스터 스폰 위치(일단 한마리 위치만 테스트용으로)
+	FVector MonSpawnLocation = { x, y, z };
+	auto SpawnMonster = GetWorld()->SpawnActor<AMyMonster>(obj->GeneratedClass, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo);
+	SpawnMonster->SetType(OBJ_LAZARD);
+	SpawnMonster->SetID(oid);
 }
 
 void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z) {
@@ -108,11 +191,20 @@ void AMyGameModeBase::ProcessEvent2() {
 		if (ev.oid < MAX_PLAYER) {
 			SpawnPlayer(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
 		}
-		else if (ev.oid == 20000) {
-			// SpawnBoss(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
-		}
-		else {
-			// SpawnMonster(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+		// else if (ev.oid == 20000) {
+		// 	// SpawnBoss(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+		// }
+		else {	// Normal Monster
+			if (ev.o_type == OBJ_GOBLIN)
+				SpawnGoblin(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+			else if (ev.o_type == OBJ_CYCLOPS)
+				SpawnCyclops(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+			else if (ev.o_type == OBJ_BEETLE)
+				SpawnBeetle(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+			else if (ev.o_type == OBJ_MINI_GOLEM)
+				SpawnMiniGolem(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+			else if (ev.o_type == OBJ_LAZARD)
+				SpawnLazard(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
 		}
 		net.PopEvent();
 	}break;

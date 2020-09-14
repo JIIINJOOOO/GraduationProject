@@ -5,6 +5,7 @@
 #include "Last_Hero.h"
 #include "GameFramework/GameModeBase.h"
 #include "Network.h"
+#include "MyMonster.h"
 #include "MyGameModeBase.generated.h"
 
 /**
@@ -30,9 +31,21 @@ public:
 		TSubclassOf<class AMyMonsterAIController> MonsterAIBP;
 	UPROPERTY(EditAnywhere, Category = "NetworkMonster")
 		TSubclassOf<class AMyMonster_Goblin> MonToSpawn;
+	UPROPERTY(EditAnywhere, Category = "NetworkMonster")
+		TSubclassOf<class AMyMonster> CycToSpawn;
 protected:
 	UFUNCTION()
 	void SpawnMonster();
+	UFUNCTION()
+		void SpawnGoblin(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnCyclops(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnBeetle(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnMiniGolem(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnLazard(const int& oid, float x, float y, float z);
 	UFUNCTION()
 		void SpawnPlayer(int oid, float x, float y, float z);
 };

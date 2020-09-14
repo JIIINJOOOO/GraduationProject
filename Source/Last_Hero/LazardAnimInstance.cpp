@@ -36,3 +36,19 @@ void ULazardAnimInstance::PlayLazardAnimMontage(UAnimMontage * Mtg)
 {
 	Montage_Play(Mtg, 1.0f);
 }
+
+void ULazardAnimInstance::Hitreaction() {
+	Montage_Play(HitReaction_Mtg, 1.0f);
+}
+
+void ULazardAnimInstance::Attack1() {
+	Montage_Play(Attack_1_Mtg, 1.0f);
+}
+
+void ULazardAnimInstance::Attack2() {
+	Montage_Play(Attack_2_Mtg, 1.0f);
+}
+
+void ULazardAnimInstance::Attack3() {
+	Montage_Play(Attack_3_Mtg, 1.0f);
+}

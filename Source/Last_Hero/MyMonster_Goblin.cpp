@@ -9,6 +9,7 @@
 #include "Engine/BlueprintGeneratedClass.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Network.h"
+#include <math.h>
 extern Network net;
 
 // Sets default values
@@ -22,9 +23,8 @@ AMyMonster_Goblin::AMyMonster_Goblin()
 	{
 		GetMesh()->SetSkeletalMesh(SK_GOBLIN.Object);
 	}
-
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-
+	// Blueprint'/Game/Game/BluePrints/MyMonster_Goblin_BP.MyMonster_Goblin_BP'
 	// --------------------------------------------------------------------------------------
 	// 프로젝트 켜진 상태에서 컴파일돌리면 문제가 없는데 언리얼 재시작할때는 73%에서 무한로딩걸림	
 	// static ConstructorHelpers::FClassFinder<UAnimInstance> AnimBP(TEXT("AnimBlueprint'/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin_C'"));
@@ -33,7 +33,7 @@ AMyMonster_Goblin::AMyMonster_Goblin()
 	// }
 	// --------------------------------------------------------------------------------------
 
-	GetMesh()->SetRelativeTransform(FTransform(FVector(0.f, 0.f, -88.f)));
+	// GetMesh()->SetRelativeTransform(FTransform(FVector(0.f, 0.f, -88.f)));
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> GOB_ANIM(TEXT("/Game/Game/BluePrints/Goblin/BPA_Goblin.BPA_Goblin_C"));
 
 	//if (GOB_ANIM.Succeeded())
@@ -53,12 +53,14 @@ AMyMonster_Goblin::AMyMonster_Goblin()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("MyMonster"));
 
 	id = -1;
-	id = 10000;
-	velocity = { 0,0,0 };
-	speed = 1.f;
+	// id = 10000;
+	velocity = { 0.1f, 0,0 };
+	speed = 0.1f;
 	isMoving = false;
 	isDead = false;
 	hp = 100;
+	type = -1;
+	// isMoving = true;
 }
 
 // Called when the game starts or when spawned
@@ -74,29 +76,42 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
+	if (type == -1)return;
+	// AddMovementInput(velocity, speed);
+
+	/*
+	x, y 각각 계산해서
+	그러니까 velocity가 양수일 경우에는 상대 좌표값이 내 좌표보다 커야하고
+	velocity가 음수면 내 좌표보다 작아야한다
+	0 이면.. 걍 넘기자 어차피 서버에선 뷰리스트 기반으로 해서 큰 차이는 안날거야
+	*/
+	
+	// velocity = GetVelocity();
+	// float y = (velocity.X*vel.X) + (velocity.Y*vel.Y) + (velocity.Z*vel.Z);
+	// float cy = cos(y);
+	// UE_LOG(LogTemp, Log, TEXT("adafafasfafs  %d %lf"));;
 	
 	if (isDead) {
 		if (deadCnt == 500) SetActorLocation(FVector(12450.0, 99870.0, -540.0));
 		deadCnt++;
 		return;
 	}
+	// float y = 180 * atan2(net.my_pos.x - MonPos.X, net.my_pos.y - MonPos.Y) / PI;
+	// SetActorRotation(FRotator(0, -y, 0));
+	if (isMoving) AddMovementInput(velocity, speed);
+	// velocity = -velocity;
+	// AddMovementInput(velocity, speed);
 
-	AddMovementInput(velocity, speed, true);
-
-	// static int r = 0;
-	// r = (r + 1) % 360;
-	// SetActorRotation(FRotator(0, r, 0));
-	// return;
-	if (net.isHost && isMoving) {
-		MonPos = GetActorLocation();
-		rotation = GetActorRotation();
-		velocity = GetVelocity();
-		CS_NPC_MOVE pack{ sizeof(CS_NPC_MOVE), cs_npc_move, id };
-		pack.pos = { MonPos.X, MonPos.Y, MonPos.Z };
-		pack.roatation = { rotation.Pitch, rotation.Yaw, rotation.Roll };
-		pack.velocity = { velocity.X, velocity.Y, velocity.Z };
-		net.SendPacket(&pack);
-	}
+	// if (net.isHost && isMoving) {
+	// 	MonPos = GetActorLocation();
+	// 	rotation = GetActorRotation();
+	// 	velocity = GetVelocity();
+	// 	CS_NPC_MOVE pack{ sizeof(CS_NPC_MOVE), cs_npc_move, id };
+	// 	pack.pos = { MonPos.X, MonPos.Y, MonPos.Z };
+	// 	pack.roatation = { rotation.Pitch, rotation.Yaw, rotation.Roll };
+	// 	pack.velocity = { velocity.X, velocity.Y, velocity.Z };
+	// 	net.SendPacket(&pack);
+	// }
 	net.eventLock.lock();
 	if (net.eventQue.empty()) {
 		net.eventLock.unlock();
@@ -104,7 +119,7 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 	}
 	auto ev = net.eventQue.front();
 	net.eventLock.unlock();
-	// UE_LOG(LogTemp, Log, TEXT("ev type id %d %d"), (int)ev.type, ev.oid);
+	
 	if (ev.oid < NPC_ID_START) return;
 	if (ev.oid != id) return;
 	// if (net.isHost) {
@@ -114,23 +129,24 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 
 
 	switch (ev.type) {
-	case sc_update_obj:
+	case sc_update_obj: {
 		// if (net.isHost) {
 		// 	net.PopEvent();
 		// 	break;
 		// }
-		SetActorLocationAndRotation(FVector(ev.pos.x, ev.pos.y, ev.pos.z), FRotator(ev.rotation.x, ev.rotation.y, ev.rotation.z), false, 0, ETeleportType::None);
+		AddMovementInput(velocity, speed);
+		SetActorLocationAndRotation(FVector(ev.pos.x, ev.pos.y, MonPos.Z), FRotator(ev.rotation.x, ev.rotation.y, ev.rotation.z), false, 0, ETeleportType::TeleportPhysics);
 		velocity = { ev.velocity.x,ev.velocity.y,ev.velocity.z };
-		// SetActorRotation(FRotator(0, ev.rotation.y, 0));
+		// SetActorRotation(FRotator(ev.rotation.x, ev.rotation.y, ev.rotation.z));
 		// velocity.Normalize();
 		isMoving = true;
 		speed = 200.f;
 		net.PopEvent();
-		break;
+	}break;
 	case sc_dead: {
 		// SetActorLocation(FVector(0, 0, 0));
 		animInstance->Death();
-		//velocity = { 0,0,0 };
+		velocity = { 0,0,0 };
 		hp = ev.hp;
 		speed = 0.f;
 		isDead = true;
@@ -138,9 +154,10 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 		net.PopEvent();
 	}break;
 	case sc_attack: {
-		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
-		if (myAnimInst != nullptr) myAnimInst->Slash();
-		//velocity = { 0,0,0 };
+		// UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
+		// if (myAnimInst != nullptr) myAnimInst->Slash();
+		animInstance->Slash();
+		velocity = { 0,0,0 };
 		speed = 0.f;
 		isMoving = false;
 
@@ -150,13 +167,13 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->HitReaction();
 		hp = ev.hp;
+		velocity = { 0,0,0 };
 		speed = 0.f;
 		isMoving = false;
 
 		net.PopEvent();
 	}break;
 	case sc_move_stop: {
-		isMoving = false;
 		velocity = { 0,0,0 };
 		speed = 0.f;
 		isMoving = false;
@@ -204,4 +221,5 @@ FVector AMyMonster_Goblin::GetMonsterPos()
 
 void AMyMonster_Goblin::SetID(const int& id) {
 	this->id = id;
+	type = OBJ_GOBLIN;
 }

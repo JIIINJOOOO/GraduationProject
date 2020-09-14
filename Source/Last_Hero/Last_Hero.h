@@ -8,6 +8,7 @@
 #include "IUMGModule.h"
 #include "Blueprint/UserWidget.h"
 #include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(Last_Hero, Log, All);
 #define ABLOG_CALLINFO (FString(__FUNCTION__) + TEXT("(") + FString::FromInt(__LINE__) + TEXT(")"))

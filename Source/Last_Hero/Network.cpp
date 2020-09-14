@@ -6,7 +6,6 @@
 
 
 Network::Network() {
-	// hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	int retval;
 	WSAData wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return;
@@ -32,8 +31,7 @@ Network::Network() {
 	retval = connect(m_sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) return;
 
-	m_sendEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	loginEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	// loginEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	HANDLE rthread = CreateThread(NULL, 0, RecvThread, this, 0, NULL);
 
 	gob_num = 0;
@@ -52,12 +50,12 @@ DWORD WINAPI Network::RecvThread(LPVOID p) {
 	while (true) {
 		// retval = recv(sock, (char*)&recvBytes, sizeof(int), 0);
 		// retval = recv(sock, arg->recvBuf, recvBytes, 0);
-
-		retval = recv(sock, arg->recvBuf, BUFSIZE, 0);
+		retval = recvn(sock, arg->recvBuf, BUFSIZE, 0);
 		// if (retval == SOCKET_ERROR) break;
 		// if (retval == 0) break;
 
 		arg->recvBuf[retval] = '\0';
+		
 		arg->ProcessPacket(arg->recvBuf);
 		// Sleep(1000 / 60);
 		// SetEvent(gmbEvent);
@@ -79,7 +77,7 @@ void Network::ProcessPacket(char* buf) {
 		SC_LOGIN_OK* pack = reinterpret_cast<SC_LOGIN_OK*>(buf);
 		my_id = pack->uid;
 		m_status = p_login;
-		SetEvent(loginEvent);
+		// set loginevent
 
 		GMB_Event ev;
 		ev.type = sc_login_ok;
@@ -109,18 +107,11 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = sc_enter_obj;
 		ev.pos = pack->pos;
 		ev.oid = pack->oid;
-		// gmbLock.lock();
+		ev.o_type = pack->o_type;
+		
 		eventLock.lock();
 		eventQue.push(ev);
 		eventLock.unlock();
-
-		// gmb.type = sc_enter_obj;
-		// gmb.pos = pack->pos;
-		// gmb.oid = pack->oid;
-		// gmbLock.unlock();
-			// myGame.PostLogin(&players[pack->oid]);
-			// players[pack->oid];
-	//	}
 	}break;
 	case sc_update_obj: {
 		SC_UPDATE_OBJ* pack = reinterpret_cast<SC_UPDATE_OBJ*>(buf);
@@ -128,8 +119,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = sc_update_obj;
 		ev.pos = pack->pos;
 		ev.oid = pack->oid;
-		UE_LOG(LogTemp, Log, TEXT("wnr313 -- %d"), ev.oid)
-			ev.rotation = pack->rotation;
+		ev.rotation = pack->rotation;
 		ev.velocity = pack->velocity;
 		eventLock.lock();
 		eventQue.push(ev);
@@ -142,7 +132,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 		ev.mp = static_cast<short>(pack->combo);	// 
-
+		UE_LOG(LogTemp, Log, TEXT("Net Attack pack oid = "), pack->oid);
 		eventLock.lock();
 		eventQue.push(ev);
 		eventLock.unlock();
@@ -192,7 +182,6 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
-
 		eventLock.lock();
 		eventQue.push(ev);
 		eventLock.unlock();
@@ -356,7 +345,10 @@ int recvn(SOCKET s, char *buf, int len, int flags) {
 	int received;
 	char *ptr = buf;
 	int  left = len;
-
+	
+	recv(s, ptr, 1, flags);
+	left = (int)*ptr - 1;
+	ptr += 1;
 	while (left > 0) {
 		received = recv(s, ptr, left, flags);
 		if (received == SOCKET_ERROR)

@@ -38,4 +38,10 @@ private:
 		float speedSide_cpp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server, Meta = (AllowPrivateAccess = true))
 		float speedForward_cpp;
+public:
+	// Animation play Func
+	void Hitreaction();
+	void Attack1();
+	void Attack2();
+	void Attack3();
 };
