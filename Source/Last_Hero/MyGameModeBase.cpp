@@ -29,9 +29,9 @@ AMyGameModeBase::AMyGameModeBase()
 		MonsterAIBP = GOBLIN_AI.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<UObject> MON_AI(TEXT("/Game/Game/BluePrints/Goblin/Ai_Monster_Goblin.Ai_Monster_Goblin"));
+	static ConstructorHelpers::FClassFinder<UObject> MON_AI(TEXT("/Game/Game/BluePrints/mini_golem/Ai_Monster_minigolem.Ai_Monster_minigolem_C"));
 	if (MON_AI.Succeeded()) {
-		OtherMonsterAIBP = MON_AI.Class;
+		OtherMonstersAIBP = MON_AI.Class;
 	}
 
 
