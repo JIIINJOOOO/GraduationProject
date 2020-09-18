@@ -22,6 +22,7 @@ public:
 	void PlayGolemMontage(GOLEM_ANIM_MONTAGE select);
 	void JumpToThrowSpearMontageSection(FName section);
 	void JumpToStompAttackMontageSection(FName section);
+	void JumpToDownSweepMontageSection(FName section);
 
 
 public:
@@ -59,6 +60,10 @@ private:
 		void AnimNotify_ChargeStomping();
 	UFUNCTION()
 		void AnimNotify_StompDamage();
+	UFUNCTION()
+		void AnimNotify_ChargeDownSweep();
+	UFUNCTION()
+		void AnimNotify_DownSweepDamage();
 	//FName GetThrowSpearMontageSectionName(int32 Section);
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
@@ -93,6 +98,8 @@ private:
 		UAnimMontage* DownAttack1Montage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* DownAttack2Montage;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+		UAnimMontage* DownSweepTwiceMontage;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 		UAnimMontage* GolemFallingDownMontage;
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))

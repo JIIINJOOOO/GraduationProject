@@ -260,6 +260,16 @@ void AMyBossGolem::ChargeStompingLoopEnd()
 	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
 }
 
+void AMyBossGolem::DownSweepLoopStart()
+{
+	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
+}
+
+void AMyBossGolem::DownSweepLoopEnd()
+{
+	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
+}
+
 
 
 
