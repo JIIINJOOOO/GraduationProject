@@ -38,6 +38,7 @@ void AMyBossGolem::Attack_CloseRange()
 	else
 	{
 		RndAtkMtg = setRandomAttackMontage(DOWN_START, DOWN_END);
+		RndAtkMtg = DOWN_SWEEP;
 		/*if (RndDownAtk == 0)
 		{
 			GolemAnim->PlayDownAttack_1_Montage();
@@ -184,9 +185,15 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 		else
 			return DOWN_ATTACK_1;
 		break;
+	case 18:
+		if (!IsBreakLeftArm && !IsHalfBreakLeftArm)
+			return DOWN_SWEEP;
+		else
+			return DOWN_ATTACK_1;
+		break;
 	default:
 		if (IsDown)
-			return SWEEP_ATTACK;
+			return DOWN_ATTACK_1;
 		else
 			return NORMAL_ATTACK;
 		break;
@@ -260,14 +267,14 @@ void AMyBossGolem::ChargeStompingLoopEnd()
 	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
 }
 
-void AMyBossGolem::DownSweepLoopStart()
+void AMyBossGolem::ChargeDownSweepLoopStart()
 {
-	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
+	GolemAnim->JumpToDownSweepMontageSection(FName("End"));
 }
 
-void AMyBossGolem::DownSweepLoopEnd()
+void AMyBossGolem::ChargeDownSweepLoopEnd()
 {
-	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
+	GolemAnim->JumpToDownSweepMontageSection(FName("End"));
 }
 
 

@@ -174,7 +174,7 @@ void UBossGolemAnimInstance::JumpToStompAttackMontageSection(FName section)
 }
 void UBossGolemAnimInstance::JumpToDownSweepMontageSection(FName section)
 {
-	ABCHECK(Montage_IsPlaying(DownSweepMontage));
+	ABCHECK(Montage_IsPlaying(DownSweepTwiceMontage));
 	Montage_JumpToSection(section, DownSweepTwiceMontage);
 }
 void UBossGolemAnimInstance::AnimNotify_Launch()
@@ -213,6 +213,16 @@ void UBossGolemAnimInstance::AnimNotify_StompDamage()
 {
 	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
 	BossGolem->StompDamage();
+}
+void UBossGolemAnimInstance::AnimNotify_ChargeDownSweep()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->ChargeDownSweep();
+}
+void UBossGolemAnimInstance::AnimNotify_DownSweepDamage()
+{
+	auto BossGolem = Cast<AMyBossGolem>(TryGetPawnOwner());
+	BossGolem->DownSweepDamage();
 }
 //FName UBossGolemAnimInstance::GetThrowSpearMontageSectionName(int32 Section)
 //{

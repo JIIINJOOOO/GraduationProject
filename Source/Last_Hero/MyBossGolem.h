@@ -63,11 +63,16 @@ public:
 		void ChargeStompingLoopStart();
 	UFUNCTION(BlueprintCallable)
 		void ChargeStompingLoopEnd();
-	// Down Sweep
+	// DownSweep
+	UFUNCTION(BlueprintImplementableEvent)
+		void ChargeDownSweep();
+	UFUNCTION(BlueprintImplementableEvent)
+		void DownSweepDamage();
+	// Charge DownSweep loop start,end
 	UFUNCTION(BlueprintCallable)
-		void DownSweepLoopStart();
+		void ChargeDownSweepLoopStart();
 	UFUNCTION(BlueprintCallable)
-		void DownSweepLoopEnd();
+		void ChargeDownSweepLoopEnd();
 	
 
 
