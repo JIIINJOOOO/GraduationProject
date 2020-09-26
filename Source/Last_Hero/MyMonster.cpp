@@ -6,6 +6,8 @@
 #include "CyclopsAnimInstance.h"
 #include "BeetleAnimInstance.h"
 #include "MiniGolemAnimInstance.h"
+#include "LazardAnimInstance.h"
+
 
 extern Network net;
 
@@ -13,20 +15,23 @@ extern Network net;
 AMyMonster::AMyMonster()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	static ConstructorHelpers::FClassFinder<UObject> MON_AICONTROLLER(TEXT("/Game/Game/BluePrints/mini_golem/Ai_Monster_minigolem.Ai_Monster_minigolem"));
+	// static ConstructorHelpers::FClassFinder<UObject> MON_AICONTROLLER(TEXT("/Game/Game/BluePrints/mini_golem/Ai_Monster_minigolem.Ai_Monster_minigolem"));
 
 
-	if (MON_AICONTROLLER.Succeeded())
-	{
-		AIControllerClass = MON_AICONTROLLER.Class;
-		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	}
+	// if (MON_AICONTROLLER.Succeeded())
+	// {
+	// 	AIControllerClass = MON_AICONTROLLER.Class;
+	// 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	// }
 
 	PrimaryActorTick.bCanEverTick = true;
 	speed = 200.f;
 	velocity = { 0,0,0 };
 	isDead = false;
-	id = 0;
+	id = -1;
+	type = -1;
+	deadCnt = 0;
+	isMoving = false;
 }
 
 // Called when the game starts or when spawned
@@ -34,14 +39,14 @@ void AMyMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	MonPos = GetActorLocation();
-	
-	
-	id = 10000 + net.mon_num;
-	if (net.isHost) {
-		CS_SPAWN_NPC pack{ sizeof(pack), cs_spawn_npc, id };
-		pack.pos = { MonPos.X, MonPos.Y, MonPos.Z };
-		net.SendPacket(&pack);
-	}
+	SpawnDefaultController();
+}
+
+// Called to bind functionality to input
+void AMyMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
 }
 
 // Called every frame
@@ -49,21 +54,20 @@ void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
+	
+	if (isMoving) AddMovementInput(velocity, speed, true);
 
-	AddMovementInput(velocity, speed, true);
+	if (type == OBJ_CYCLOPS)
+		CyclopsUpdate();
+	else if (type == OBJ_BEETLE)
+		BeetleUpdate();
+	else if (type == OBJ_MINI_GOLEM)
+		MiniGolemUpdate();
+	else if (type == OBJ_LAZARD)
+		LazardUpdate();
+}
 
-	if (net.isHost == true) {
-		MonPos = GetActorLocation();
-		rotation = GetActorRotation();
-		velocity = GetVelocity();
-		CS_NPC_MOVE pack{ sizeof(CS_NPC_MOVE), cs_npc_move, id };
-		pack.pos = { MonPos.X, MonPos.Y, MonPos.Z };
-		pack.roatation = { rotation.Pitch, rotation.Yaw, rotation.Roll };
-		pack.velocity = { velocity.X, velocity.Y, velocity.Z };
-		net.SendPacket(&pack);
-	}
-
-	// else {	// is not host client
+void AMyMonster::CyclopsUpdate() {
 	net.eventLock.lock();
 	if (net.eventQue.empty()) {
 		net.eventLock.unlock();
@@ -73,80 +77,193 @@ void AMyMonster::Tick(float DeltaTime)
 	net.eventLock.unlock();
 	if (ev.oid < NPC_ID_START) return;
 	if (ev.oid != id) return;
-	
-	if (isDead) {
-		SetActorLocation(FVector(12450.0, 99870.0, -540.0));
-		return;
-	}
 
 	switch (ev.type) {
 	case sc_update_obj:
-		if (net.isHost) {
-			net.PopEvent();
-			break;
-		}
-		MonPos = { ev.pos.x, ev.pos.y, ev.pos.z };
+		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
 		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
-		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
-		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::None);
-		speed = 200.f;
+		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
+		isMoving = true;
 		net.PopEvent();
 		break;
 	case sc_attack: {
-		/*if (IsCyclops()) {
-			auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
-			if (animInst != nullptr) animInst->Attack1();
+		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) {
+			if (ev.mp == 0) animInst->Attack1();
+			if (ev.mp == 1) animInst->Attack2();
+			if (ev.mp == 2) animInst->Attack3();
 		}
-		else if (IsBeetle()) {
-			auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
-			if (animInst != nullptr) animInst->Attack1();
-		}
-		else if (IsMiniGolem()) {
-			auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
-			if (animInst != nullptr) animInst->Attack1();
-		}*/
-		speed = 0.f;
+		isMoving = false;
 		net.PopEvent();
 	}break;
 	case sc_damaged: {
-		/*if (IsCyclops()) {
-			auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
-			if (animInst != nullptr) animInst->Hitreaction();
-		}
-		else if (IsBeetle()) {
-			auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
-			if (animInst != nullptr) animInst->Hitreaction();
-		}
-		else if (IsMiniGolem()) {
-			auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
-			if (animInst != nullptr) animInst->Hitreaction();
-		}*/
-		hp = ev.hp;
-		speed = 0.f;
+		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
 		net.PopEvent();
 	}break;
-	case sc_block:
-		speed = 0.f;
-		net.PopEvent();
-		break;
 	case sc_dead: {
-		isDead = true;
-		SetActorLocation(FVector(12450.0, 99870.0, -540.0));
-		speed = 0.f;
+		// isDead = true;
+		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
 		net.PopEvent();
 	}break;
 	default:
-		speed = 0.f;
+		isMoving = false;
 		net.PopEvent();
 		break;
 	}
 }
 
-// Called to bind functionality to input
-void AMyMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+void AMyMonster::BeetleUpdate() {
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.oid < NPC_ID_START) return;
+	if (ev.oid != id) return;
 
+	switch (ev.type) {
+	case sc_update_obj:
+		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
+		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
+		isMoving = true;
+		net.PopEvent();
+		break;
+	case sc_attack: {
+		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) {
+			if (ev.mp == 0) animInst->Attack1();
+			if (ev.mp == 1) animInst->Attack2();
+			if (ev.mp == 2) animInst->Attack3();
+		}
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	case sc_damaged: {
+		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	case sc_dead: {
+		// isDead = true;
+		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	default:
+		isMoving = false;
+		net.PopEvent();
+		break;
+	}
+}
+
+void AMyMonster::MiniGolemUpdate() {
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.oid < NPC_ID_START) return;
+	if (ev.oid != id) return;
+
+	switch (ev.type) {
+	case sc_update_obj:
+		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
+		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
+		isMoving = true;
+		net.PopEvent();
+		break;
+	case sc_attack: {
+		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) {
+			if (ev.mp == 0) animInst->Attack1();
+			if (ev.mp == 1) animInst->Attack2();
+			if (ev.mp == 2) animInst->Attack3();
+		}
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	case sc_damaged: {
+		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	case sc_dead: {
+		// isDead = true;
+		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	default:
+		isMoving = false;
+		net.PopEvent();
+		break;
+	}
+}
+
+void AMyMonster::LazardUpdate() {
+	net.eventLock.lock();
+	if (net.eventQue.empty()) {
+		net.eventLock.unlock();
+		return;
+	}
+	auto ev = net.eventQue.front();
+	net.eventLock.unlock();
+	if (ev.oid < NPC_ID_START) return;
+	if (ev.oid != id) return;
+
+	switch (ev.type) {
+	case sc_update_obj:
+		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
+		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
+		isMoving = true;
+		net.PopEvent();
+		break;
+	case sc_attack: {
+		auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) {
+			if (ev.mp == 0) animInst->Attack1();
+			if (ev.mp == 1) animInst->Attack2();
+			if (ev.mp == 2) animInst->Attack3();
+		}
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	case sc_damaged: {
+		auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	case sc_dead: {
+		// isDead = true;
+		auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
+		if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		net.PopEvent();
+	}break;
+	default:
+		isMoving = false;
+		net.PopEvent();
+		break;
+	}
 }
 
 bool AMyMonster::IsCyclops() {
@@ -159,4 +276,12 @@ bool AMyMonster::IsBeetle() {
 
 bool AMyMonster::IsMiniGolem() {
 	return MINI_GOLEM_ID <= id;
+}
+
+void AMyMonster::SetID(const int& new_id) {
+	id = new_id;
+}
+
+void AMyMonster::SetType(const int& mon_type) {
+	type = mon_type;
 }

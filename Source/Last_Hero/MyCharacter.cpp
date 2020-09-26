@@ -95,9 +95,11 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	position = GetActorLocation();
+	net.my_pos = { position.X, position.Y, position.Z };
 	if (net.GetStatus() != p_login) return;
 	if (id == net.GetMyID()) {
-		if (net.isMoving == false) return;
+		// if (net.isMoving == false) return;
 		position = GetActorLocation();
 		rotation = GetActorRotation();
 		auto vel = GetVelocity();
@@ -149,8 +151,7 @@ void AMyCharacter::Tick(float DeltaTime)
 		// 	UE_LOG(LogTemp, Log, TEXT("C Movesaddsa"));
 		// 	break;
 		// }
-		speed = 200.f;
-		SetActorRotation(rotation);
+		speed = 600.f;
 		// speed = 0.f;
 		// GetVelocity();
 		// UE_LOG(LogTemp, Log, TEXT("C Move"));
@@ -262,8 +263,7 @@ void AMyCharacter::Tick(float DeltaTime)
 		break;
 	case sc_set_npc_target: {
 		if (ev.hp == 10000) {
-			net.gob_target_pos = { position.X, position.Y, position.Z };
-			net.gob_target = id;
+			
 		}
 		net.PopEvent();
 	}break;

@@ -29,7 +29,9 @@ private:
 	float speed;
 	bool isDead;
 	int hp;
-
+	int type;
+	int deadCnt;
+	bool isMoving;
 
 public:
 	// Sets default values for this character's properties
@@ -52,6 +54,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		bool ready_cpp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
+		float Health_cpp;
 	
 public:	
 	// Called every frame
@@ -64,4 +68,12 @@ public:
 	bool IsBeetle();
 	bool IsMiniGolem();
 	bool IsLazard();
+
+	void SetID(const int& new_id);
+	void SetType(const int& mon_type);
+
+	void CyclopsUpdate();
+	void BeetleUpdate();
+	void MiniGolemUpdate();
+	void LazardUpdate();
 };
