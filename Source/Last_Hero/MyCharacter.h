@@ -99,6 +99,9 @@ public:
 		UChildActorComponent* BPShield_cpp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		UChildActorComponent* BPHammer_cpp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerInfo)
+		float ServerPlayerHP;
 	
 //private:
 //	void MoveForward(float NewAxisValue);
