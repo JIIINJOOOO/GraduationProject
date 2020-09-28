@@ -13,7 +13,7 @@ extern Network net;
 AMyMonster::AMyMonster()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	static ConstructorHelpers::FClassFinder<UObject> MON_AICONTROLLER(TEXT("/Game/Game/BluePrints/mini_golem/Ai_Monster_minigolem.Ai_Monster_minigolem"));
+	static ConstructorHelpers::FClassFinder<UObject> MON_AICONTROLLER(TEXT("/Game/Game/BluePrints/mini_golem/Ai_Monster_minigolem.Ai_Monster_minigolem_C"));
 
 
 	if (MON_AICONTROLLER.Succeeded())

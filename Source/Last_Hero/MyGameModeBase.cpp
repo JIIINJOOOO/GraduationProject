@@ -47,7 +47,7 @@ AMyGameModeBase::AMyGameModeBase()
 void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 {
 	// 플레이어 스폰 위치 트랜스폼
-	FTransform PlayerSpawnTrans(FRotator::ZeroRotator, FVector(14410.0f, 77670.0f, -450.0f), FVector(1.0f, 1.0f, 1.0f));
+	FTransform PlayerSpawnTrans(FRotator::ZeroRotator, FVector(10230.0f, 76530.0f, -360.0f/*14410.0f, 77670.0f, -450.0f*/), FVector(1.0f, 1.0f, 1.0f));
 	// 플레이어 스폰 코드
 	RestartPlayerAtTransform(NewPlayer, PlayerSpawnTrans);
 	Super::PostLogin(NewPlayer);
