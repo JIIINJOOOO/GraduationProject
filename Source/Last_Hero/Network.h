@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 
+
 #pragma comment(lib, "ws2_32")
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include "Windows/PreWindowsApi.h" // winnt.h(536): warning C4005: 'TEXT': macro redefinition
@@ -14,10 +15,14 @@
 #include <vector>
 #include <mutex>
 #include <queue>
+#include <chrono>
+#undef UpdateResource
+#undef PlaySound
 #include "protocol.h"
 
+
 #define MAXLEN 10
-#define SERVERIP "192.168.10.30"
+#define SERVERIP "1.11.57.96"
 #define SERVERPORT 9000
 #define BUFSIZE 512
 #define MAX_USERS 4
@@ -27,7 +32,7 @@
  *
  */
 using namespace std;
-
+using namespace chrono;
 
 class LAST_HERO_API Network {
 	struct GMB_Event {
@@ -39,8 +44,17 @@ class LAST_HERO_API Network {
 		short mp;	// 공격시 콤보 카운트 용도로도 사용
 		short level;
 		short exp;
+		char o_type;
 		Position rotation;
 		Position velocity;
+	};
+	struct Test {
+		void lock() {
+
+		}
+		void unlock() {
+
+		}
 	};
 
 private:
@@ -56,20 +70,14 @@ public:
 	mutex gmbLock;
 	queue<GMB_Event> eventQue;
 	mutex eventLock;
-
+	// Test eventLock;
 	HANDLE loginEvent;
 	Weapon_Type wpnType;
 	bool isMoving;
 
 	int gob_target{ -100 };
-	Position gob_target_pos;
-
-	int gob_num;
-	int cyclops_num;
-	int mini_num;
-	int lazard_num;
-	int beetle_num;
-	int mon_num;
+	Position my_pos;
+	high_resolution_clock::time_point lastPopTime;
 public:
 	Network();
 	~Network() = default;
@@ -85,6 +93,8 @@ public:
 	int GetMyID() const;
 
 	void PopEvent();
+
+	static void PopThread();
 };
 
 int recvn(SOCKET s, char *buf, int len, int flags);

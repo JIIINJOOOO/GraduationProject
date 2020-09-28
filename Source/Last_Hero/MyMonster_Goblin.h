@@ -25,6 +25,7 @@ private:
 
 	bool isDead;
 	int deadCnt;
+	int type;
 
 public:
 	// Sets default values for this character's properties

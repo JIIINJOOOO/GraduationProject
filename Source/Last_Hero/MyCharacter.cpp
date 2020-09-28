@@ -82,6 +82,7 @@ AMyCharacter::AMyCharacter()
 	id = -1;
 	velocity = { 0,0,0 };
 	speed = 0.f;
+	isMoving = false;
 }
 //5/31: 290p 세팅까지 마친상태
 
@@ -89,15 +90,20 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	SetActorLocation(FVector(10227.3125, 76509.90625, -437.344971));
 }
 
 // Called every frame
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	position = GetActorLocation();
+	net.my_pos = { position.X, position.Y, position.Z };
+
+
 	if (net.GetStatus() != p_login) return;
 	if (id == net.GetMyID()) {
-		if (net.isMoving == false) return;
+		// if (net.isMoving == false) return;
 		position = GetActorLocation();
 		rotation = GetActorRotation();
 		auto vel = GetVelocity();
@@ -130,7 +136,8 @@ void AMyCharacter::Tick(float DeltaTime)
 	}
 	if (ev.oid >= 10) return;
 	if (ev.oid != id && id != -1) return;
-	AddMovementInput(velocity, speed, true);
+	AddMovementInput(velocity, speed);
+	isMoving = false;
 
 	switch (ev.type) {
 	case sc_login_ok:
@@ -144,20 +151,23 @@ void AMyCharacter::Tick(float DeltaTime)
 		velocity = { ev.velocity.x,ev.velocity.y ,ev.velocity.z };
 		// UE_LOG(LogTemp, Log, TEXT("%d %d %d"), ev.velocity.x, ev.velocity.y, ev.velocity.z);
 		// SetActorRotation(rotation);
+		// SetActorLocation(position);
 		// auto currentPos = GetActorLocation();
 		// if ((int)currentPos.X == (int)position.X) {
 		// 	UE_LOG(LogTemp, Log, TEXT("C Movesaddsa"));
 		// 	break;
 		// }
-		speed = 200.f;
-		SetActorRotation(rotation);
+		isMoving = true;
+		speed = 600.f;
 		// speed = 0.f;
 		// GetVelocity();
 		// UE_LOG(LogTemp, Log, TEXT("C Move"));
 		// AddMovementInput(position);
 		// AddMovementInput(FRotationMatrix(rotation).GetUnitAxis(EAxis::Y), 200.f);
 		// AddMovementInput(GetVelocity(), 200.f);
-		SetActorLocationAndRotation(position, rotation, false, 0, ETeleportType::None);
+
+		// SetActorLocationAndRotation(position, rotation, false, 0, ETeleportType::None);
+
 		net.PopEvent();
 	}break;
 	case sc_attack: {
@@ -220,6 +230,7 @@ void AMyCharacter::Tick(float DeltaTime)
 	case sc_berserk: {
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->Berserker();
+		bersuckermode_cpp = true;
 		net.PopEvent();
 	}break;
 	case sc_fireball:
@@ -244,6 +255,7 @@ void AMyCharacter::Tick(float DeltaTime)
 		net.PopEvent();
 	}break;
 	case sc_damaged: {
+		UE_LOG(LogTemp, Log, TEXT("Player Damaged!"));
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->SwordShieldImpact1();
 		hp = ev.hp;
@@ -258,16 +270,18 @@ void AMyCharacter::Tick(float DeltaTime)
 	case sc_move_stop:
 		speed = 0.f;
 		velocity = { 0,0,0 };
+		position = { ev.pos.x, ev.pos.y, ev.pos.z };
+		SetActorLocation(position);
 		net.PopEvent();
 		break;
 	case sc_set_npc_target: {
 		if (ev.hp == 10000) {
-			net.gob_target_pos = { position.X, position.Y, position.Z };
-			net.gob_target = id;
+
 		}
 		net.PopEvent();
 	}break;
 	default:
+		net.PopEvent();
 		break;
 	}
 }
@@ -433,6 +447,9 @@ void AMyCharacter::PossessedBy(AController* NewController)
 
 void AMyCharacter::SetID(const int& id) {
 	SpawnDefaultController();
-	SetActorLocation(FVector(10230.0, 76530.0, -360));
 	this->id = id;
+}
+
+void AMyCharacter::SetPosition(float x, float y, float z) {
+	SetActorLocation(FVector(x, y, z));
 }

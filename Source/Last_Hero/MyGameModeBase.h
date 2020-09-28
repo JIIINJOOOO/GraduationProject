@@ -36,5 +36,17 @@ protected:
 	UFUNCTION()
 	void SpawnMonster();
 	UFUNCTION()
+		void SpawnGoblin(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnCyclops(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnBeetle(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnMiniGolem(const int& oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnLazard(const int& oid, float x, float y, float z);
+	UFUNCTION()
 		void SpawnPlayer(int oid, float x, float y, float z);
+	UFUNCTION()
+		void SpawnGolem(int oid, float x, float y, float z);
 };

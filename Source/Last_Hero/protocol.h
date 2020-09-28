@@ -1,8 +1,8 @@
 
 #pragma once
 #define MAXLEN 10
-enum Obj_Type {
-	obj_player, obj_monster
+enum OBJ_TYPE {
+	OBJ_PLAYER, OBJ_GOBLIN, OBJ_CYCLOPS, OBJ_BEETLE, OBJ_MINI_GOLEM, OBJ_LAZARD, OBJ_GOLEM
 };
 struct Position {
 	float x, y, z;
@@ -14,7 +14,7 @@ enum PACKET_TYPE {
 	sc_leave, sc_login, sc_signup, sc_login_fail, sc_login_ok,
 	sc_signup_ok, sc_signup_fail, sc_player_move, sc_update_obj, sc_enter_obj,
 	sc_leave_obj, cs_chat, sc_chat, cs_attack, cs_guard, sc_attack, sc_guard, cs_fireball, sc_fireball, sc_set_host, cs_jump, sc_jump,
-	cs_evade, cs_weapon_on, cs_weapon_off, sc_evade, sc_weapon_on, sc_weapon_off, cs_berserk, sc_berserk, cs_ready, sc_ready, cs_game_start, sc_game_start, sc_level_up, sc_dead, sc_damaged, sc_get_exp, sc_block, cs_boss_move, sc_fireball_off, sc_fireball_move, cs_hide, sc_hide, cs_hide_off, sc_hide_off, cs_assassin, sc_assassin, cs_move_stop, sc_move_stop, cs_exit, cs_sword_on, cs_sword_off, cs_hammer_on, cs_hammer_off, sc_sword_on, sc_sword_off, sc_hammer_on, sc_hammer_off, cs_npc_move, sc_npc_move, sc_set_npc_target, cs_spawn_npc
+	cs_evade, cs_weapon_on, cs_weapon_off, sc_evade, sc_weapon_on, sc_weapon_off, cs_berserk, sc_berserk, cs_ready, sc_ready, cs_game_start, sc_game_start, sc_level_up, sc_dead, sc_damaged, sc_get_exp, sc_block, cs_boss_move, sc_fireball_off, sc_fireball_move, cs_hide, sc_hide, cs_hide_off, sc_hide_off, cs_assassin, sc_assassin, cs_move_stop, sc_move_stop, cs_exit, cs_sword_on, cs_sword_off, cs_hammer_on, cs_hammer_off, sc_sword_on, sc_sword_off, sc_hammer_on, sc_hammer_off, cs_npc_move, sc_npc_move, sc_set_npc_target, cs_spawn_npc, cs_boss_attack, sc_boss_attack, cs_boss_bone, sc_bone_break, sc_bone_update, cs_sync_fail
 };
 
 enum Weapon_Type {
@@ -34,9 +34,6 @@ enum Lobby_State {
 	standby = 10, ingame, full
 };
 
-enum OBJ_TYPE {
-	OBJ_PLAYER
-};
 
 enum P_STATE {
 	p_free, p_login,
@@ -389,6 +386,7 @@ struct SC_MOVE_STOP {
 	char size;
 	char type;
 	short oid;
+	Position pos;
 };
 
 struct CS_EXIT {
@@ -445,8 +443,6 @@ struct CS_NPC_MOVE {
 	char type;
 	short oid;
 	Position pos;
-	Position roatation;
-	Position velocity;
 };
 
 struct SC_NPC_MOVE {
@@ -471,5 +467,47 @@ struct CS_SPAWN_NPC {
 	char type;
 	short oid;
 	Position pos;
+};
+
+struct CS_BOSS_ATTACK {
+	char size;
+	char type;
+	short oid;
+	short atk_num;
+};
+
+struct SC_BOSS_ATTACK {
+	char size;
+	char type;
+	short oid;
+	short atk_num;
+};
+
+struct CS_BOSS_BONE {
+	char size;
+	char type;
+	short oid;
+	char boneMap[12];
+};
+
+struct SC_BONE_BREAK {
+	char size;
+	char type;
+	short oid;
+	short part;
+};
+
+struct SC_BONE_UPDATE {
+	char size;
+	char type;
+	short oid;
+	char part;
+	char attacked;	// ÇÇ°ÝÈ½¼ö
+};
+
+struct CS_SYNC_FAIL {
+	char size;
+	char type;
+	short oid;
 };
 #pragma pack(pop)

@@ -5,6 +5,7 @@
 #include "Last_Hero.h"
 #include "MyAIController.h"
 #include "GameFramework/Character.h"
+#include "Network.h"
 #include "MyBossGolem.generated.h"
 
 
@@ -22,6 +23,13 @@ UCLASS()
 class LAST_HERO_API AMyBossGolem : public ACharacter
 {
 	GENERATED_BODY()
+
+private:
+	int id;
+	int type;
+	FVector pos;
+	FRotator rotate;
+	FVector velocity;
 
 public:
 	// Sets default values for this character's properties
@@ -162,4 +170,10 @@ private:
 
 	// c++ variables
 	bool IsDownInit;
+
+public:
+	char* GetPartString(int pid);
+	void AttackPacketProcess(const int& atk_num);
+	CS_BOSS_BONE MakeBonePacket();
+	void SetID(const int& id);
 };

@@ -31,6 +31,7 @@ private:
 	float speed;
 	FVector velocity;
 	UMyAnimInstance* animInstance;
+	bool isMoving;
 
 public:
 	// Sets default values for this character's properties
@@ -137,4 +138,5 @@ public:
 		class UMyAnimInstance* MyAnim;*/
 public:
 	void SetID(const int& id);
+	void SetPosition(float x, float y, float z);
 };
