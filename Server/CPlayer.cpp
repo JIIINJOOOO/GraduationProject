@@ -52,7 +52,7 @@ void CPlayer::Initialize(int hp, int o_type, int exp, int lv, int mp, int atk, i
 	atkPoint = 15;
 	pos.x = x;
 	pos.y = y;
-	pos = { 14410.0, 77670.0, -444.22113 };
+	pos = { 10230.0, 76530.0, -360 };
 	isBerserk = false;
 	isGuard = false;
 	isWpnOn = false;

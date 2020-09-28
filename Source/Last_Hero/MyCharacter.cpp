@@ -433,6 +433,6 @@ void AMyCharacter::PossessedBy(AController* NewController)
 
 void AMyCharacter::SetID(const int& id) {
 	SpawnDefaultController();
-	SetActorLocation(FVector(14410.0, 77670.0, -444.22113));
+	SetActorLocation(FVector(10230.0, 76530.0, -360));
 	this->id = id;
 }
