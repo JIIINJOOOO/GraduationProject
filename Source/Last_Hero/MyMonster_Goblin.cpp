@@ -69,7 +69,7 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 	if (type == -1) return;
 
 	if (isDead) {
-		if (deadCnt == 500) SetActorLocation(FVector(12450.0, 99870.0, -540.0));
+		if (deadCnt == 300) SetActorLocation(FVector(12450.0, 99870.0, -540.0));
 		deadCnt++;
 		return;
 	}
@@ -109,12 +109,12 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 		net.PopEvent();
 		break;
 	case sc_dead: {
-		// animInstance->Death();
-		// velocity = { 0,0,0 };
-		// hp = ev.hp;
-		// speed = 0.f;
-		// isDead = true;
-		// isMoving = false;
+		animInstance->Death();
+		velocity = { 0,0,0 };
+		hp = ev.hp;
+		speed = 0.f;
+		isDead = true;
+		isMoving = false;
 		net.PopEvent();
 	}break;
 	case sc_attack: {
