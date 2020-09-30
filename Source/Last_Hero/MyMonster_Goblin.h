@@ -7,8 +7,10 @@
 #include "UObject/ConstructorHelpers.h"
 #include "MyAnimInstance.h"
 #include "GoblinAnimInstance.h"
+#include <chrono>
 #include "MyMonster_Goblin.generated.h"
 
+using namespace std::chrono;
 UCLASS()
 class LAST_HERO_API AMyMonster_Goblin : public ACharacter
 {
@@ -26,6 +28,8 @@ private:
 	bool isDead;
 	int deadCnt;
 	int type;
+
+	high_resolution_clock::time_point deathTime;
 
 public:
 	// Sets default values for this character's properties

@@ -430,7 +430,7 @@ void AMyBossGolem::Tick(float DeltaTime)
 	{
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::ChargeSpear, 2.5f, true, 0.0f);
 	}*/
-
+	return;
 	if (net.isHost) {
 		CS_NPC_MOVE pack{ sizeof(CS_NPC_MOVE), cs_npc_move, id };
 		pack.pos = { pos.X, pos.Y, pos.Z };

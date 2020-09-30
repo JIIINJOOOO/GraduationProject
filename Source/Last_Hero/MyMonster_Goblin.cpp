@@ -67,33 +67,19 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 	MonPos = GetActorLocation();
 	
 	if (type == -1) return;
+	if (id == -1) return;
 
 	if (isDead) {
-		if (deadCnt == 300) SetActorLocation(FVector(12450.0, 99870.0, -540.0));
-		deadCnt++;
+		if (deathTime+3s < high_resolution_clock::now())
+			SetActorLocation(FVector(12450.0, 99870.0, -540.0));
 		return;
 	}
 
 	if (isMoving) AddMovementInput(velocity, speed);
 
-	if (net.isHost) {
-		CS_NPC_MOVE pack{ sizeof(CS_NPC_MOVE), cs_npc_move, id };
-		pack.pos = { MonPos.X,MonPos.Y,MonPos.Z };
-		net.SendPacket(&pack);
-	}
-
-	net.eventLock.lock();
-	if (net.eventQue.empty()) {
-		net.eventLock.unlock();
-		return;
-	}
-	auto ev = net.eventQue.front();
-	net.eventLock.unlock();
-	if (ev.oid < NPC_ID_START) return;
-	if (ev.oid != id) return;
-
-
-
+	if (net.objEventQue[id].empty()) return;
+	auto ev = net.objEventQue[id].front();
+	net.objEventQue[id].pop();
 	switch (ev.type) {
 	case sc_update_obj:
 		MonPos = { ev.pos.x, ev.pos.y, ev.pos.z };
@@ -104,9 +90,7 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 		// SetActorRotation(FRotator(0, ev.rotation.y, 0));
 		// velocity.Normalize();
 		isMoving = true;
-		speed = 0.1f;
 		speed = 200.f;
-		net.PopEvent();
 		break;
 	case sc_dead: {
 		animInstance->Death();
@@ -114,15 +98,14 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 		hp = ev.hp;
 		speed = 0.f;
 		isDead = true;
+		deathTime = high_resolution_clock::now();
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_attack: {
 		animInstance->Slash();
 		velocity = { 0,0,0 };
 		speed = 0.f;
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_damaged: {
 		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
@@ -130,27 +113,17 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 		hp = ev.hp;
 		speed = 0.f;
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_move_stop: {
 		hp = ev.hp;
 		velocity = { 0,0,0 };
 		speed = 0.f;
 		isMoving = false;
-
-		net.PopEvent();
-	}break;
-	case sc_set_npc_target: {
-
-		net.PopEvent();
 	}break;
 	case sc_block:
 		isMoving = false;
-
-		net.PopEvent();
 		break;
 	default:
-		net.PopEvent();
 		break;
 	}
 }

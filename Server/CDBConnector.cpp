@@ -18,6 +18,25 @@ extern HANDLE g_iocp;
 extern map<int, CPlayer*> g_player;
 extern void send_packet(int uid, void* p);
 
+void HandleDiagnosticRecord(SQLHANDLE hHandle, SQLSMALLINT hType, RETCODE RetCode)
+{
+	SQLSMALLINT iRec = 0;
+	SQLINTEGER iError;
+	WCHAR wszMessage[1000];
+	WCHAR wszState[SQL_SQLSTATE_SIZE + 1];
+	if (RetCode == SQL_INVALID_HANDLE) {
+		fwprintf(stderr, L"Invalid handle!\n");
+		return;
+	}
+	while (SQLGetDiagRec(hType, hHandle, ++iRec, (SQLCHAR*)wszState, &iError, (SQLCHAR*)wszMessage,
+		(SQLSMALLINT)(sizeof(wszMessage) / sizeof(WCHAR)), (SQLSMALLINT*)NULL) == SQL_SUCCESS) {
+		// Hide data truncated..
+		if (wcsncmp(wszState, L"01004", 5)) {
+			fwprintf(stderr, L"[%5.5s] %s (%d)\n", wszState, wszMessage, iError);
+		}
+	}
+}
+
 void CDBConnector::AllocateHandle() {
 	// Allocate ODBC Handle
 	retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
@@ -75,6 +94,7 @@ int CDBConnector::ExcuteStatementDirect(SQLCHAR* sql) {
 	if (retcode == SQL_SUCCESS)
 		printf("Query Suceess \n");
 	else {
+		HandleDiagnosticRecord(hstmt, SQL_HANDLE_STMT, retcode);
 		SQLGetDiagRec(SQL_HANDLE_STMT, hstmt, ++rec, state,
 			&native, message, sizeof(message), &length);
 		printf("%s : %ld : %ld : %s \n", state, rec, native, message);

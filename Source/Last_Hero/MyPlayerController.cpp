@@ -101,17 +101,20 @@ void AMyPlayerController::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	bool isPrevMove = false; // 이전 프레임에도 이동중이었는지
-	if (net.isMoving) isPrevMove = true;
+	if (net.isMovingN) isPrevMove = true;
 	else isPrevMove = false;
 	
-	static int cnt = 0;
-	if (isInput) {
-		cnt++;
-		if (cnt == 100) {
-			isInput = false;
-			cnt = 0;
-		}
-	}
+	if (lastInputTime + 1s < high_resolution_clock::now())
+		isInput = false;
+
+	// static int cnt = 0;
+	// if (isInput) {
+	// 	cnt++;
+	// 	if (cnt == 100) {
+	// 		isInput = false;
+	// 		cnt = 0;
+	// 	}
+	// }
 
 	// isInput = true;
 
@@ -127,6 +130,7 @@ void AMyPlayerController::Tick(float DeltaTime) {
 			net.SendPacket(&pack);
 			//net.wpnType = wpn_none;
 		}
+		lastInputTime = high_resolution_clock::now();
 		isInput = true;
 	}
 	if (IsInputKeyDown(EKeys::Two) && !isInput) {
@@ -140,6 +144,7 @@ void AMyPlayerController::Tick(float DeltaTime) {
 			net.SendPacket(&pack);
 			//net.wpnType = wpn_none;
 		}
+		lastInputTime = high_resolution_clock::now();
 		isInput = true;
 	}
 	if (IsInputKeyDown(EKeys::Three)) {
@@ -211,12 +216,20 @@ void AMyPlayerController::Tick(float DeltaTime) {
 	else isInput_Space = false;
 
 	if (isInput_W || isInput_A || isInput_S || isInput_D || isInput_Space)
-		net.isMoving = true;
-	else net.isMoving = false;
+		net.isMovingN = true;
+	else net.isMovingN = false;
 
-	if (isPrevMove && !net.isMoving) {
-		// 이전까지 이동하다가 이동이 중단되었을때. 즉, 이동종료 알림
-		CS_MOVE_STOP pack{ sizeof(CS_MOVE_STOP), cs_move_stop };
+	if (IsInputKeyDown(EKeys::W) || IsInputKeyDown(EKeys::A) || IsInputKeyDown(EKeys::S) || IsInputKeyDown(EKeys::D) || IsInputKeyDown(EKeys::SpaceBar)) {
+		net.isMovingN = true;
+		// UE_LOG(LogTemp, Log, TEXT("Input Move key"));
+		CS_MOVE pack{ sizeof(CS_MOVE), move_packet, net.my_pos, net.my_rot, net.my_vel };
 		net.SendPacket(&pack);
 	}
+	else net.isMovingN = false;
+
+	// if (isPrevMove && !net.isMovingN) {
+	// 	// 이전까지 이동하다가 이동이 중단되었을때. 즉, 이동종료 알림
+	// 	CS_MOVE_STOP pack{ sizeof(CS_MOVE_STOP), cs_move_stop };
+	// 	net.SendPacket(&pack);
+	// }
 }

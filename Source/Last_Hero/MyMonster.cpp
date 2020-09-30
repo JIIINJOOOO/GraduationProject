@@ -54,7 +54,6 @@ void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
-	ServerMonHP = 0;
 	if (isMoving) AddMovementInput(velocity, speed, true);
 
 	if (type == OBJ_CYCLOPS)
@@ -68,15 +67,9 @@ void AMyMonster::Tick(float DeltaTime)
 }
 
 void AMyMonster::CyclopsUpdate() {
-	net.eventLock.lock();
-	if (net.eventQue.empty()) {
-		net.eventLock.unlock();
-		return;
-	}
-	auto ev = net.eventQue.front();
-	net.eventLock.unlock();
-	if (ev.oid < NPC_ID_START) return;
-	if (ev.oid != id) return;
+	if (net.objEventQue[id].empty()) return;
+	auto ev = net.objEventQue[id].front();
+	net.objEventQue[id].pop();
 
 	switch (ev.type) {
 	case sc_update_obj:
@@ -84,7 +77,6 @@ void AMyMonster::CyclopsUpdate() {
 		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
-		net.PopEvent();
 		break;
 	case sc_attack: {
 		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
@@ -94,38 +86,28 @@ void AMyMonster::CyclopsUpdate() {
 			if (ev.mp == 2) animInst->Attack3();
 		}
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_damaged: {
 		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_dead: {
 		// isDead = true;
 		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	default:
 		isMoving = false;
-		net.PopEvent();
 		break;
 	}
 }
 
 void AMyMonster::BeetleUpdate() {
-	net.eventLock.lock();
-	if (net.eventQue.empty()) {
-		net.eventLock.unlock();
-		return;
-	}
-	auto ev = net.eventQue.front();
-	net.eventLock.unlock();
-	if (ev.oid < NPC_ID_START) return;
-	if (ev.oid != id) return;
+	if (net.objEventQue[id].empty()) return;
+	auto ev = net.objEventQue[id].front();
+	net.objEventQue[id].pop();
 
 	switch (ev.type) {
 	case sc_update_obj:
@@ -134,7 +116,6 @@ void AMyMonster::BeetleUpdate() {
 		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
-		net.PopEvent();
 		break;
 	case sc_attack: {
 		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
@@ -144,38 +125,28 @@ void AMyMonster::BeetleUpdate() {
 			if (ev.mp == 2) animInst->Attack3();
 		}
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_damaged: {
 		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_dead: {
 		// isDead = true;
 		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	default:
 		isMoving = false;
-		net.PopEvent();
 		break;
 	}
 }
 
 void AMyMonster::MiniGolemUpdate() {
-	net.eventLock.lock();
-	if (net.eventQue.empty()) {
-		net.eventLock.unlock();
-		return;
-	}
-	auto ev = net.eventQue.front();
-	net.eventLock.unlock();
-	if (ev.oid < NPC_ID_START) return;
-	if (ev.oid != id) return;
+	if (net.objEventQue[id].empty()) return;
+	auto ev = net.objEventQue[id].front();
+	net.objEventQue[id].pop();
 
 	switch (ev.type) {
 	case sc_update_obj:
@@ -184,7 +155,6 @@ void AMyMonster::MiniGolemUpdate() {
 		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
-		net.PopEvent();
 		break;
 	case sc_attack: {
 		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
@@ -194,38 +164,28 @@ void AMyMonster::MiniGolemUpdate() {
 			if (ev.mp == 2) animInst->Attack3();
 		}
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_damaged: {
 		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	case sc_dead: {
 		// isDead = true;
 		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
 	}break;
 	default:
 		isMoving = false;
-		net.PopEvent();
 		break;
 	}
 }
 
 void AMyMonster::LazardUpdate() {
-	net.eventLock.lock();
-	if (net.eventQue.empty()) {
-		net.eventLock.unlock();
-		return;
-	}
-	auto ev = net.eventQue.front();
-	net.eventLock.unlock();
-	if (ev.oid < NPC_ID_START) return;
-	if (ev.oid != id) return;
+	if (net.objEventQue[id].empty()) return;
+	auto ev = net.objEventQue[id].front();
+	net.objEventQue[id].pop();
 
 	switch (ev.type) {
 	case sc_update_obj:
@@ -234,7 +194,6 @@ void AMyMonster::LazardUpdate() {
 		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
-		net.PopEvent();
 		break;
 	case sc_attack: {
 		auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());

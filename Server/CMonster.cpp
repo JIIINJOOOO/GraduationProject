@@ -1,4 +1,5 @@
 #include <map>
+#include <random>
 #include "CMonster.h"
 #include "globals.h"
 #include "CTerrain.h"
@@ -13,13 +14,17 @@ extern map<int, CObject*> g_obj;
 extern map<int, CMonster*> g_monster;
 extern map<int, CPlayer*> g_player;
 extern Boss* boss;
+extern map<int, Boss*> g_boss;
 
 extern void send_packet(int uid, void* p);
+
+random_device rd;
+mt19937 gen(rd());
+uniform_int_distribution<int> dis(0, 2); // 0,1,2
 
 float GetDegree(Position p1, Position p2) {
 	return (atan2f(p2.y - p1.y, p2.x - p1.x) * 180) / Pi;
 }
-
 
 void CMonster::Update(CObject& my, const CObject& other) {
 	// POS_2D myPos = {(pos.x-SIDE_MIN)/POS_SCALE, (pos.y-SIDE_MIN)/POS_SCALE};
@@ -99,23 +104,25 @@ void CMonster::Update(CObject& my, const CObject& other) {
 }
 
 void CMonster::Chase(const CPlayer& target) {
-	SC_SET_NPC_TARGET pack;
-	pack.size = sizeof(pack);
-	pack.type = sc_set_npc_target;
-	pack.oid = id;
-	pack.pos = g_player[GetTarget()]->GetPosition();
-	pack.pos = pack.pos - pos;
-	velocity = pack.pos;
+	/*
+	지금 문제가 서버에서는 각 노드로 바로 이동해버리는데
+	클라에서는 각 노드를 사용해 velocity를 얻어서 이동하니까
+	서버에서는 100씩 이동하는데 클라에서는 이동중임
+	이걸 해결하려면
+	1. 노드를 분할해서 이동시킨다
+	2. 0번클라에서 이동한 값을 받아서 동기화시킨다.
+		- 근데 이걸 어쩌지
+	*/
+	velocity = target.GetPosition() - pos;
+	velocity.z = 0;
+	pos = pos + (velocity * 0.15);
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
-		// if (!g_player[i]->isHost) continue;
-		// send_packet(i, &pack);
 		send_packet(i, &MakeUpdatePacket());
-		// break;
 	}
-	
-	
+
 	return;
+	// ----------------------------------------------------
 	m_chasePath.clear();
 	POS_2D my = { (pos.x-SIDE_MIN)/POS_SCALE, (pos.y-SIDE_MIN)/POS_SCALE };
 	Position pp = target.GetPosition();
@@ -126,18 +133,30 @@ void CMonster::Chase(const CPlayer& target) {
 	// pos = p;
 	// 임시로 좌표에 그대로 넣었는데 노드의 좌표이므로 사이 보정 해줘야함
 	// 이걸 어케함 ㅆ1벌
-	// velocity.x = (p.x*POS_SCALE) + SIDE_MIN - pos.x;
-	// velocity.y = (p.y*POS_SCALE) + SIDE_MIN - pos.y;
+	velocity.x = (p.x*POS_SCALE) + SIDE_MIN - pos.x;
+	velocity.y = (p.y*POS_SCALE) + SIDE_MIN - pos.y;
+	velocity.z = 0;
 	// velocity.x = pp.x - pos.x;
 	// velocity.y = pp.y - pos.y;
-	
-	pos.x = (p.x*POS_SCALE) + SIDE_MIN;
-	pos.y = (p.y*POS_SCALE) + SIDE_MIN;
-	cout << velocity.x << "\t" << velocity.y << endl;
+	auto dest_x = (p.x*POS_SCALE) + SIDE_MIN;
+	auto dest_y = (p.y*POS_SCALE) + SIDE_MIN;
+	// pos.x = pos.x + ((dest_x - pos.x) * 0.2);
+	// pos.y = pos.y + ((dest_y - pos.y) * 0.2);
+	pos.x = dest_x;
+	pos.y = dest_y;
+
 	m_chasePath.pop_front();
 	
-	rotation = GetDegree(pos, target.GetPosition());
-	// cout << rotation << endl;
+	// rotation.y = GetDegree(pos, Position(dest_x, dest_y, 0));
+	rotation.y = GetDegree(pos, pp);
+	// rotation.y = (int)(rotation.y + 360) % 360;
+	// cout << "rotation  :  " << rotation.y << endl;
+	// cout << pos.x <<"\t"<< pos.y << endl;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &MakeUpdatePacket());
+	}
+	// cout << rotation << endl; 18
 }
 
 void CMonster::Idle() {
@@ -149,8 +168,15 @@ void CMonster::Attack(CPlayer& target) {
 	응랑ㄱ 공격을 어떻게 홰야ㅏ하지?
 	으어먀ㅐㄱㄹㄴㅇ
 	*/
-	SC_OBJ_ATTACK pack{ sizeof(pack), sc_attack, id };
+	// 949000.0
+	int attack_num = dis(gen);	// 어떤 공격 사용할지인데 클라에서 출력만 다르게 하고 대미지 처리는 모두 동일하게 진행
 	if (GetDistance(target.GetPosition()) > ATTACK_RANGE) return;
+	SC_OBJ_ATTACK pack{ sizeof(pack), sc_attack, id,attack_num };
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
+	// if (!IsFront(target.GetPosition())) return;
 	cout << "몬스터" << id << "(이)가 " << target.GetID() << "를 공격 ";
 	Sleep(500);
 	if (GetDistance(target.GetPosition()) < GUARD_RANGE) {
@@ -159,9 +185,10 @@ void CMonster::Attack(CPlayer& target) {
 			// SC_OBJ_GUARD gp{ sizeof(gp), sc_guard, id };
 			SC_BLOCK bp{ sizeof(bp), sc_block, id };
 			// send_packet(target.GetIdx(), &gp);
-			for (auto& p : target.viewList)
-				if (p < MAX_PLAYER)
-					send_packet(p, &bp);
+			for (int i = 0; i < MAX_PLAYER; ++i) {
+				if (g_player[i] == NULL) continue;
+				send_packet(i, &bp);
+			}
 			return;
 		}
 		else if (target.isEvade) {
@@ -169,29 +196,32 @@ void CMonster::Attack(CPlayer& target) {
 			return;
 		}
 	}
+	
+	SC_DAMAGED d_pack{ sizeof(SC_DAMAGED), sc_damaged, target.GetIdx(), target.GetHP()};
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		// cout << "player damaged" << endl;
+		send_packet(i, &d_pack);
+	}
 	cout << target.GetID() << "(은)는 " << atkPoint << "의 대미지를 입었다\n";
 	target.TakeDamage(atkPoint);
 	
 }
 
 void CMonster::Update() {
-	
-	// state->Execute(this);
-	// for (int i = 0; i < MAX_PLAYER; ++i) {
-	// 	if (g_player[i] == NULL) continue;
-	// 	if (g_player[i]->viewList.count(id) != 0)
-	// 		send_packet(i, &MakeUpdatePacket());
-	// }
 
-	for (int i = 0; i < MAX_PLAYER; ++i) {
-		if (g_player[i] == NULL) continue;
-		if (!g_player[i]->isHost) continue;
-		send_packet(i, &MakeUpdatePacket());
+	state->Execute(this);
+
+}
+
+void CMonster::UpdateWithClient() {
+	if (monState == M_CHASE) {
+		if (target == -1) return;
+		if (g_player[target] == NULL) return;
+		velocity = g_player[target]->GetPosition() - pos;
+		// cout << target << endl;
 	}
-
-//	if (healthPoint <= 0) {
-//		
-//	}
+	// cout << velocity.x << "\t" << velocity.y << endl;
 }
 
 void CMonster::Initialize(Position pos, int type) {
@@ -229,13 +259,17 @@ void CMonster::SetPrevHealthPoint() {
 
 int CMonster::TakeDamage(int atk_point) {
 	healthPoint -= atk_point;
-	if (healthPoint <= 0) healthPoint = 0;
+	if (healthPoint <= 0) Death();
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
-		if (g_player[i]->viewList.count(id) == 0) continue;
 		send_packet(i, &MakeDamagedPacket());
 	}
 	return healthPoint;
+}
+
+void CMonster::Death() {
+	healthPoint = 0;
+	pos = { 0,0,0 };
 }
 
 // Getter & Setter
@@ -294,13 +328,33 @@ int CMonster::GetPrevHealthPoint() const {
 	return prevHealth;
 }
 
+int CMonster::GetHP() const {
+	return healthPoint;
+}
+
 void CMonster::ResetRecoverCool() {
 	recoveryCoolTime = 0;
 }
 
+bool CMonster::IsFront(const Position& player_pos) {
+	/*
+	오브젝트가 내 앞에 있는지 검사
+	velocity를 기준으로 내 앞인지만 검사하고
+	*/
+	if (velocity.x > 0)
+		if (player_pos.x < pos.x) return false;
+	if (velocity.x < 0)
+		if (player_pos.x > pos.x) return false;
+	if (velocity.y > 0)
+		if (player_pos.y < pos.y) return false;
+	if (velocity.y < 0)
+		if (player_pos.y > pos.y) return false;
+	return true;
+}
+
 SC_OBJECT_ENTER CMonster::MakeEnterPacket() {
 	SC_OBJECT_ENTER p;
-	p.o_type = 1; // 몬스터 타입
+	p.o_type = m_type; // 몬스터 타입
 	p.pos = pos;
 	p.size = sizeof(SC_OBJECT_ENTER);
 	p.type = sc_enter_obj;
@@ -322,7 +376,7 @@ SC_UPDATE_OBJ CMonster::MakeUpdatePacket() {
 	p.pos = pos;
 	p.size = sizeof(p);
 	p.type = sc_update_obj;
-	p.rotation = Position(0, rotation, 0);
+	p.rotation = rotation;
 	p.velocity = velocity;
 	return p;
 }
@@ -348,15 +402,15 @@ void CMonster::SetVelocity(const Position& v) {
 	velocity = v;
 }
 void CMonster::SetRotation(const Position& r) {
-	rotation = r.y;
+	rotation = r;
 }
 
 void CreateMonster(int num) {
-	return;
 	Position defPos{ 15580.f, 77800.f, -490.f };
 	// 14900.0, 78160.0 -432.0
 	// 15580.0 77800.0 -490.0
-	defPos = { 19890.0, 78770.0, -428.114075 };
+	
+	// 13068.541016  86198.484375 -448.772888
 	//for (int i = 0; i < 4; ++i) {
 	//	short idx = START_POINT_MONSTER + i*1000;
 	//	// defPos.x = xdis(gen);
@@ -372,39 +426,70 @@ void CreateMonster(int num) {
 	//	// break;
 	//}
 
-	// Goblin
-	short idx = NPC_ID_START;
-	g_monster[idx] = new CMonster;
-	g_monster[idx]->Initialize(defPos, normal);
-	g_monster[idx]->SetIndex(idx);
-	cout << "고블린(id=" << idx << ") 스폰" << endl;
+	// Boss
+	short idx = BOSS_IDX;
+	defPos = { 22976.53125, 35731.6875, -932.329895 };
+	g_boss[idx] = new Boss;
+	g_boss[idx]->Initialize(idx, defPos);
+	cout<<"Boss Golem(id="<<idx<<") Spawn("<<defPos.x<<", " << defPos.y << ", " << defPos.z << ")\n";
+	// return;
+	// idx = idx + 1;
+	// defPos = { 22976.53125, 35731.6875, -932.329895 };
+	// g_boss[idx] = new Boss;
+	// g_boss[idx]->Initialize(idx, defPos);
+	// cout << "Boss Golem(id=" <<idx<< ") Spawn(" << defPos.x << ", " << defPos.y << ", " << defPos.z << ")\n";
 
+	// Goblin
+	idx = NPC_ID_START;
+	defPos = { 12853.588867, 76285.28125, -420.191681 };
+	g_monster[idx] = new CMonster;
+	g_monster[idx]->Initialize(defPos, OBJ_GOBLIN);
+	g_monster[idx]->SetIndex(idx);
+	cout << "Goblin(id=" << idx << ") Spawn(" << defPos.x << ", " << defPos.y << ", " << defPos.z << ")\n";
+	return;
+	idx = NPC_ID_START+1;
+	defPos = { 13553.588867, 76285.28125, -420.191681 };
+	g_monster[idx] = new CMonster;
+	g_monster[idx]->Initialize(defPos, OBJ_GOBLIN);
+	g_monster[idx]->SetIndex(idx);
+	cout << "Goblin(id=" << idx << ") Spawn(" << defPos.x << ", " << defPos.y << ", " << defPos.z << ")\n";
+	return;
 	// Cyclops
 	idx = CYCLOPS_ID_START;
-	defPos = { 22270.0, 87990.0, -400.0 };
+	defPos = { 12775.796875, 75823.28125, -384.288635 };
 	g_monster[idx] = new CMonster;
-	g_monster[idx]->Initialize(defPos, normal);
+	g_monster[idx]->Initialize(defPos, OBJ_CYCLOPS);
 	g_monster[idx]->SetIndex(idx);
-	cout << "사이클롭스(id=" << idx << ") 스폰" << endl;
-
+	cout << "Cyclops(id=" << idx << ") Spawn" << endl;
+	return;
 	// Beetle
 	idx = BEETLE_ID_START;
-	defPos = { 23250.0, 83220.0, -353.467102 };
+	defPos = { 12775.796875, 75823.28125, -384.288635 };
 	g_monster[idx] = new CMonster;
-	g_monster[idx]->Initialize(defPos, normal);
+	g_monster[idx]->Initialize(defPos, OBJ_BEETLE);
 	g_monster[idx]->SetIndex(idx);
-	cout << "비틀(id=" << idx << ") 스폰" << endl;
-
+	cout << "Beetle(id=" << idx << ") 스폰" << endl;
+	return;
 	// Mini Golem
 	idx = MINI_GOLEM_ID_START;
 	defPos = { 29130.652344, 78242.976562, -374.753357 };
 	g_monster[idx] = new CMonster;
-	g_monster[idx]->Initialize(defPos, normal);
+	g_monster[idx]->Initialize(defPos, OBJ_MINI_GOLEM);
 	g_monster[idx]->SetIndex(idx);
-	cout << "미니골렘(id=" << idx << ") 스폰" << endl;
+	cout << "Lazard(id=" << idx << ") 스폰" << endl;
 
-	// boss = new Boss;
-	// boss->Initialize(20'000, defPos);
+	// Lazard
+	g_monster[idx] = new CMonster;
+	g_monster[idx]->Initialize(defPos, OBJ_LAZARD);
+	g_monster[idx]->SetIndex(idx);
+	cout << "Lazard(id=" << idx << ") 스폰" << endl;
+	
 	// cout << "Create Monsters Complete (num of : " << num + 1 << ")\n";
+
+	/*
+	boss 
+	15729.668945, 86634.828125, -123.504761
+	22976.53125, 35731.6875, -932.329895
+	*/
 }
 

@@ -22,7 +22,7 @@ IdleState* IdleState::GetInstance() {
 
 
 void IdleState::Enter(CMonster* mon) {
-	
+	mon->monState = M_IDLE;
 }
 
 void IdleState::Execute(CMonster* mon) {
@@ -85,6 +85,7 @@ ChaseState* ChaseState::GetInstance() {
 
 void ChaseState::Enter(CMonster* mon) {
 	cout << "Monster[" << mon->GetID() << "] is started chase " << g_player[mon->GetTarget()]->GetID() << endl;
+	mon->monState = M_CHASE;
 	
 }
 
@@ -100,27 +101,31 @@ void ChaseState::Execute(CMonster* mon) {
 	if (tg == NULL) return;
 
 	mon->Chase(*tg);
+
 	if (mon->GetDistance(tg->GetPosition()) < ATTACK_RANGE) {
 		mon->ChangeState(AttackState::GetInstance());
 		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
 	}
-	else if (mon->GetDistance(mon->GetDefPosition()) > ACTIVITY_RANGE) {
-		mon->ChangeState(ReturnHomeState::GetInstance());
-		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
-	}
-	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);	
-	// AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
-
+	// else if (mon->GetDistance(mon->GetDefPosition()) > ACTIVITY_RANGE) {
+	// 	mon->ChangeState(ReturnHomeState::GetInstance());
+	// 	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
+	// 	return;
+	// }
+	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 300ms, NULL);	
 }
 
 void ChaseState::Exit(CMonster* mon) {
+	mon->SetVelocity(Position(0, 0, 0));
+	// mon->SetPosition(g_player[mon->GetTarget()]->GetPosition());
 	SC_MOVE_STOP pack{sizeof(SC_MOVE_STOP), sc_move_stop, mon->GetID()};
+	pack.pos = mon->GetPosition();
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
 		if (!g_player[i]->isAlive) continue;
-		send_packet(i, &pack);
+		// send_packet(i, &pack);
 	}
+	mon->chaseEndPos = mon->GetPosition();
 }
 
 // Attack State
@@ -132,6 +137,7 @@ AttackState* AttackState::GetInstance() {
 
 void AttackState::Enter(CMonster* mon) {
 	cout << "Monster[" << mon->GetID() << "] is started attack " << g_player[mon->GetTarget()]->GetID() << endl;
+	mon->monState = M_ATTACK;
 }
 
 void AttackState::Execute(CMonster* mon) {
@@ -163,7 +169,7 @@ void AttackState::Execute(CMonster* mon) {
 		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
 	}
-	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 5s, NULL);
+	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 3s, NULL);
 }
 
 void AttackState::Exit(CMonster*) {
@@ -180,6 +186,7 @@ ReturnHomeState* ReturnHomeState::GetInstance() {
 void ReturnHomeState::Enter(CMonster* mon) {
 	cout << "Monster[" << mon->GetID() << "] is started return to home\n";
 	mon->SetPrevHealthPoint();
+	mon->monState = M_RHOME;
 }
 
 void ReturnHomeState::Execute(CMonster* mon) {
@@ -205,6 +212,7 @@ DeadState* DeadState::GetInstance() {
 
 void DeadState::Enter(CMonster* mon) {
 	cout << "Monster[" << mon->GetID() << "] is Dead\n";
+	mon->monState = M_DEAD;
 }
 
 void DeadState::Execute(CMonster* mon) {
@@ -214,7 +222,6 @@ void DeadState::Execute(CMonster* mon) {
 	// 	tick = 0;
 	// 	mon->ChangeState(IdleState::GetInstance());
 	// }
-	cout << "Monster[" << mon->GetID() << "] is Dead\n";
 	// mon->SetHealthPoint(0);
 	// mon->SetPosition(Position(0, 0, 0));
 	// mon->ChangeState(IdleState::GetInstance());

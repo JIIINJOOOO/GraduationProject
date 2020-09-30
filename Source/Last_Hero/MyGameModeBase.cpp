@@ -201,13 +201,17 @@ void AMyGameModeBase::SpawnGolem(int oid, float x, float y, float z) {
 
 void AMyGameModeBase::ProcessEvent3()
 {
-	net.eventLock.lock();
-	if (net.eventQue.empty()) {
-		net.eventLock.unlock();
-		return;
-	}
-	auto ev = net.eventQue.front();
-	net.eventLock.unlock();
+	// net.eventLock.lock();
+	// if (net.eventQue.empty()) {
+	// 	net.eventLock.unlock();
+	// 	return;
+	// }
+	// auto ev = net.eventQue.front();
+	// net.eventLock.unlock();
+	// return;
+	if (net.objEventQue[GMB_ID].empty()) return;
+	auto ev = net.objEventQue[GMB_ID].front();
+	net.objEventQue[GMB_ID].pop();
 
 	switch (ev.type) {
 	case sc_enter_obj: {
@@ -231,7 +235,6 @@ void AMyGameModeBase::ProcessEvent3()
 			else if (ev.o_type == OBJ_GOLEM)
 				SpawnGolem(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
 		}
-		net.PopEvent();
 	}break;
 
 	default:

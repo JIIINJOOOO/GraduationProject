@@ -19,8 +19,10 @@ Network::Network() {
 
 	m_status = p_free;
 	isHost = false;
-	isMoving = false;
+	isMovingN = false;
 	wpnType = wpn_none;
+
+	//objEventQue.insert(GMB_ID);
 
 	//connect()
 	SOCKADDR_IN serveraddr;
@@ -84,12 +86,6 @@ void Network::ProcessPacket(char* buf) {
 		m_status = p_login;
 		// set loginevent
 
-		GMB_Event ev;
-		ev.type = sc_login_ok;
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
-
 	} break;
 	case sc_login_fail:
 		break;
@@ -102,21 +98,19 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->id;
+
+		objEventQue[pack->id].push(ev);
 	}break;
 	case sc_enter_obj: {
 		SC_OBJECT_ENTER* pack = reinterpret_cast<SC_OBJECT_ENTER*>(buf);
 
-		// 	if (pack->oid == 0) break;
-		//	if (pack->oid < 10) {
 		GMB_Event ev;
 		ev.type = sc_enter_obj;
 		ev.pos = pack->pos;
 		ev.oid = pack->oid;
 		ev.o_type = pack->o_type;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[GMB_ID].push(ev);
 	}break;
 	case sc_update_obj: {
 		SC_UPDATE_OBJ* pack = reinterpret_cast<SC_UPDATE_OBJ*>(buf);
@@ -126,10 +120,8 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		ev.rotation = pack->rotation;
 		ev.velocity = pack->velocity;
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
-
+		
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_attack: {
 		SC_OBJ_ATTACK* pack = reinterpret_cast<SC_OBJ_ATTACK*>(buf);
@@ -137,10 +129,8 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 		ev.mp = static_cast<short>(pack->combo);	// 
-		UE_LOG(LogTemp, Log, TEXT("Net Attack pack oid = "), pack->oid);
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_fireball: {
 		SC_FIREBALL* pack = reinterpret_cast<SC_FIREBALL*>(buf);
@@ -148,9 +138,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_guard: {
 		SC_OBJ_GUARD* pack = reinterpret_cast<SC_OBJ_GUARD*>(buf);
@@ -158,9 +146,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_jump: {
 		SC_JUMP* pack = reinterpret_cast<SC_JUMP*>(buf);
@@ -168,9 +154,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_evade: {
 		SC_EVADE* pack = reinterpret_cast<SC_EVADE*>(buf);
@@ -178,18 +162,15 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_weapon_on: {
 		SC_WEAPON_ON* pack = reinterpret_cast<SC_WEAPON_ON*>(buf);
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_weapon_off: {
 		SC_WEAPON_OFF* pack = reinterpret_cast<SC_WEAPON_OFF*>(buf);
@@ -197,9 +178,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_level_up: {
 		SC_LEVEL_UP* pack = reinterpret_cast<SC_LEVEL_UP*>(buf);
@@ -211,9 +190,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.level = pack->level;
 		ev.exp = pack->exp;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_dead: {
 		SC_DEAD* pack = reinterpret_cast<SC_DEAD*>(buf);
@@ -221,9 +198,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_damaged: {
 		SC_DAMAGED* pack = reinterpret_cast<SC_DAMAGED*>(buf);
@@ -231,9 +206,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_block: {
 		SC_BLOCK* pack = reinterpret_cast<SC_BLOCK*>(buf);
@@ -241,9 +214,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_set_host:
 		isHost = true;
@@ -254,9 +225,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_move_stop: {
 		SC_MOVE_STOP* pack = reinterpret_cast<SC_MOVE_STOP*>(buf);
@@ -265,9 +234,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		ev.pos = pack->pos;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_sword_on: {
 		SC_SWORD_ON * pack = reinterpret_cast<SC_SWORD_ON*>(buf);
@@ -276,9 +243,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		wpnType = wpn_sword;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_sword_off: {
 		SC_SWORD_ON * pack = reinterpret_cast<SC_SWORD_ON*>(buf);
@@ -287,9 +252,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		wpnType = wpn_none;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_hammer_on: {
 		SC_HAMMER_ON * pack = reinterpret_cast<SC_HAMMER_ON*>(buf);
@@ -298,9 +261,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		wpnType = wpn_hammer;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_hammer_off: {
 		SC_HAMMER_ON * pack = reinterpret_cast<SC_HAMMER_ON*>(buf);
@@ -309,25 +270,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		wpnType = wpn_none;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
-	}break;
-	case sc_set_npc_target: {
-		SC_SET_NPC_TARGET* pack = reinterpret_cast<SC_SET_NPC_TARGET*>(buf);
-		GMB_Event ev;
-		if (pack->oid == 10000) {
-			ev.type = pack->type;
-			ev.oid = pack->target;
-			ev.hp = pack->oid;
-		}
-		// ev.type = pack->type;
-		// ev.oid = pack->oid;
-		// ev.pos = pack->pos;
-
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_boss_attack: {
 		SC_BOSS_ATTACK* pack = reinterpret_cast<SC_BOSS_ATTACK*>(buf);
@@ -336,9 +279,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		ev.exp = pack->atk_num;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_bone_break: {
 		SC_BONE_BREAK* pack = reinterpret_cast<SC_BONE_BREAK*>(buf);
@@ -347,9 +288,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		ev.o_type = pack->part;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_bone_update: {
 		SC_BONE_UPDATE* pack = reinterpret_cast<SC_BONE_UPDATE*>(buf);
@@ -359,9 +298,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.o_type = pack->part;
 		ev.hp = pack->attacked;
 
-		eventLock.lock();
-		eventQue.push(ev);
-		eventLock.unlock();
+		objEventQue[pack->oid].push(ev);
 	}break;
 	default:
 		break;

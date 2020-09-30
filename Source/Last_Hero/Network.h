@@ -15,6 +15,7 @@
 #include <vector>
 #include <mutex>
 #include <queue>
+#include <unordered_map>
 #include <chrono>
 #undef UpdateResource
 #undef PlaySound
@@ -25,9 +26,10 @@
 #define SERVERIP "1.11.57.96"
 #define SERVERPORT 9000
 #define BUFSIZE 512
-#define MAX_USERS 4
+#define MAX_USERS 10
 #define NPC_ID_START 10000
 #define MAX_MONSTER 100
+#define GMB_ID 999
 /**
  *
  */
@@ -35,6 +37,7 @@ using namespace std;
 using namespace chrono;
 
 class LAST_HERO_API Network {
+public:
 	struct GMB_Event {
 		// 받은 패킷 정보를 이벤트를 통해 넘겨준다?
 		char type;
@@ -47,14 +50,8 @@ class LAST_HERO_API Network {
 		char o_type;
 		Position rotation;
 		Position velocity;
-	};
-	struct Test {
-		void lock() {
 
-		}
-		void unlock() {
-
-		}
+		
 	};
 
 private:
@@ -71,13 +68,19 @@ public:
 	queue<GMB_Event> eventQue;
 	mutex eventLock;
 	// Test eventLock;
+	unordered_map<int, queue<GMB_Event>> objEventQue;
+
 	HANDLE loginEvent;
 	Weapon_Type wpnType;
-	bool isMoving;
+	bool isMovingN;
 
 	int gob_target{ -100 };
 	Position my_pos;
+	Position my_rot;
+	Position my_vel;
 	high_resolution_clock::time_point lastPopTime;
+
+
 public:
 	Network();
 	~Network() = default;
@@ -95,6 +98,7 @@ public:
 	void PopEvent();
 
 	static void PopThread();
+	
 };
 
 int recvn(SOCKET s, char *buf, int len, int flags);

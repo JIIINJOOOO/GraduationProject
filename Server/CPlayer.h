@@ -87,6 +87,7 @@ public:
 	void SetPass(const char* pass);
 	void SetVelocity(const Position& v);
 
+	int GetHP() const;
 	int GetMaxHP() const;
 	int GetMaxMP() const;
 	int GetEXP() const;
@@ -120,5 +121,7 @@ public:
 	void Assassinate();
 	void WeaponOn(const Weapon_Type& wpn);
 	void WeaponOff();
+
+	bool IsFront(const Position& mon_pos);
 };
 

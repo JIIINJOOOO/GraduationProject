@@ -25,8 +25,12 @@ struct Position {
 		Position np{ x - p.x, y - p.y, z - p.z };
 		return np;
 	}
-	int DotProduct(const Position& p) {
-		
+	Position operator*(const float& scalar) {
+		Position np{ x*scalar, y*scalar, z*scalar };
+		return np;
+	}
+	float DotProduct(const Position& p) {
+		return cos(p.x*x + p.y*y + p.z*z);
 	}
 	bool operator==(const Position& p) {
 		if ((int)p.x != (int)x) return false;

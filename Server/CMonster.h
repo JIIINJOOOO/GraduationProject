@@ -2,10 +2,10 @@
 #include "CObject.h"
 #include "CPlayer.h"
 #include "CPathFinder.h"
-#define MAX_MONSTER 1
+#define MAX_MONSTER 10000
 #define ACTIVITY_RANGE 4000'00
-#define ATTACK_RANGE 2500
-#define CHASE_RANGE 1000'00
+#define ATTACK_RANGE 100
+#define CHASE_RANGE 300
 #define MONSTER_MAX_HP 100
 #define BOSS_IDX 20'000
 #define START_POINT_MONSTER 10000
@@ -25,6 +25,7 @@ enum monster_state {
 enum M_STATE {
 	M_IDLE, M_CHASE, M_ATTACK, M_RHOME, M_DEAD
 };
+
 
 class State;
 
@@ -51,11 +52,13 @@ private:
 	int exp;
 	int atkPoint;
 
-	float rotation;
+	Position rotation;
 	Position velocity;
 
 	int player_dir[MAX_PLAYER];
 public:
+	M_STATE monState;
+	Position chaseEndPos;
 	CMonster() = default;
 	~CMonster() = default;
 
@@ -65,6 +68,8 @@ public:
 	void Idle();
 	void Attack(CPlayer& target);
 	void Chase(const CPlayer& target);
+
+	void UpdateWithClient();
 	 
 	void ChangeState(State* newState);
 
@@ -75,6 +80,8 @@ public:
 	void ResetRecoverCool();
 
 	int TakeDamage(int atk_point);
+
+	void Death();
 
 	// Getter & Setter
 	void SetState(const int& state);
@@ -87,6 +94,7 @@ public:
 	void SetPosition(const Position& pos);
 	Position GetPosition() const;
 	Position GetDefPosition() const;
+	Position GetRotation() const;
 	int GetDistance(Position pos);
 	void SetTarget(const int& t);
 	int GetTarget() const;
@@ -98,9 +106,12 @@ public:
 	SC_DAMAGED MakeDamagedPacket();
 	void SetIndex(const int& idx);
 	int GetEXP() const;
+	int GetHP() const;
 
 	void SetVelocity(const Position& v);
 	void SetRotation(const Position& r);
+
+	bool IsFront(const Position& player_pos);
 };
 
 void CreateMonster(int num);
