@@ -30,7 +30,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	if (nullptr == World) return;
 
 	auto BossGolem = Cast<AMyBossGolem>(OwnerComp.GetAIOwner()->GetPawn());
-	
+
 	TArray<FOverlapResult> OverlapResults;
 
 	FCollisionQueryParams CollisionQueryParam(NAME_None, false, ControllingPawn);
@@ -65,7 +65,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 		{
 			//AMyCharacter* MyCharacter = Cast<AMyCharacter>(OverlapResult.GetActor());
 			//TMap<AMyCharacter*,float> Players_Dist;
-			TMap<AMyCharacter*,float> Players;
+			TMap<AMyCharacter*, float> Players;
 
 			AMyCharacter* Player = Cast<AMyCharacter>(OverlapResult.GetActor());
 
@@ -75,12 +75,12 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 				Dist = Player->GetDistanceTo(ControllingPawn);
 				Players.Emplace(Cast<AMyCharacter>(OverlapResult.GetActor()), Dist);
 			}
-			
-			Players.KeySort([](float Dist_1,float Dist_2) {
+
+			Players.ValueSort([](float Dist_1, float Dist_2) {
 				return Dist_1 < Dist_2;
 			});
-			Dist = Players.begin().Value;
-			AMyCharacter* MyCharacter = *(Players.begin().Key);
+			Dist = Players.begin().Value();
+			AMyCharacter* MyCharacter = Players.begin().Key();
 
 			//AActor* AttackTarget = OverlapResult.GetActor();
 			//auto MyCharacter = OverlapResult.GetActor();
@@ -102,7 +102,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 				{
 					BossGolem->IsDetectInit = true;
 				}
-				
+
 				/*bool IsInitDist = false;
 				float Dist = 0.0f;
 				float TempDist = 0.0f;
@@ -181,9 +181,9 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 			}
 		}
 	}
-	if(!BossGolem->IsDetectInit)
+	if (!BossGolem->IsDetectInit)
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMyAIController::TargetKey, nullptr);
 
 	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 	DrawDebugSphere(World, Center, RecogRadius, 16, FColor::Yellow, false, 0.2f);
- }
+}

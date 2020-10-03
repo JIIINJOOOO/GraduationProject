@@ -76,6 +76,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		bool bersuckermode_cpp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool HammerEquipped_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
+		bool SwordEquipped_cpp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		EMovementStateCPP MovementState_cpp;
 	
 	// attack count

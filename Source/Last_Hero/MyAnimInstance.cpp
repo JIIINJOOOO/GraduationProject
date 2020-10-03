@@ -38,6 +38,14 @@ UMyAnimInstance::UMyAnimInstance()
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_SLASH_2_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/Mixamo/Sword_And_Shield_Slash__1__Montage.Sword_And_Shield_Slash__1__Montage"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORD_SLASH_3_MONTAGE(TEXT("/Game/Game/Mesh/player_anim/sword_shiend/Shield_Strike_Montage.Shield_Strike_Montage"));
 
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HAM_COMBO_1_MTG(TEXT("/Game/Game/Mesh/player_anim/Hammer/Combo1_Montage.Combo1_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HAM_COMBO_2_MTG(TEXT("/Game/Game/Mesh/player_anim/Hammer/Combo2_Montage.Combo2_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HAM_COMBO_3_MTG(TEXT("/Game/Game/Mesh/player_anim/Hammer/Combo3_Montage.Combo3_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HAM_COMBO_4_MTG(TEXT("/Game/Game/Mesh/player_anim/Hammer/Comb04_Montage.Comb04_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HAM_DEATH_MTG(TEXT("/Game/Game/Mesh/player_anim/Hammer/Death_Montage.Death_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HAM_DEATH_WAIT_MTG(TEXT("/Game/Game/Mesh/player_anim/Hammer/Death_wait_Montage.Death_wait_Montage"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HAM_DEFENCE_MTG(TEXT("/Game/Game/Mesh/player_anim/Hammer/Defence_Hit_Montage.Defence_Hit_Montage"));
+
 
 	
 	if (SWORD_INWARD_SLASH_MONTAGE.Succeeded())
@@ -136,6 +144,36 @@ UMyAnimInstance::UMyAnimInstance()
 	{
 		Sword_Slash_Combo3_Mtg = SWORD_SLASH_3_MONTAGE.Object;
 	}
+
+	if (HAM_COMBO_1_MTG.Succeeded())
+	{
+		Ham_Combo_1_Mtg = HAM_COMBO_1_MTG.Object;
+	}
+	if (HAM_COMBO_2_MTG.Succeeded())
+	{
+		Ham_Combo_2_Mtg = HAM_COMBO_2_MTG.Object;
+	}
+	if (HAM_COMBO_3_MTG.Succeeded())
+	{
+		Ham_Combo_3_Mtg = HAM_COMBO_3_MTG.Object;
+	}
+	if (HAM_COMBO_4_MTG.Succeeded())
+	{
+		Ham_Combo_4_Mtg = HAM_COMBO_4_MTG.Object;
+	}
+	if (HAM_DEATH_MTG.Succeeded())
+	{
+		Ham_Death_Mtg = HAM_DEATH_MTG.Object;
+	}
+	if (HAM_DEATH_WAIT_MTG.Succeeded())
+	{
+		Ham_Death_wait_Mtg = HAM_DEATH_WAIT_MTG.Object;
+	}
+	if (HAM_DEFENCE_MTG.Succeeded())
+	{
+		Ham_Death_Mtg = HAM_DEFENCE_MTG.Object;
+	}
+
 
 }
 
