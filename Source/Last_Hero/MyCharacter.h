@@ -32,7 +32,7 @@ private:
 	FVector velocity;
 	UMyAnimInstance* animInstance;
 	bool isMoving;
-
+	FVector netPos;
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();

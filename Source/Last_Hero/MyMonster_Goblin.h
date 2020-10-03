@@ -30,6 +30,7 @@ private:
 	int type;
 
 	high_resolution_clock::time_point deathTime;
+	FVector netPos;
 
 public:
 	// Sets default values for this character's properties

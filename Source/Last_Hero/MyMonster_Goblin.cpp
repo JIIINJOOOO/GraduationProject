@@ -58,6 +58,8 @@ void AMyMonster_Goblin::BeginPlay()
 	Super::BeginPlay();
 	SpawnDefaultController();
 	animInstance = Cast<UGoblinAnimInstance>(GetMesh()->GetAnimInstance());
+	netPos = GetActorLocation();
+	SetActorRotation(FRotator(0, 180, 0));
 }
 
 // Called every frame
@@ -65,26 +67,29 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
-	
+	netPos.Z = MonPos.Z;
+
 	if (type == -1) return;
 	if (id == -1) return;
 
 	if (isDead) {
-		if (deathTime+3s < high_resolution_clock::now())
+		if (deathTime+5s < high_resolution_clock::now())
 			SetActorLocation(FVector(12450.0, 99870.0, -540.0));
 		return;
 	}
 
 	if (isMoving) AddMovementInput(velocity, speed);
+	SetActorLocation(netPos);
 
 	if (net.objEventQue[id].empty()) return;
 	auto ev = net.objEventQue[id].front();
 	net.objEventQue[id].pop();
 	switch (ev.type) {
 	case sc_update_obj:
-		MonPos = { ev.pos.x, ev.pos.y, ev.pos.z };
+		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
 		velocity = { ev.velocity.x,ev.velocity.y,ev.velocity.z };
 		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		netPos = MonPos;
 		// SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::None);
 		SetActorLocation(MonPos);
 		// SetActorRotation(FRotator(0, ev.rotation.y, 0));
@@ -102,14 +107,15 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 		isMoving = false;
 	}break;
 	case sc_attack: {
-		animInstance->Slash();
+		if (ev.mp == 0)	animInstance->Slash();
+		if (ev.mp == 1) animInstance->AttackBackhand();
+		if (ev.mp == 2) animInstance->AttackDownward();
 		velocity = { 0,0,0 };
 		speed = 0.f;
 		isMoving = false;
 	}break;
 	case sc_damaged: {
-		UGoblinAnimInstance* myAnimInst = Cast<UGoblinAnimInstance>(animInstance);
-		if (myAnimInst != nullptr) myAnimInst->HitReaction();
+		animInstance->HitReaction();
 		hp = ev.hp;
 		speed = 0.f;
 		isMoving = false;
@@ -122,6 +128,20 @@ void AMyMonster_Goblin::Tick(float DeltaTime)
 	}break;
 	case sc_block:
 		isMoving = false;
+		break;
+	case sc_set_pos:
+		velocity = { 0,0,0 };
+		speed = 0.f;
+		isMoving = false;
+		MonPos = { ev.pos.x, ev.pos.y, ev.pos.z };
+		netPos = MonPos;
+		SetActorLocation(MonPos);
+		break;
+	case sc_set_rotation:
+		speed = 0.f;
+		isMoving = false;
+		rotation = { ev.rotation.x,ev.rotation.y, ev.rotation.z };
+		SetActorRotation(rotation);
 		break;
 	default:
 		break;

@@ -104,7 +104,7 @@ void AMyPlayerController::Tick(float DeltaTime) {
 	if (net.isMovingN) isPrevMove = true;
 	else isPrevMove = false;
 	
-	if (lastInputTime + 1s < high_resolution_clock::now())
+	if (lastInputTime + 500ms < high_resolution_clock::now())
 		isInput = false;
 
 	// static int cnt = 0;

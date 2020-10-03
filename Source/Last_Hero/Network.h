@@ -71,7 +71,7 @@ public:
 	unordered_map<int, queue<GMB_Event>> objEventQue;
 
 	HANDLE loginEvent;
-	Weapon_Type wpnType;
+	Weapon_Type wpnType{wpn_none};
 	bool isMovingN;
 
 	int gob_target{ -100 };

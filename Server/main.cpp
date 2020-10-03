@@ -64,7 +64,7 @@ int main() {
 		cout << "Fail Loading Hightmap to Terrain!\n";
 		exit(-1);
 	}
-	CreateMonster(MAX_MONSTER);
+	CreateMonsters(MAX_MONSTER);
 
 	CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_listenSocket), g_iocp, 999, 9);
 	SOCKET cs = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -233,15 +233,8 @@ void ProcessPacket(int uid, char* buf) {
 				send_packet(oid, &pack);
 	}break;
 	case cs_guard: {
-		SC_OBJ_GUARD pack;
-		pack.size = sizeof(SC_OBJ_GUARD);
-		pack.type = sc_guard;
-		pack.oid = uid;
-		// 아ㅓㅁ너램ㄹ너ㅐ 한시간을 고민했는데 호출을 안한거면 어쩌자ㅣ는거영창ㄹ ㅅㅂ
 		g_player[uid]->Guard();
-		for (auto& oid : g_player[uid]->viewList)
-			if (oid < MAX_PLAYER)
-				send_packet(oid, &pack);
+		
 	}break;
 	case cs_jump: {
 		SC_JUMP pack;
@@ -253,14 +246,7 @@ void ProcessPacket(int uid, char* buf) {
 				send_packet(oid, &pack);
 	}break;
 	case cs_evade: {
-		SC_EVADE pack;
-		pack.size = sizeof(SC_EVADE);
-		pack.type = sc_evade;
-		pack.oid = uid;
 		g_player[uid]->Evade();
-		for (auto& oid : g_player[uid]->viewList)
-			if (oid < MAX_PLAYER)
-				send_packet(oid, &pack);
 	}break;
 	case cs_weapon_on: {
 		if (g_player[uid]->isWpnOn) break;
@@ -288,7 +274,7 @@ void ProcessPacket(int uid, char* buf) {
 		
 	}break;
 	case cs_sword_off: {
-		g_player[uid]->WeaponOff();
+		g_player[uid]->WeaponOff(wpn_sword);
 		
 	}break;
 	case cs_hammer_on: {
@@ -296,7 +282,7 @@ void ProcessPacket(int uid, char* buf) {
 		
 	}break;
 	case cs_hammer_off: {
-		g_player[uid]->WeaponOff();
+		g_player[uid]->WeaponOff(wpn_hammer);
 		
 	}break;
 	case cs_berserk: {
@@ -307,8 +293,18 @@ void ProcessPacket(int uid, char* buf) {
 	}break;
 	case cs_boss_move: {
 		CS_BOSS_MOVE* pack = reinterpret_cast<CS_BOSS_MOVE*>(buf);
-		boss->SetPosition(pack->destination);
-		boss->SetRotation(pack->rotation);
+		if (g_boss[BOSS_IDX] == NULL) break;
+		g_boss[BOSS_IDX]->SetRotation(pack->rotation);
+		g_boss[BOSS_IDX]->SetPosition(pack->destination);
+		SC_UPDATE_OBJ spack{ sizeof(SC_UPDATE_OBJ), sc_update_obj };
+		spack.oid = BOSS_IDX;
+		spack.pos = pack->destination;
+		spack.rotation = pack->rotation;
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (g_player[i] == NULL) continue;
+			if (uid == i) continue;
+			send_packet(i, &spack);
+		}
 	}break;
 	case cs_hide: {
 		g_player[uid]->Hide();
@@ -396,7 +392,7 @@ void send_packet(int uid, void* p) {
 }
 
 void Disconnect(int uid) {
-	cout << "Disconnect " << g_player[uid]->GetID() << endl;
+	cout << "Disconnect " << g_player[uid]->GetID() << uid << endl;
 	if (0 > uid || uid >= MAX_PLAYER) return;
 	g_player[uid]->isAlive = false;
 	// g_player.erase(uid);

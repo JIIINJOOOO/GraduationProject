@@ -300,6 +300,24 @@ void Network::ProcessPacket(char* buf) {
 
 		objEventQue[pack->oid].push(ev);
 	}break;
+	case sc_set_pos: {
+		SC_SET_POS* pack = reinterpret_cast<SC_SET_POS*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.pos = pack->pos;
+
+		objEventQue[pack->oid].push(ev);
+	}break;
+	case sc_set_rotation: {
+		SC_SET_ROTATION* pack = reinterpret_cast<SC_SET_ROTATION*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.rotation = pack->rot;
+
+		objEventQue[pack->oid].push(ev);
+	}break;
 	default:
 		break;
 	}
