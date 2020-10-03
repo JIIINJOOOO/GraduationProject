@@ -5,6 +5,7 @@
 #include "Engine/EngineTypes.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "DrawDebugHelpers.h"
+#include <algorithm>
 
 UBTService_Detect::UBTService_Detect()
 {
@@ -62,11 +63,30 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 	{
 		for (auto const& OverlapResult : OverlapResults)
 		{
-			AMyCharacter* MyCharacter = Cast<AMyCharacter>(OverlapResult.GetActor());
+			//AMyCharacter* MyCharacter = Cast<AMyCharacter>(OverlapResult.GetActor());
+			//TMap<AMyCharacter*,float> Players_Dist;
+			TMap<AMyCharacter*,float> Players;
+
+			AMyCharacter* Player = Cast<AMyCharacter>(OverlapResult.GetActor());
+
+			float Dist = 0.0f;
+			if (Player->GetController()->IsPlayerController())
+			{
+				Dist = Player->GetDistanceTo(ControllingPawn);
+				Players.Emplace(Cast<AMyCharacter>(OverlapResult.GetActor()), Dist);
+			}
+			
+			Players.KeySort([](float Dist_1,float Dist_2) {
+				return Dist_1 < Dist_2;
+			});
+			Dist = Players.begin().Value;
+			AMyCharacter* MyCharacter = *(Players.begin().Key);
+
 			//AActor* AttackTarget = OverlapResult.GetActor();
 			//auto MyCharacter = OverlapResult.GetActor();
-
-			if (MyCharacter && MyCharacter->GetController()->IsPlayerController())
+			// 10/3 캐릭터들을 배열에 담아서 걔네 다 거리 비교해서 젤 가까운애를 타겟으로
+			//if (MyCharacter && MyCharacter->GetController()->IsPlayerController())
+			if ((Players.Num() != 0)/* && IsPlayer*/)
 				//if (MyCharacter && MyCharacter->GetName() == "BP_Player_C_0")
 			{
 				//OwnerComp.GetBlackboardComponent()->SetValueAsFloat(AMyAIController::DistanceKey, Dist);
@@ -82,6 +102,29 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent & OwnerComp, uint8 * Nod
 				{
 					BossGolem->IsDetectInit = true;
 				}
+				
+				/*bool IsInitDist = false;
+				float Dist = 0.0f;
+				float TempDist = 0.0f;
+				for (auto const& Player : Players)
+				{
+					if (!IsInitDist)
+					{
+						Dist = Player->GetDistanceTo(ControllingPawn);
+						IsInitDist = true;
+					}
+					else
+					{
+						TempDist = Player->GetDistanceTo(ControllingPawn);
+					}
+					if (TempDist < Dist)
+					{
+						Dist = TempDist;
+					}
+				}*/
+				// 10/3 3:02 여기까지함 -> 스왑로직 맞나 맨정신에 다시 생각해보자
+
+
 				float Dist = MyCharacter->GetDistanceTo(ControllingPawn);
 				BossGolem->Distance = Dist;
 				OwnerComp.GetBlackboardComponent()->SetValueAsRotator(AMyAIController::GolemRotKey, BossGolem->GetActorRotation());

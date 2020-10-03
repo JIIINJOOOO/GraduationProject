@@ -246,7 +246,7 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 		}
 		break;
 	case 16: // Down State
-		if (!IsBreakLeftArm && !IsHalfBreakLeftArm) {
+		if (!IsBreakLeftArm /*&& !IsHalfBreakLeftArm*/) {
 			pack.atk_num = DOWN_ATTACK_1;
 			net.SendPacket(&pack);
 			return DOWN_ATTACK_1;
@@ -258,7 +258,7 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 		}
 		break;
 	case 17:
-		if (!IsBreakRightArm && !IsHalfBreakRightArm) {
+		if (!IsBreakRightArm /*&& !IsHalfBreakRightArm*/) {
 			pack.atk_num = DOWN_ATTACK_2;
 			net.SendPacket(&pack);
 			return DOWN_ATTACK_2;
@@ -270,7 +270,7 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 		}
 		break;
 	case 18:
-		if (!IsBreakLeftArm && !IsHalfBreakLeftArm) {
+		if (!IsBreakLeftArm /*&& !IsHalfBreakLeftArm*/) {
 			pack.atk_num = DOWN_SWEEP;
 			net.SendPacket(&pack);
 			return DOWN_SWEEP;

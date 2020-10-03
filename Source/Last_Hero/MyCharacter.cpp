@@ -401,3 +401,8 @@ void AMyCharacter::SetID(const int& id) {
 void AMyCharacter::SetPosition(float x, float y, float z) {
 	SetActorLocation(FVector(x, y, z));
 }
+
+void AMyCharacter::SetDist_Boss(float dist)
+{
+	Dist_Boss = dist;
+}
