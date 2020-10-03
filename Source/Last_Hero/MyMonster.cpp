@@ -2,7 +2,6 @@
 
 
 #include "MyMonster.h"
-#include "Network.h"
 #include "CyclopsAnimInstance.h"
 #include "BeetleAnimInstance.h"
 #include "MiniGolemAnimInstance.h"
@@ -14,7 +13,7 @@ extern Network net;
 // Sets default values
 AMyMonster::AMyMonster()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	// static ConstructorHelpers::FClassFinder<UObject> MON_AICONTROLLER(TEXT("/Game/Game/BluePrints/mini_golem/Ai_Monster_minigolem.Ai_Monster_minigolem_C"));
 
 
@@ -39,6 +38,7 @@ void AMyMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	MonPos = GetActorLocation();
+	netPos = MonPos;
 	SpawnDefaultController();
 }
 
@@ -54,7 +54,15 @@ void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
-	if (isMoving) AddMovementInput(velocity, speed, true);
+
+	if (isDead) {
+		if (deathTime + 3s < high_resolution_clock::now())
+			SetActorLocation(FVector(12450.0, 99870.0, -540.0));
+		return;
+	}
+
+	if (isMoving) AddMovementInput(velocity, speed);
+	else SetActorLocation(netPos);
 
 	if (type == OBJ_CYCLOPS)
 		CyclopsUpdate();
@@ -74,9 +82,12 @@ void AMyMonster::CyclopsUpdate() {
 	switch (ev.type) {
 	case sc_update_obj:
 		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
+		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
 		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		netPos = MonPos;
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
+		speed = 200.f;
 		break;
 	case sc_attack: {
 		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
@@ -86,18 +97,30 @@ void AMyMonster::CyclopsUpdate() {
 			if (ev.mp == 2) animInst->Attack3();
 		}
 		isMoving = false;
+		speed = 0.f;
+		velocity = { 0,0,0 };
 	}break;
 	case sc_damaged: {
 		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
+		velocity = { 0,0,0 };
+		speed = 0.f;
+		hp = ev.hp;
 	}break;
 	case sc_dead: {
-		// isDead = true;
 		auto animInst = Cast<UCyclopsAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
+		isDead = true;
+		deathTime = high_resolution_clock::now();
 	}break;
+	case sc_set_rotation:
+		speed = 0.f;
+		isMoving = false;
+		rotation = { ev.rotation.x,ev.rotation.y, ev.rotation.z };
+		SetActorRotation(rotation);
+		break;
 	default:
 		isMoving = false;
 		break;
@@ -112,10 +135,13 @@ void AMyMonster::BeetleUpdate() {
 	switch (ev.type) {
 	case sc_update_obj:
 		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
-		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
 		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		netPos = MonPos;
+		// SetActorLocation(MonPos);
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
+		speed = 200.f;
 		break;
 	case sc_attack: {
 		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
@@ -125,18 +151,30 @@ void AMyMonster::BeetleUpdate() {
 			if (ev.mp == 2) animInst->Attack3();
 		}
 		isMoving = false;
+		speed = 0.f;
+		velocity = { 0,0,0 };
 	}break;
 	case sc_damaged: {
 		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
+		velocity = { 0,0,0 };
+		speed = 0.f;
+		hp = ev.hp;
 	}break;
 	case sc_dead: {
-		// isDead = true;
 		auto animInst = Cast<UBeetleAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
+		isDead = true;
+		deathTime = high_resolution_clock::now();
 	}break;
+	case sc_set_rotation:
+		speed = 0.f;
+		isMoving = false;
+		rotation = { ev.rotation.x,ev.rotation.y, ev.rotation.z };
+		SetActorRotation(rotation);
+		break;
 	default:
 		isMoving = false;
 		break;
@@ -151,10 +189,13 @@ void AMyMonster::MiniGolemUpdate() {
 	switch (ev.type) {
 	case sc_update_obj:
 		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
-		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
 		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		netPos = MonPos;
+		// SetActorLocation(MonPos);
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
+		speed = 200.f;
 		break;
 	case sc_attack: {
 		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
@@ -164,18 +205,30 @@ void AMyMonster::MiniGolemUpdate() {
 			if (ev.mp == 2) animInst->Attack3();
 		}
 		isMoving = false;
+		speed = 0.f;
+		velocity = { 0,0,0 };
 	}break;
 	case sc_damaged: {
 		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
+		velocity = { 0,0,0 };
+		speed = 0.f;
+		hp = ev.hp;
 	}break;
 	case sc_dead: {
-		// isDead = true;
 		auto animInst = Cast<UMiniGolemAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
+		isDead = true;
+		deathTime = high_resolution_clock::now();
 	}break;
+	case sc_set_rotation:
+		speed = 0.f;
+		isMoving = false;
+		rotation = { ev.rotation.x,ev.rotation.y, ev.rotation.z };
+		SetActorRotation(rotation);
+		break;
 	default:
 		isMoving = false;
 		break;
@@ -190,10 +243,13 @@ void AMyMonster::LazardUpdate() {
 	switch (ev.type) {
 	case sc_update_obj:
 		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
-		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
 		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		netPos = MonPos;
+		// SetActorLocation(MonPos);
 		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
 		isMoving = true;
+		speed = 200.f;
 		break;
 	case sc_attack: {
 		auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
@@ -203,24 +259,32 @@ void AMyMonster::LazardUpdate() {
 			if (ev.mp == 2) animInst->Attack3();
 		}
 		isMoving = false;
-		net.PopEvent();
+		speed = 0.f;
+		velocity = { 0,0,0 };
 	}break;
 	case sc_damaged: {
 		auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
+		velocity = { 0,0,0 };
+		speed = 0.f;
+		hp = ev.hp;
 	}break;
 	case sc_dead: {
-		// isDead = true;
 		auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
 		if (animInst != nullptr) animInst->Hitreaction();
 		isMoving = false;
-		net.PopEvent();
+		isDead = true;
+		deathTime = high_resolution_clock::now();
 	}break;
+	case sc_set_rotation:
+		speed = 0.f;
+		isMoving = false;
+		rotation = { ev.rotation.x,ev.rotation.y, ev.rotation.z };
+		SetActorRotation(rotation);
+		break;
 	default:
 		isMoving = false;
-		net.PopEvent();
 		break;
 	}
 }

@@ -32,11 +32,12 @@ private:
 	FVector velocity;
 	UMyAnimInstance* animInstance;
 	bool isMoving;
+	FVector netPos;
 
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
-
+	float Dist_Boss;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -46,7 +47,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
 	virtual void PossessedBy(AController* NewController) override;
-
+	void SetDist_Boss(float dist);
 	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	// Called to bind functionality to input

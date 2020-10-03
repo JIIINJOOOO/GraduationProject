@@ -8,7 +8,7 @@
 #include "MyGameModeBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class LAST_HERO_API AMyGameModeBase : public AGameModeBase
@@ -34,7 +34,7 @@ public:
 		TSubclassOf<class AMyMonster_Goblin> MonToSpawn;
 protected:
 	UFUNCTION()
-	void SpawnMonster();
+		void SpawnMonster();
 	UFUNCTION()
 		void SpawnGoblin(const int& oid, float x, float y, float z);
 	UFUNCTION()

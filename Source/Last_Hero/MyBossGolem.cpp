@@ -145,7 +145,7 @@ void AMyBossGolem::setGroundFrictionZero()
 
 GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, GOLEM_ANIM_MONTAGE Max)
 {
-	// if (net.isHost == false) return GOLEM_ANIM_MONTAGE();
+	if (net.isHost == false) return GOLEM_ANIM_MONTAGE();
 	int rnd = FMath::RandRange(Min + 1, Max - 1);
 	CS_BOSS_ATTACK pack{ sizeof(CS_BOSS_ATTACK), cs_boss_attack, id };
 	switch (rnd)
@@ -403,6 +403,11 @@ void AMyBossGolem::BeginPlay()
 	BoneMap.Emplace("Bip001-L-Foot", 20);
 	BoneMap.Emplace("Bip001-L-Calf", 22);
 	BoneMap.Emplace("Bip001-L-Thigh", 24);
+
+	pos = GetActorLocation();
+	rotate = GetActorRotation();
+
+	sendTime = high_resolution_clock::now();
 }
 
 void AMyBossGolem::PostInitializeComponents()
@@ -430,46 +435,50 @@ void AMyBossGolem::Tick(float DeltaTime)
 	{
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::ChargeSpear, 2.5f, true, 0.0f);
 	}*/
-	return;
 	if (net.isHost) {
-		CS_NPC_MOVE pack{ sizeof(CS_NPC_MOVE), cs_npc_move, id };
-		pack.pos = { pos.X, pos.Y, pos.Z };
-		net.SendPacket(&pack);
-	}
+		pos = GetActorLocation();
+		rotate = GetActorRotation();
+		if (sendTime + 50ms < high_resolution_clock::now()) {
+			CS_BOSS_MOVE pack{ sizeof(CS_NPC_MOVE), cs_boss_move };
+			pack.destination = { pos.X, pos.Y, pos.Z };
+			pack.rotation = { rotate.Pitch, rotate.Yaw, rotate.Roll };
+			net.SendPacket(&pack);
+			sendTime = high_resolution_clock::now();
 
-	// 맞을때만 하도록 바꾸고싶은데 ㅁㄴㅇㅁㄴㄹ
-	auto pack = MakeBonePacket();
-	net.SendPacket(&pack);
-
-	net.eventLock.lock();
-	if (net.eventQue.empty()) {
-		net.eventLock.unlock();
+			auto bonePack = MakeBonePacket();
+			net.SendPacket(&bonePack);
+		}
 		return;
 	}
-	auto ev = net.eventQue.front();
-	net.eventLock.unlock();
-	if (ev.oid != id) return;
+	else {
+		if (sendTime + 100ms < high_resolution_clock::now()) {
+			auto bonePack = MakeBonePacket();
+			net.SendPacket(&bonePack);
+			sendTime = high_resolution_clock::now();
+		}
+	}
+
+	if (net.objEventQue[id].empty()) return;
+	auto ev = net.objEventQue[id].front();
+	net.objEventQue[id].pop();
 
 	switch (ev.type) {
 	case sc_boss_attack:
 		AttackPacketProcess(ev.exp);
-		net.PopEvent();
 		break;
 	case sc_update_obj:
 		pos = { ev.pos.x, ev.pos.y, ev.pos.z };
 		rotate = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
-		net.PopEvent();
+		SetActorLocation(pos);
+		// SetActorLocationAndRotation(pos, rotate, false, 0, ETeleportType::TeleportPhysics);
 		break;
 	case sc_bone_break:
 		BoneMap[GetPartString(ev.o_type)] = 0;
-		net.PopEvent();
 		break;
 	case sc_bone_update:
 		BoneMap[GetPartString(ev.o_type)] = ev.hp;
-		net.PopEvent();
 		break;
 	default:
-		net.PopEvent();
 		break;
 	}
 }

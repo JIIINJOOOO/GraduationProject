@@ -30,7 +30,7 @@ private:
 	FVector pos;
 	FRotator rotate;
 	FVector velocity;
-
+	high_resolution_clock::time_point sendTime;
 public:
 	// Sets default values for this character's properties
 	AMyBossGolem();

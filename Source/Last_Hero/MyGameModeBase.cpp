@@ -57,7 +57,6 @@ void AMyGameModeBase::PostLogin(APlayerController * NewPlayer)
 
 void AMyGameModeBase::BeginPlay()
 {
-	// SpawnMonster();
 	// UE_LOG(LogTemp, Log, TEXT("GMB BeginPlay"));
 	// // 19340.0  82040.0  60.0
 	// SpawnGolem(20001, 19340.0, 82040.0, 60.0);
@@ -66,7 +65,6 @@ void AMyGameModeBase::BeginPlay()
 		CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234" };
 		net.SendPacket(&p);
 	}
-
 	/*
 	12853.588867, 76285.28125, -420.191681
 	*/
@@ -96,7 +94,7 @@ void AMyGameModeBase::SpawnMonster()
 	auto SpawnMonster = GetWorld()->SpawnActor<AMyMonster_Goblin>(obj->GeneratedClass, MonSpawnLocation, FRotator::ZeroRotator, SpawnInfo); // 이렇게 하면 블프에서 구현해놓은 AI 구동이 안된다
 	/*AActor* SpawnMonster = GetWorld()->SpawnActor(MonsterBP->GeneratedClass);
 	SpawnMonster->SetActorLocation(MonSpawnLocation);*/
-	SpawnMonster->SetID(-1);
+	SpawnMonster->SetID(999);
 }
 
 void AMyGameModeBase::SpawnGoblin(const int& oid, float x, float y, float z) {

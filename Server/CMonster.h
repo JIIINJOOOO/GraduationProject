@@ -4,8 +4,8 @@
 #include "CPathFinder.h"
 #define MAX_MONSTER 10000
 #define ACTIVITY_RANGE 4000'00
-#define ATTACK_RANGE 100
-#define CHASE_RANGE 300
+#define ATTACK_RANGE 200
+#define CHASE_RANGE 1000
 #define MONSTER_MAX_HP 100
 #define BOSS_IDX 20'000
 #define START_POINT_MONSTER 10000
@@ -57,6 +57,7 @@ private:
 
 	int player_dir[MAX_PLAYER];
 public:
+	bool isActive;
 	M_STATE monState;
 	Position chaseEndPos;
 	CMonster() = default;
@@ -114,7 +115,9 @@ public:
 	bool IsFront(const Position& player_pos);
 };
 
-void CreateMonster(int num);
+float GetDegree(Position p1, Position p2);
+void CreateMonsters(int num);
+void SpawnMonster(int id, float x, float y, float z, int type);
 void monster_thread();
 void MonsterThread();
 

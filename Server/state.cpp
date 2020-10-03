@@ -23,6 +23,7 @@ IdleState* IdleState::GetInstance() {
 
 void IdleState::Enter(CMonster* mon) {
 	mon->monState = M_IDLE;
+	mon->isActive = false;
 }
 
 void IdleState::Execute(CMonster* mon) {
@@ -56,10 +57,6 @@ void IdleState::Execute(CMonster* mon) {
 		return;
 	}
 	if (g_player[chaseID] == NULL) {
-		/* 플레이어가 로그인하면
-		   근처에 있는 몬스터 AI를 활성화하기 위해 AddTimer를 호출하는데
-		   이 때 플레이어가 패스워드 오류 등으로 인해 잘못 생성하게 되면 오류가 생긴다? 
-		   이게 뭔 개풀 뜯어먹는 소리인지 모르겠는데 릥ㄴ루ㅐㅑ*/
 		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
 	}
@@ -112,7 +109,7 @@ void ChaseState::Execute(CMonster* mon) {
 	// 	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 	// 	return;
 	// }
-	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 300ms, NULL);	
+	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 100ms, NULL);	
 }
 
 void ChaseState::Exit(CMonster* mon) {
@@ -138,6 +135,13 @@ AttackState* AttackState::GetInstance() {
 void AttackState::Enter(CMonster* mon) {
 	cout << "Monster[" << mon->GetID() << "] is started attack " << g_player[mon->GetTarget()]->GetID() << endl;
 	mon->monState = M_ATTACK;
+	// SC_SET_ROTATION pack{ sizeof(SC_SET_ROTATION), sc_set_rotation, mon->GetID() };
+	// float y = GetDegree(mon->GetPosition(), g_player[mon->GetTarget()]->GetPosition());
+	// pack.rot = { 0, y,0 };
+	// for (int i = 0; i < MAX_PLAYER; ++i) {
+	// 	if (g_player[i] == NULL) continue;
+	// 	send_packet(i, &pack);
+	// }
 }
 
 void AttackState::Execute(CMonster* mon) {

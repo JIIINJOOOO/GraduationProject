@@ -13,7 +13,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <mutex>
 #include <queue>
 #include <unordered_map>
 #include <chrono>
@@ -51,7 +50,7 @@ public:
 		Position rotation;
 		Position velocity;
 
-		
+
 	};
 
 private:
@@ -64,14 +63,12 @@ public:
 	bool isHost;
 	SOCKET m_sock;
 	char recvBuf[BUFSIZE];
-	mutex gmbLock;
 	queue<GMB_Event> eventQue;
-	mutex eventLock;
 	// Test eventLock;
 	unordered_map<int, queue<GMB_Event>> objEventQue;
 
 	HANDLE loginEvent;
-	Weapon_Type wpnType;
+	Weapon_Type wpnType{ wpn_none };
 	bool isMovingN;
 
 	int gob_target{ -100 };
@@ -98,7 +95,7 @@ public:
 	void PopEvent();
 
 	static void PopThread();
-	
+
 };
 
 int recvn(SOCKET s, char *buf, int len, int flags);

@@ -91,7 +91,7 @@ void AMyPlayerController::BeginPlay()
 
 void AMyPlayerController::ShowResultUI()
 {
-	auto  AmyGameState = Cast<AMyGameStateBase> ( UGameplayStatics::GetGameState(this));
+	auto  AmyGameState = Cast<AMyGameStateBase>(UGameplayStatics::GetGameState(this));
 	ResultWidget->BindGameState(AmyGameState);
 	ResultWidget->AddToViewport();
 	ChangeInputMode(false);
@@ -103,8 +103,8 @@ void AMyPlayerController::Tick(float DeltaTime) {
 	bool isPrevMove = false; // 이전 프레임에도 이동중이었는지
 	if (net.isMovingN) isPrevMove = true;
 	else isPrevMove = false;
-	
-	if (lastInputTime + 1s < high_resolution_clock::now())
+
+	if (lastInputTime + 500ms < high_resolution_clock::now())
 		isInput = false;
 
 	// static int cnt = 0;

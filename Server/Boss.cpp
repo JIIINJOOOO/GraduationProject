@@ -198,10 +198,9 @@ void Boss::BoneMapUpdate(char* new_boneMap) {
 				continue;
 			}
 			BoneMap[i] -= 1;
-			BoneMap[i] = 0;
 			boneLock.unlock();
 			if (BoneMap[i] <= 0) {
-				cout << "보스 부위가 파괴" << endl;
+				cout << "보스 부위 파괴" << endl;
 				SC_BONE_BREAK pack{ sizeof(SC_BONE_BREAK), sc_bone_break, id, i };
 				for (int i = 0; i < MAX_PLAYER; ++i) {
 					if (g_player[i] == NULL) continue;

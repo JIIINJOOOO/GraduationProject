@@ -10,7 +10,7 @@
 #define MAX_CLIENTS 100
 #define MAX_MOVE_RANGE 10
 #define MAX_VIEW_RANGE 5000
-#define BERSERK_RANGE 2700
+#define BERSERK_RANGE 500
 #define BERSERK_BONUS 2
 #define LEVEL_UP_BONUS 10
 #define GUARD_RANGE 200
@@ -120,7 +120,7 @@ public:
 	void HideOff();
 	void Assassinate();
 	void WeaponOn(const Weapon_Type& wpn);
-	void WeaponOff();
+	void WeaponOff(const Weapon_Type& wpn);
 
 	bool IsFront(const Position& mon_pos);
 };

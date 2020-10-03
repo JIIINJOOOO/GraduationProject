@@ -10,7 +10,7 @@ extern Network net;
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	//SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	//Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
@@ -33,7 +33,7 @@ AMyCharacter::AMyCharacter()
 
 	swordStrap_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("SWORDSTRAP_CPP"));
 	swordStrap_cpp->SetupAttachment(GetMesh());
-	
+
 	BPSword_cpp = CreateDefaultSubobject<UChildActorComponent>(TEXT("BPSWORD_CPP"));
 	BPSword_cpp->SetupAttachment(swordStrap_cpp);
 	BPShield_cpp = CreateDefaultSubobject<UChildActorComponent>(TEXT("BPSHEILD_CPP"));
@@ -44,7 +44,7 @@ AMyCharacter::AMyCharacter()
 
 	HandSocket3_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("HANDSOCKET3_CPP"));
 	HandSocket3_cpp->SetupAttachment(GetMesh());
-	
+
 	HammerStrap_cpp = CreateDefaultSubobject<USceneComponent>(TEXT("HAMMERSTRAP_CPP"));
 	HammerStrap_cpp->SetupAttachment(GetMesh());
 	BPSword_cpp = CreateDefaultSubobject<UChildActorComponent>(TEXT("BPHAMMER_CPP"));
@@ -91,6 +91,7 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorLocation(FVector(10227.3125, 76509.90625, -437.344971));
+	netPos = { 10227.3125, 76509.90625, -437.344971 };
 	id = net.GetMyID();
 }
 
@@ -100,7 +101,8 @@ void AMyCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (net.GetStatus() != p_login) return;
 
-	AddMovementInput(velocity, speed, true);
+	if (isMoving) AddMovementInput(velocity, speed);
+	// else SetActorLocation(netPos);
 
 	position = GetActorLocation();
 	rotation = GetActorRotation();
@@ -110,20 +112,21 @@ void AMyCharacter::Tick(float DeltaTime)
 		net.my_pos = { position.X, position.Y, position.Z };
 		net.my_rot = { rotation.Pitch, rotation.Yaw, rotation.Roll };
 		net.my_vel = { GetVelocity().X, GetVelocity().Y, GetVelocity().Z };
+		netPos = position;
 	}
 	velocity = { 0,0,0 };
-	
+
+	if (net.GetMyID() == id) return;
 	if (net.objEventQue[id].empty()) return;
 	auto ev = net.objEventQue[id].front();
 	net.objEventQue[id].pop();
-	
-	if (ev.oid == net.GetMyID()) return;
 
 	switch (ev.type) {
 	case sc_update_obj: {
 		position = { ev.pos.x, ev.pos.y, ev.pos.z };
 		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
 		velocity = { ev.velocity.x,ev.velocity.y ,ev.velocity.z };
+		netPos = position;
 		isMoving = true;
 		speed = 600.f;
 		SetActorLocationAndRotation(position, rotation, false, 0, ETeleportType::None);
@@ -138,98 +141,85 @@ void AMyCharacter::Tick(float DeltaTime)
 				myAnimInst->SwordSlashCombo2();
 			else myAnimInst->SwordSlashCombo3();
 		}
-	}break;
-	case sc_weapon_on: {	// 해머는 나중에 분리 지금은 귀찮아
-		BPSword_cpp->AttachTo(HandSocket1_cpp);
-		BPShield_cpp->AttachTo(HandSocket2_cpp);
-		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
-		if (myAnimInst != nullptr) myAnimInst->OutSword();
-
-	}break;
-	case sc_weapon_off: {
-		HandSocket1_cpp->DetachFromParent();
-		HandSocket2_cpp->DetachFromParent();
-		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
-		if (myAnimInst != nullptr) myAnimInst->InSword();
-	
+		isMoving = false;
 	}break;
 	case sc_sword_on: {
 		BPSword_cpp->AttachTo(HandSocket1_cpp);
 		BPShield_cpp->AttachTo(HandSocket2_cpp);
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->OutSword();
-	
+		isMoving = false;
 	}break;
 	case sc_sword_off: {
 		HandSocket1_cpp->DetachFromParent();
 		HandSocket2_cpp->DetachFromParent();
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->InSword();
-	
+		isMoving = false;
 	}break;
 	case sc_hammer_on: {
 		BPHammer_cpp->AttachTo(HandSocket1_cpp);
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->OutHammer();
-	
+		isMoving = false;
 	}break;
 	case sc_hammer_off: {
 		HandSocket3_cpp->DetachFromParent();
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->InHammer();
-
+		isMoving = false;
 	}break;
 	case sc_guard: {
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->SwordShieldIdle();
-	
+		isMoving = false;
 	}break;
 	case sc_berserk: {
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->Berserker();
 		bersuckermode_cpp = true;
-		
+		isMoving = false;
 	}break;
-	case sc_fireball:
-	
-		break;
 	case sc_evade: {
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->Evade();
-		
+		isMoving = false;
 	}break;
 	case sc_jump: {
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->Jump();
-	
+		isMoving = false;
 	}break;
-	case sc_level_up:
-		break;
 	case sc_dead: {
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->Pickup();
-
+		isMoving = false;
 	}break;
 	case sc_damaged: {
 		UE_LOG(LogTemp, Log, TEXT("Player Damaged!"));
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->SwordShieldImpact1();
 		hp = ev.hp;
+		isMoving = false;
 	}break;
 	case sc_get_exp:
 		break;
 	case sc_block:
+		isMoving = false;
 		break;
 	case sc_move_stop:
 		speed = 0.f;
 		velocity = { 0,0,0 };
 		position = { ev.pos.x, ev.pos.y, ev.pos.z };
 		SetActorLocation(position);
+		isMoving = false;
 		break;
 	case sc_leave:
+		isMoving = false;
 		SetActorLocation(FVector(-1000, -1000, 0));
 		break;
 	default:
+		isMoving = false;
 		break;
 	}
 }
@@ -400,6 +390,7 @@ void AMyCharacter::SetID(const int& id) {
 
 void AMyCharacter::SetPosition(float x, float y, float z) {
 	SetActorLocation(FVector(x, y, z));
+	netPos = { x,y,z };
 }
 
 void AMyCharacter::SetDist_Boss(float dist)

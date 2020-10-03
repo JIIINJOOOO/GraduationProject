@@ -8,7 +8,7 @@
 #include "MyPlayerController.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class LAST_HERO_API AMyPlayerController : public APlayerController
@@ -46,20 +46,20 @@ protected:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<class UABGameplayWidget> MenuWidgetClass;
+		TSubclassOf<class UABGameplayWidget> MenuWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = UI)
-	TSubclassOf<class UMyGameplayResultWidget> ResultWidgetClass;
+		TSubclassOf<class UMyGameplayResultWidget> ResultWidgetClass;
 
-	
+
 private:
 	void OnGamePasuse();
 
 	UPROPERTY()
-	class UABGameplayWidget* MenuWidget;
+		class UABGameplayWidget* MenuWidget;
 
 	UPROPERTY()
-	class UMyGameplayResultWidget* ResultWidget;
+		class UMyGameplayResultWidget* ResultWidget;
 
 	FInputModeGameOnly GameInputMode;
 	FInputModeUIOnly UIInputMode;

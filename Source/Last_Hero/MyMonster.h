@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Last_Hero.h"
+#include "Network.h"
 #include "GameFramework/Character.h"
 #include "MyMonster.generated.h"
 
@@ -32,6 +33,8 @@ private:
 	int type;
 	int deadCnt;
 	bool isMoving;
+	FVector netPos;
+	high_resolution_clock::time_point deathTime;
 
 public:
 	// Sets default values for this character's properties
@@ -54,8 +57,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		bool ready_cpp;
 
-	
-public:	
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

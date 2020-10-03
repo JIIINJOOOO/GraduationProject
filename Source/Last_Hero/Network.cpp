@@ -120,7 +120,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 		ev.rotation = pack->rotation;
 		ev.velocity = pack->velocity;
-		
+
 		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_attack: {
@@ -129,7 +129,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 		ev.mp = static_cast<short>(pack->combo);	// 
-		
+
 		objEventQue[pack->oid].push(ev);
 	}break;
 	case sc_fireball: {
@@ -300,6 +300,24 @@ void Network::ProcessPacket(char* buf) {
 
 		objEventQue[pack->oid].push(ev);
 	}break;
+	case sc_set_pos: {
+		SC_SET_POS* pack = reinterpret_cast<SC_SET_POS*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.pos = pack->pos;
+
+		objEventQue[pack->oid].push(ev);
+	}break;
+	case sc_set_rotation: {
+		SC_SET_ROTATION* pack = reinterpret_cast<SC_SET_ROTATION*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.rotation = pack->rot;
+
+		objEventQue[pack->oid].push(ev);
+	}break;
 	default:
 		break;
 	}
@@ -323,10 +341,7 @@ int Network::GetMyID() const {
 }
 
 void Network::PopEvent() {
-	eventLock.lock();
-	eventQue.pop();
-	eventLock.unlock();
-	lastPopTime = high_resolution_clock::now();
+	
 }
 
 int recvn(SOCKET s, char *buf, int len, int flags) {

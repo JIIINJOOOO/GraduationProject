@@ -35,7 +35,6 @@ void CPlayer::Initialize(const CPlayer& p) {
 	name = p.name;
 	m_pass = p.m_pass;
 	level = p.level;
-	pos = { 14463.1f,78765.1f, -444.2f };
 	pos = { 10227.3125, 76509.90625, -437.344971 };
 	/*
 	10227.3125, 76509.90625, -437.344971
@@ -49,10 +48,10 @@ void CPlayer::Initialize(int hp, int o_type, int exp, int lv, int mp, int atk, i
 	this->exp = exp;
 	level = lv;
 	atkPoint = atk;
-	atkPoint = 20;
+	atkPoint = 10;
 	pos.x = x;
 	pos.y = y;
-	pos = { 14410.0, 77670.0, -444.22113 };
+	pos = { 10227.3125, 76509.90625, -437.344971 };
 	isBerserk = false;
 	isGuard = false;
 	isWpnOn = false;
@@ -103,20 +102,23 @@ void CPlayer::Attck() {
 	}
 	// send_packet(id, &pack);
 	// Sleep(500);
-	for (auto& oid : viewList) {
-		if (oid < NPC_ID_START) continue;
+	this_thread::sleep_for(100ms);
+	for (int i = NPC_ID_START; i < NPC_ID_START + MAX_MONSTER; ++i) {
+		// if (i < NPC_ID_START) continue;
 		// cout << oid<<"\t"<<GetDistance(g_monster[oid]->GetPosition()) << endl;
-		if (g_monster[oid]->GetHealthPoint() == 0) continue;
-		if (GetDistance(g_monster[oid]->GetPosition()) < ATTACK_RANGE) {
-			// if (!IsFront(g_monster[oid]->GetPosition())) continue;
+		if (g_monster[i] == NULL) continue;
+		if (g_monster[i]->GetHealthPoint() == 0) continue;
+		if (GetDistance(g_monster[i]->GetPosition()) < ATTACK_RANGE) {
+			if (!IsFront(g_monster[i]->GetPosition())) continue;
 			Position directionVec = { cos(rotation.y), sin(rotation.y), 0 };
-			
-			cout << name <<id<< "의 공격으로 몬스터" << oid << "에게 " << atkPoint << "의 대미지!" << endl;
-			if (g_monster[oid]->TakeDamage(atkPoint) <= 0)
-				KillMonster(oid);
-		//	break;
+
+			cout << name << id << "의 공격으로 몬스터" << i << "에게 " << atkPoint << "의 대미지!" << endl;
+			if (g_monster[i]->TakeDamage(atkPoint) <= 0)
+				KillMonster(i);
+			//	break;
 		}
 	}
+	
 	AddTimer(id, EV_ATK_OFF, high_resolution_clock::now() + 500ms, NULL);	// 공격 종료를 알림
 }
 
@@ -128,20 +130,21 @@ void CPlayer::Berserk() {
 	SC_BERSERK pack{sizeof(SC_BERSERK), sc_berserk, id};
 	for (auto& p : viewList)
 		if (p < MAX_PLAYER) send_packet(p, &pack);
-	// Sleep(50);
-	for (auto& oid : viewList) {
-		if (oid < NPC_ID_START) continue;
-		if (g_monster[oid]->GetHealthPoint() == 0) continue;
-		if (GetDistance(g_monster[oid]->GetPosition()) < BERSERK_RANGE) {
-			if (g_monster[oid]->TakeDamage(200) <= 0)
-				KillMonster(oid);
-			cout << name << id << "의 버서크로 몬스터" << oid << "에게 " << 200 << "의 대미지!" << endl;
+	this_thread::sleep_for(100ms);
+	for (int i = NPC_ID_START; i < NPC_ID_START + MAX_MONSTER; ++i) {
+		// if (oid < NPC_ID_START) continue;
+		if (g_monster[i] == NULL) continue;
+		if (g_monster[i]->GetHealthPoint() == 0) continue;
+		if (GetDistance(g_monster[i]->GetPosition()) < BERSERK_RANGE) {
+			if (g_monster[i]->TakeDamage(50) <= 0)
+				KillMonster(i);
+			cout << name << id << "의 버서크로 몬스터" << i << "에게 " << 50 << "의 대미지!" << endl;
 		}
 	}
 	isBerserk = true;
 	atkPoint += BERSERK_BONUS;
 	magicPoint += BERSERK_BONUS;
-	AddTimer(id, EV_BERSER, high_resolution_clock::now()+10s, 0); // 시간은 추후 지정
+	AddTimer(id, EV_BERSER, high_resolution_clock::now()+15s, 0); // 시간은 추후 지정
 }
 
 void CPlayer::BerserkOff() {
@@ -155,7 +158,7 @@ void CPlayer::KillMonster(int oid) {
 	cout << name << id << "(이)가 몬스터" << oid << "를 죽이고 경험치 " << g_monster[oid]->GetEXP() << "획득" << endl;
 	exp += g_monster[oid]->GetEXP();
 	send_packet(id, &MakeGetExpPacket());
-
+	this_thread::sleep_for(500ms);
 	SC_DEAD pack{ sizeof(SC_DEAD), sc_dead, oid };
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
@@ -174,42 +177,52 @@ void CPlayer::LevelUp() {
 	healthPoint = MaxHP;
 	magicPoint  = MaxMP;
 	SC_LEVEL_UP pack{ sizeof(SC_LEVEL_UP), sc_level_up , id, level, exp, healthPoint, magicPoint };
-	send_packet(id, &pack);
-	for (auto& p : viewList)
-		if (p < MAX_PLAYER)
-			send_packet(id, &pack);
-	
+	// send_packet(id, &pack);
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(id, &pack);
+	}
 	AddQuary(id, EV_UPDATE, name.c_str(), m_pass.c_str());
 }
 
 void CPlayer::Guard() {
 	if (isGuard) return;
 	isGuard = true;
+	SC_OBJ_GUARD pack{ sizeof(SC_OBJ_GUARD), sc_guard, id };
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
 	AddTimer(id, EV_GUARD_OFF, high_resolution_clock::now()+3s, NULL);
 }
 
 void CPlayer::TakeDamage(int damage) {
 	healthPoint -= damage;
 	SC_DAMAGED pack{sizeof(pack), sc_damaged, id, healthPoint};
-	send_packet(id, &pack);
-	for (auto& p : viewList)
-		if (p <= MAX_PLAYER)
-			send_packet(p, &pack);
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
 	if (healthPoint <= 0) {
 		healthPoint = 0;
 		isAlive = false;
 		cout << name << id << " 사망\n";
 		SC_DEAD dp{ sizeof(dp), sc_dead, id };
-		send_packet(id, &dp);
-		for (auto& p : viewList)
-			if (p <= MAX_PLAYER)
-				send_packet(p, &pack);
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (g_player[i] == NULL) continue;
+			send_packet(i, &dp);
+		}
 	}
 }
 
 void CPlayer::Evade() {
 	if (isEvade) return;
 	isEvade = true;
+	SC_EVADE pack{ sizeof(SC_EVADE), sc_evade, id };
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
 	AddTimer(id, EV_EVADE_OFF, high_resolution_clock::now() + 2s, NULL);
 }
 
@@ -224,9 +237,10 @@ void CPlayer::FireBall() {
 	fireball.SetRotation(rotation.y);
 	fireball.SetOwnerID(id);
 	SC_FIREBALL pack{ sizeof(SC_FIREBALL), sc_fireball, id };
-	for (auto& p : viewList)
-		if (p < MAX_PLAYER) send_packet(p, &pack);
-	send_packet(id, &pack);
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
 	AddTimer(id, EV_FIREBALL, high_resolution_clock::now() + 1s, NULL);
 }
 
@@ -235,8 +249,10 @@ void CPlayer::Hide() {
 	isHide = true;
 	cout << name << id << "(이)가 은신을 사용\n";
 	SC_HIDE pack{sizeof(SC_HIDE), sc_hide, id};
-	for (auto& p : viewList)
-		if (p < MAX_PLAYER) send_packet(p, &pack);
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
 }
 
 void CPlayer::HideOff() {
@@ -244,8 +260,10 @@ void CPlayer::HideOff() {
 	isHide = false;
 	cout << name << id << "(이)가 은신을 해제\n";
 	SC_HIDE_OFF pack{ sizeof(SC_HIDE_OFF), sc_hide_off, id };
-	for (auto& p : viewList)
-		if (p < MAX_PLAYER) send_packet(p, &pack);
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
 }
 
 void CPlayer::Assassinate() {
@@ -256,15 +274,15 @@ void CPlayer::Assassinate() {
 		if (g_player[i] == NULL) continue;
 		send_packet(i, &pack);
 	}
-	Sleep(500);
-	for (auto& oid : viewList) {
-		if (oid < NPC_ID_START) continue;
-		if (g_monster[oid]->GetHealthPoint() == 0) continue;
-		if (GetDistance(g_monster[oid]->GetPosition()) < ATTACK_RANGE) {
-			if (!IsFront(g_monster[oid]->GetPosition())) continue;
-			cout << name << id << "의 암살 스킬로 몬스터" << oid << "에게 " << atkPoint*2 << "의 대미지!" << endl;
-			if (g_monster[oid]->TakeDamage(atkPoint*2) <= 0)
-				KillMonster(oid);
+	this_thread::sleep_for(100ms);
+	for (int i = NPC_ID_START; i < NPC_ID_START + MAX_MONSTER; ++i) {
+		if (g_monster[i] == NULL) continue;
+		if (g_monster[i]->GetHealthPoint() == 0) continue;
+		if (GetDistance(g_monster[i]->GetPosition()) < ATTACK_RANGE) {
+			// if (!IsFront(g_monster[oid]->GetPosition())) continue;
+			cout << name << id << "의 암살 스킬로 몬스터" << i << "에게 " << atkPoint*2 << "의 대미지!" << endl;
+			if (g_monster[i]->TakeDamage(atkPoint*2) <= 0)
+				KillMonster(i);
 			isHide = false;
 		}
 	}
@@ -293,8 +311,11 @@ void CPlayer::WeaponOn(const Weapon_Type& wpn) {
 	}
 }
 
-void CPlayer::WeaponOff() {
-	if (wpnType == wpn_none) return;
+void CPlayer::WeaponOff(const Weapon_Type& wpn) {
+	if (wpnType == wpn_none) {
+		WeaponOn(wpn);
+		return;
+	}
 	cout << name << id << "(이)가 무기를 탈착\n";
 	if (wpnType == wpn_sword) {
 		SC_SWORD_OFF pack{ sizeof(SC_SWORD_OFF), sc_sword_off, id };
@@ -311,13 +332,6 @@ void CPlayer::WeaponOff() {
 
 void CPlayer::MoveTo(const Position& p) {
 	SetPosition(p);
-
-	// for (int i = 0; i < MAX_PLAYER; ++i) {
-	// 	if (g_player[i] == NULL) continue;
-	// 	if (i == id) continue;
-	// 	send_packet(i, &MakeUpdatePacket());
-	// }
-	// return;
 	unordered_set<int> oldVl = viewList; // 현재 뷰리스트 카피
 	unordered_set<int> newVl;
 	// 모든 플레이어를 검사하여 시야에 있으면 새로운 뷰 리스트에 넣는다
@@ -349,7 +363,9 @@ void CPlayer::MoveTo(const Position& p) {
 			else if (no >= 20000) continue;	// Boss
 			else {
 				send_packet(id, &g_monster[no]->MakeUpdatePacket());
+				if (g_monster[no]->isActive) break;
 				AddTimer(no, EV_MONSTER, chrono::high_resolution_clock::now() + 1s, NULL);
+				g_monster[no]->isActive = true;
 			}
 			viewList.insert(no);	// 뷰리스트에 추가
 			if (!(no < MAX_PLAYER)) continue;
@@ -465,6 +481,15 @@ void CPlayer::EnterGame() {
 		g_player[i]->viewList.insert(id);
 		send_packet(i, &MakeEnterPacket());
 		send_packet(id, &g_player[i]->MakeEnterPacket());
+
+		if (g_player[i]->wpnType == wpn_sword) {
+			SC_SWORD_ON pack{ sizeof(SC_SWORD_ON), sc_sword_on, i };
+			send_packet(id, &pack);
+		}
+		else if (g_player[i]->wpnType == wpn_hammer) {
+			SC_HAMMER_ON pack{ sizeof(SC_HAMMER_ON), sc_hammer_on, i };
+			send_packet(id, &pack);
+		}
 	}
 	//for (int i = NPC_ID_START; i < NPC_ID_START + MAX_MONSTER; ++i) {
 	//	if (g_monster[i] == NULL) continue;
