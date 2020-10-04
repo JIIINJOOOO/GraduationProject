@@ -10,6 +10,9 @@
 #define GOBLIN_0 10000
 #define GOBLIN_1 10001
 #define GOBLIN_2 10002
+#define GOBLIN_3 10003
+#define GOBLIN_4 10004
+
 
 #define CYCLOPS_0 11000
 
@@ -178,6 +181,9 @@ void CMonster::Initialize(Position pos, int type) {
 	m_activityRange = ACTIVITY_RANGE;
 	atkPoint = 10;
 	isActive = false;
+
+	for (int i = 0; i < MAX_PLAYER; ++i)
+		player_dir[i] = 999'999'999;
 }
 
 void CMonster::ChangeState(State* newState) {
@@ -347,6 +353,22 @@ void CMonster::SetRotation(const Position& r) {
 	rotation = r;
 }
 
+void CMonster::UpdateTarget() {
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) {
+			player_dir[i] = 999'999'999;
+			continue;
+		}
+		player_dir[i] = GetDistance(g_player[i]->GetPosition());
+	}
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		if (!g_player[i]->isAlive) continue;
+		if (player_dir[i] < player_dir[target])
+			target = i;
+	}
+}
+
 void CreateMonsters(int num) {
 	Position defPos{ 15580.f, 77800.f, -490.f };
 	// 14900.0, 78160.0 -432.0
@@ -383,18 +405,14 @@ void CreateMonsters(int num) {
 
 	idx = NPC_ID_START;
 	SpawnMonster(GOBLIN_0, 12853.0, 76285.0, -420.0, OBJ_GOBLIN);
-	SpawnMonster(GOBLIN_1, 10480.0, 77260.0, -410.0, OBJ_GOBLIN);
-	SpawnMonster(GOBLIN_2, 13090.0, 78376.0, -410.0, OBJ_GOBLIN);
-
+	SpawnMonster(GOBLIN_1, 10480.0, 77260.0, -410.0, OBJ_CYCLOPS);
+	SpawnMonster(GOBLIN_2, 13090.0, 78376.0, -410.0, OBJ_BEETLE);
+	SpawnMonster(GOBLIN_3, 11010.0, 74920.0, -410.0, OBJ_MINI_GOLEM);
+	SpawnMonster(GOBLIN_4, 11730.0, 79790.0, -600.0, OBJ_LAZARD);
+	// 19320.0, 81700.0, 81700.0
 	// 10480.0, 77260.0, -410.0
 	// 11690.0, 76590.0, -340.0
 	// SpawnMonster(CYCLOPS_0, 13000, 76285.28125, -420.191681, OBJ_CYCLOPS);
-
-	/*
-	boss 
-	15729.668945, 86634.828125, -123.504761
-	22976.53125, 35731.6875, -932.329895
-	*/
 }
 
 void SpawnMonster(int id, float x, float y, float z, int type) {

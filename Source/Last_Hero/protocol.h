@@ -14,7 +14,7 @@ enum PACKET_TYPE {
 	sc_leave, sc_login, sc_signup, sc_login_fail, sc_login_ok,
 	sc_signup_ok, sc_signup_fail, sc_player_move, sc_update_obj, sc_enter_obj,
 	sc_leave_obj, cs_chat, sc_chat, cs_attack, cs_guard, sc_attack, sc_guard, cs_fireball, sc_fireball, sc_set_host, cs_jump, sc_jump,
-	cs_evade, cs_weapon_on, cs_weapon_off, sc_evade, sc_weapon_on, sc_weapon_off, cs_berserk, sc_berserk, cs_ready, sc_ready, cs_game_start, sc_game_start, sc_level_up, sc_dead, sc_damaged, sc_get_exp, sc_block, cs_boss_move, sc_fireball_off, sc_fireball_move, cs_hide, sc_hide, cs_hide_off, sc_hide_off, cs_assassin, sc_assassin, cs_move_stop, sc_move_stop, cs_exit, cs_sword_on, cs_sword_off, cs_hammer_on, cs_hammer_off, sc_sword_on, sc_sword_off, sc_hammer_on, sc_hammer_off, cs_npc_move, sc_npc_move, sc_set_npc_target, cs_spawn_npc, cs_boss_attack, sc_boss_attack, cs_boss_bone, sc_bone_break, sc_bone_update, cs_sync_fail, sc_set_pos, sc_set_rotation
+	cs_evade, cs_weapon_on, cs_weapon_off, sc_evade, sc_weapon_on, sc_weapon_off, cs_berserk, sc_berserk, cs_ready, sc_ready, cs_game_start, sc_game_start, sc_level_up, sc_dead, sc_damaged, sc_get_exp, sc_block, cs_boss_move, sc_fireball_off, sc_fireball_move, cs_hide, sc_hide, cs_hide_off, sc_hide_off, cs_assassin, sc_assassin, cs_move_stop, sc_move_stop, cs_exit, cs_sword_on, cs_sword_off, cs_hammer_on, cs_hammer_off, sc_sword_on, sc_sword_off, sc_hammer_on, sc_hammer_off, cs_npc_move, sc_npc_move, sc_set_npc_target, cs_spawn_npc, cs_boss_attack, sc_boss_attack, cs_boss_bone, sc_bone_break, sc_bone_update, cs_sync_fail, sc_set_pos, sc_set_rotation, cs_update_move_state, sc_update_move_state
 };
 
 enum Weapon_Type {
@@ -523,6 +523,19 @@ struct SC_SET_ROTATION {
 	char type;
 	short oid;
 	Position rot;
+};
+
+struct CS_UPDATE_MOVE_STATE {
+	char size;
+	char type;
+	short state;
+};
+
+struct SC_UPDATE_MOVE_STATE {
+	char size;
+	char type;
+	short oid;
+	short state;
 };
 
 #pragma pack(pop)

@@ -31,7 +31,7 @@ public:
 	int input_2;
 
 	high_resolution_clock::time_point lastInputTime;
-
+	high_resolution_clock::time_point lastSendTime;
 
 public:
 	AMyPlayerController();

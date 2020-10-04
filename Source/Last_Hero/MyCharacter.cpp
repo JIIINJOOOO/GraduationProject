@@ -4,7 +4,6 @@
 #include "MyCharacter.h"
 #include "MyAnimInstance.h"
 #include "DrawDebugHelpers.h"
-#include "Network.h"
 extern Network net;
 
 // Sets default values
@@ -83,6 +82,7 @@ AMyCharacter::AMyCharacter()
 	velocity = { 0,0,0 };
 	speed = 0.f;
 	isMoving = false;
+	wpnType = wpn_none;
 }
 //5/31: 290p 세팅까지 마친상태
 
@@ -99,6 +99,7 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	UE_LOG(LogTemp, Log, TEXT("mosasadste %d"), MovementState_cpp);
 	if (net.GetStatus() != p_login) return;
 
 	if (isMoving) AddMovementInput(velocity, speed);
@@ -109,6 +110,13 @@ void AMyCharacter::Tick(float DeltaTime)
 	velocity = GetVelocity();
 
 	if (id == net.GetMyID()) {
+		if (net.my_moveState != static_cast<short>(MovementState_cpp)) {
+			CS_UPDATE_MOVE_STATE pack{ sizeof(pack), cs_update_move_state };
+			pack.state = static_cast<short>(MovementState_cpp);
+			net.my_moveState = static_cast<short>(MovementState_cpp);
+			net.SendPacket(&pack);
+		}
+		net.my_moveState = static_cast<short>(MovementState_cpp);
 		net.my_pos = { position.X, position.Y, position.Z };
 		net.my_rot = { rotation.Pitch, rotation.Yaw, rotation.Roll };
 		net.my_vel = { GetVelocity().X, GetVelocity().Y, GetVelocity().Z };
@@ -116,11 +124,10 @@ void AMyCharacter::Tick(float DeltaTime)
 	}
 	velocity = { 0,0,0 };
 
-	if (net.GetMyID() == id) return;
 	if (net.objEventQue[id].empty()) return;
 	auto ev = net.objEventQue[id].front();
 	net.objEventQue[id].pop();
-
+	
 	switch (ev.type) {
 	case sc_update_obj: {
 		position = { ev.pos.x, ev.pos.y, ev.pos.z };
@@ -135,15 +142,24 @@ void AMyCharacter::Tick(float DeltaTime)
 		if (net.wpnType == wpn_none) break;
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) {
-			if (ev.mp == 0)
-				myAnimInst->SwordSlashCombo1();
-			else if (ev.mp == 1)
-				myAnimInst->SwordSlashCombo2();
-			else myAnimInst->SwordSlashCombo3();
+			if (wpnType == wpn_sword) {
+				if (ev.mp == 0)
+					myAnimInst->SwordSlashCombo1();
+				else if (ev.mp == 1)
+					myAnimInst->SwordSlashCombo2();
+				else myAnimInst->SwordSlashCombo3();
+			}
+			else if (wpnType == wpn_hammer) {
+				if (ev.mp == 0) myAnimInst->HammerCombo1();
+				if (ev.mp == 1) myAnimInst->HammerCombo2();
+				if (ev.mp == 2) myAnimInst->HammerCombo3();
+				if (ev.mp == 3) myAnimInst->HammerCombo4();
+			}
 		}
 		isMoving = false;
 	}break;
 	case sc_sword_on: {
+		wpnType = wpn_sword;
 		BPSword_cpp->AttachTo(HandSocket1_cpp);
 		BPShield_cpp->AttachTo(HandSocket2_cpp);
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
@@ -151,20 +167,34 @@ void AMyCharacter::Tick(float DeltaTime)
 		isMoving = false;
 	}break;
 	case sc_sword_off: {
-		HandSocket1_cpp->DetachFromParent();
-		HandSocket2_cpp->DetachFromParent();
+		wpnType = wpn_none;
+		BPSword_cpp->DetachFromParent();
+		BPShield_cpp->DetachFromParent();
+		BPSword_cpp->AttachTo(swordStrap_cpp);
+		BPShield_cpp->AttachTo(swordStrap_cpp);
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->InSword();
+		// HandSocket1_cpp->SetupAttachment(GetMesh());
+		// HandSocket2_cpp->SetupAttachment(GetMesh());
+		// swordStrap_cpp->SetupAttachment(GetMesh());
+		// BPSword_cpp->SetupAttachment(GetMesh());
+		// BPShield_cpp->SetupAttachment(GetMesh());
+		
 		isMoving = false;
 	}break;
 	case sc_hammer_on: {
-		BPHammer_cpp->AttachTo(HandSocket1_cpp);
+		HammerEquipped_cpp = true;
+		wpnType = wpn_hammer;
+		BPHammer_cpp->AttachTo(HandSocket3_cpp);
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->OutHammer();
 		isMoving = false;
 	}break;
 	case sc_hammer_off: {
-		HandSocket3_cpp->DetachFromParent();
+		HammerEquipped_cpp = false;
+		wpnType = wpn_none;
+		BPHammer_cpp->DetachFromParent();
+		BPHammer_cpp->AttachTo(HammerStrap_cpp);
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->InHammer();
 		isMoving = false;
@@ -186,6 +216,7 @@ void AMyCharacter::Tick(float DeltaTime)
 		isMoving = false;
 	}break;
 	case sc_jump: {
+		break;
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->Jump();
 		isMoving = false;
@@ -216,8 +247,27 @@ void AMyCharacter::Tick(float DeltaTime)
 		break;
 	case sc_leave:
 		isMoving = false;
+		id = -1;
 		SetActorLocation(FVector(-1000, -1000, 0));
 		break;
+	case sc_update_move_state:
+		MovementState_cpp = static_cast<EMovementStateCPP>(ev.hp);
+		net.my_moveState = ev.hp;
+		break;
+	case sc_hide: {
+		// MovementState_cpp = EMovementStateCPP::MS_WALKING;
+		// net.my_moveState = static_cast<short>(MovementState_cpp);
+		// CS_UPDATE_MOVE_STATE pack{ sizeof(pack), cs_update_move_state };
+		// pack.state = net.my_moveState;
+		// net.SendPacket(&pack);
+	}break;
+	case sc_hide_off: {
+		// MovementState_cpp = EMovementStateCPP::MS_WALKING;
+		// net.my_moveState = static_cast<short>(MovementState_cpp);
+		// CS_UPDATE_MOVE_STATE pack{ sizeof(pack), cs_update_move_state };
+		// pack.state = net.my_moveState;
+		// net.SendPacket(&pack);
+	}break;
 	default:
 		isMoving = false;
 		break;
@@ -391,9 +441,4 @@ void AMyCharacter::SetID(const int& id) {
 void AMyCharacter::SetPosition(float x, float y, float z) {
 	SetActorLocation(FVector(x, y, z));
 	netPos = { x,y,z };
-}
-
-void AMyCharacter::SetDist_Boss(float dist)
-{
-	Dist_Boss = dist;
 }

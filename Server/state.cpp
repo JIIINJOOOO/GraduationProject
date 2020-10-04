@@ -65,7 +65,8 @@ void IdleState::Execute(CMonster* mon) {
 		mon->ChangeState(AttackState::GetInstance());
 	else if (mon->GetDistance(mon->GetDefPosition()) > ACTIVITY_RANGE)
 		mon->ChangeState(ReturnHomeState::GetInstance());
-	else mon->ChangeState(ChaseState::GetInstance());
+	else if (mon->GetDistance(g_player[chaseID]->GetPosition()) < CHASE_RANGE)
+		mon->ChangeState(ChaseState::GetInstance());
 	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 }
 
@@ -92,8 +93,15 @@ void ChaseState::Execute(CMonster* mon) {
 		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
 	}
+
+	mon->UpdateTarget();
 	int target = mon->GetTarget();
 	CPlayer*& tg = g_player[target];
+	// if (GetDistance(mon->GetPosition(), tg->GetPosition()) > CHASE_RANGE) {
+	// 	mon->ChangeState(IdleState::GetInstance());
+	// 	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
+	// 	return;
+	// }
 	if (target == NO_DETECTED) return;
 	if (tg == NULL) return;
 

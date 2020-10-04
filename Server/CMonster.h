@@ -4,8 +4,8 @@
 #include "CPathFinder.h"
 #define MAX_MONSTER 10000
 #define ACTIVITY_RANGE 4000'00
-#define ATTACK_RANGE 200
-#define CHASE_RANGE 1000
+#define ATTACK_RANGE 300
+#define CHASE_RANGE 1700
 #define MONSTER_MAX_HP 100
 #define BOSS_IDX 20'000
 #define START_POINT_MONSTER 10000
@@ -83,6 +83,8 @@ public:
 	int TakeDamage(int atk_point);
 
 	void Death();
+
+	void UpdateTarget();
 
 	// Getter & Setter
 	void SetState(const int& state);

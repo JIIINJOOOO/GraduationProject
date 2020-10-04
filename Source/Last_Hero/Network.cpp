@@ -318,6 +318,31 @@ void Network::ProcessPacket(char* buf) {
 
 		objEventQue[pack->oid].push(ev);
 	}break;
+	case sc_update_move_state: {
+		SC_UPDATE_MOVE_STATE* pack = reinterpret_cast<SC_UPDATE_MOVE_STATE*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+		ev.hp = pack->state;
+		
+		objEventQue[pack->oid].push(ev);
+	}break;
+	case sc_hide: {
+		SC_HIDE* pack = reinterpret_cast<SC_HIDE*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		objEventQue[pack->oid].push(ev);
+	}break;
+	case sc_hide_off: {
+		SC_HIDE_OFF* pack = reinterpret_cast<SC_HIDE_OFF*>(buf);
+		GMB_Event ev;
+		ev.type = pack->type;
+		ev.oid = pack->oid;
+
+		objEventQue[pack->oid].push(ev);
+	}break;
 	default:
 		break;
 	}

@@ -86,6 +86,7 @@ void AMyPlayerController::BeginPlay()
 	Super::BeginPlay();
 	ChangeInputMode(true);
 	ResultWidget = CreateWidget< UMyGameplayResultWidget>(this, ResultWidgetClass);
+	lastSendTime = high_resolution_clock::now();
 
 }
 
@@ -224,6 +225,7 @@ void AMyPlayerController::Tick(float DeltaTime) {
 		// UE_LOG(LogTemp, Log, TEXT("Input Move key"));
 		CS_MOVE pack{ sizeof(CS_MOVE), move_packet, net.my_pos, net.my_rot, net.my_vel };
 		net.SendPacket(&pack);
+		lastSendTime = high_resolution_clock::now();
 	}
 	else net.isMovingN = false;
 

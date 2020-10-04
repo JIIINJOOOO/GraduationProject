@@ -64,6 +64,7 @@ void CPlayer::Initialize(int hp, int o_type, int exp, int lv, int mp, int atk, i
 	lastAtkTime = high_resolution_clock::now();	//
 	rotation = { 0,0,0 };
 	wpnType = wpn_none;
+	moveState = P_WALKING;
 }
 
 bool CPlayer::operator== (const CPlayer& cp) const {
@@ -91,8 +92,12 @@ void CPlayer::Attck() {
 	isAttack = true;
 
 	// 마지막 공격으로부터 1초 이내에 공격시 콤보 증가
-	if (lastAtkTime + 1s > high_resolution_clock::now())
-		comboCnt = (comboCnt + 1) % MAX_SWORD_COMBO;
+	if (lastAtkTime + 1s > high_resolution_clock::now()) {
+		if (wpnType == wpn_sword)
+			comboCnt = (comboCnt + 1) % MAX_SWORD_COMBO;
+		else if (wpnType == wpn_hammer)
+			comboCnt = (comboCnt + 1) % MAX_HAMMER_COMBO;
+	}
 	else comboCnt = 0;	// reset
 
 	SC_OBJ_ATTACK pack{ sizeof(SC_OBJ_ATTACK), sc_attack, id, comboCnt };
@@ -247,7 +252,7 @@ void CPlayer::FireBall() {
 void CPlayer::Hide() {
 	if (isHide) return;
 	isHide = true;
-	cout << name << id << "(이)가 은신을 사용\n";
+	//cout << name << id << "(이)가 은신을 사용\n";
 	SC_HIDE pack{sizeof(SC_HIDE), sc_hide, id};
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
@@ -258,7 +263,7 @@ void CPlayer::Hide() {
 void CPlayer::HideOff() {
 	if (!isHide) return;
 	isHide = false;
-	cout << name << id << "(이)가 은신을 해제\n";
+	//cout << name << id << "(이)가 은신을 해제\n";
 	SC_HIDE_OFF pack{ sizeof(SC_HIDE_OFF), sc_hide_off, id };
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
@@ -490,6 +495,10 @@ void CPlayer::EnterGame() {
 			SC_HAMMER_ON pack{ sizeof(SC_HAMMER_ON), sc_hammer_on, i };
 			send_packet(id, &pack);
 		}
+
+		SC_UPDATE_MOVE_STATE pack{ sizeof(SC_UPDATE_MOVE_STATE), sc_update_move_state, i };
+		pack.state = g_player[i]->moveState;
+		send_packet(id, &pack);
 	}
 	//for (int i = NPC_ID_START; i < NPC_ID_START + MAX_MONSTER; ++i) {
 	//	if (g_monster[i] == NULL) continue;
@@ -585,4 +594,20 @@ int CPlayer::GetLevel() const {
 
 void CPlayer::SetVelocity(const Position& v) {
 	velocity = v;
+}
+
+void CPlayer::SetMoveState(const Movement_State& new_state) {
+	if (new_state == moveState) return;
+	if (new_state == P_ONWALL)
+		cout << name << id << "이(가) 매달리기 시작\n";
+	if (moveState == P_ONWALL)
+		cout << name << id << "이(가) 매달리기 종료\n";
+
+	moveState = new_state;
+	SC_UPDATE_MOVE_STATE pack{ sizeof(pack), sc_update_move_state, id };
+	pack.state = new_state;
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		send_packet(i, &pack);
+	}
 }

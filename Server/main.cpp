@@ -371,6 +371,11 @@ void ProcessPacket(int uid, char* buf) {
 		else {	// boss
 		}
 	}break;
+	case cs_update_move_state: {
+		CS_UPDATE_MOVE_STATE* pack = reinterpret_cast<CS_UPDATE_MOVE_STATE*>(buf);
+		if (g_player[uid] == NULL) break;
+		g_player[uid]->SetMoveState(static_cast<Movement_State>(pack->state));
+	}break;
 	default:
 		cout << "Unknown Packet Type Error!" << endl;
 		Disconnect(uid);

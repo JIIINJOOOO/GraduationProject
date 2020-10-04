@@ -7,19 +7,24 @@
 #include "CObject.h"
 #include "protocol.h"
 #define MAX_PLAYER 10
-#define MAX_CLIENTS 100
+#define MAX_CLIENTS 10
 #define MAX_MOVE_RANGE 10
 #define MAX_VIEW_RANGE 5000
-#define BERSERK_RANGE 500
+#define BERSERK_RANGE 600
 #define BERSERK_BONUS 2
-#define LEVEL_UP_BONUS 10
-#define GUARD_RANGE 200
+#define LEVEL_UP_BONUS 2
+#define GUARD_RANGE 300
 
 #define MAX_SWORD_COMBO 3
+#define MAX_HAMMER_COMBO 4
 
 enum Player_State {
 	not_login = -1, In_Lobby, In_Room, In_Game,
 	host, none_ready, play_game
+};
+
+enum Movement_State {
+	P_WALKING, P_ONWALL, P_JUMPING, P_FALING, P_HANGING
 };
 using namespace std::chrono;
 
@@ -45,6 +50,7 @@ private:
 	bool isBerserk;
 
 	Weapon_Type wpnType;
+	Movement_State moveState;
 public:
 	CObject fireball;
 	unordered_set<int> viewList;
@@ -92,6 +98,8 @@ public:
 	int GetMaxMP() const;
 	int GetEXP() const;
 	int GetLevel() const;
+
+	void SetMoveState(const Movement_State& new_state);
 
 	// Packet
 	SC_OBJECT_ENTER MakeEnterPacket();

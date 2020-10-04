@@ -364,3 +364,19 @@ void UMyAnimInstance::Move(float speedSide, float speedForward) {
 	speedForward_cpp = 600.f;
 
 }
+
+void UMyAnimInstance::HammerCombo1(){
+	Montage_Play(Ham_Combo_1_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::HammerCombo2(){
+	Montage_Play(Ham_Combo_2_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::HammerCombo3(){
+	Montage_Play(Ham_Combo_3_Mtg, 1.0f);
+}
+
+void UMyAnimInstance::HammerCombo4(){
+	Montage_Play(Ham_Combo_4_Mtg, 1.0f);
+}

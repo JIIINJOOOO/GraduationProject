@@ -166,4 +166,9 @@ public:
 	void SwordSlashCombo2();
 	void SwordSlashCombo3();
 	void Move(float speedSide = 0.f, float speedForward = 200.f);
+	void HammerCombo1();
+	void HammerCombo2();
+	void HammerCombo3();
+	void HammerCombo4();
+
 };

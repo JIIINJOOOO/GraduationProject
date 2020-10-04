@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "UObject/ConstructorHelpers.h"
 #include "MyAnimInstance.h"
+#include "Network.h"
 #include "MyCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -33,7 +34,7 @@ private:
 	UMyAnimInstance* animInstance;
 	bool isMoving;
 	FVector netPos;
-
+	Weapon_Type wpnType;
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();

@@ -37,9 +37,10 @@ AMyMonster::AMyMonster()
 void AMyMonster::BeginPlay()
 {
 	Super::BeginPlay();
+	SpawnDefaultController();
 	MonPos = GetActorLocation();
 	netPos = MonPos;
-	SpawnDefaultController();
+	SetActorRotation(FRotator(0, 180, 0));
 }
 
 // Called to bind functionality to input
@@ -54,15 +55,19 @@ void AMyMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MonPos = GetActorLocation();
+	netPos.Z = MonPos.Z;
+
+	if (type == -1) return;
+	if (id == -1) return;
 
 	if (isDead) {
-		if (deathTime + 3s < high_resolution_clock::now())
+		if (deathTime + 1s < high_resolution_clock::now())
 			SetActorLocation(FVector(12450.0, 99870.0, -540.0));
 		return;
 	}
 
 	if (isMoving) AddMovementInput(velocity, speed);
-	else SetActorLocation(netPos);
+	SetActorLocation(netPos);
 
 	if (type == OBJ_CYCLOPS)
 		CyclopsUpdate();
