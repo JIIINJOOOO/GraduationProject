@@ -1,61 +1,7 @@
-﻿  Boss.cpp
-c:\users\유재현\documents\github\lh_server\server\physics.h(57): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(58): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(59): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.h(11): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
-  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(81): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(115): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(115): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(117): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(117): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(124): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(125): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(204): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(211): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(211): warning C4838: 'int'에서 'char'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\boss.cpp(212): warning C4244: '=': 'short'에서 'char'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  CMonster.cpp
-c:\users\유재현\documents\github\lh_server\server\physics.h(57): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(58): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(59): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.h(11): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
-  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(37): warning C4244: 'return': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(52): warning C4305: '인수': 'double'에서 'const float'(으)로 잘립니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(62): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(62): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(64): warning C4838: 'float'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(64): warning C4244: '초기화 중': 'float'에서 'short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(80): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(81): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(110): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(110): warning C4838: 'int'에서 'char'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(111): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(125): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(139): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(176): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(177): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(254): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(255): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(261): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cmonster.cpp(395): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-  CObject.cpp
-c:\users\유재현\documents\github\lh_server\server\physics.h(57): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(58): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(59): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.h(11): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
-  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
-c:\users\유재현\documents\github\lh_server\server\cobject.cpp(55): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cobject.cpp(56): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cobject.cpp(57): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cobject.cpp(59): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cobject.cpp(78): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cobject.cpp(92): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-  CPlayer.cpp
-c:\users\유재현\documents\github\lh_server\server\physics.h(57): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(58): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(59): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  CPlayer.cpp
+c:\users\유재현\documents\github\lh_server\server\physics.h(61): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\physics.h(62): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\physics.h(63): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 c:\users\유재현\documents\github\lh_server\server\cplayer.h(11): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
   c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
 c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(38): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
@@ -64,52 +10,41 @@ c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(53): warning C4
 c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(54): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
 c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(103): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
 c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(103): warning C4838: 'int'에서 'char'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(135): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(167): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(184): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(196): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(121): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(145): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(177): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(194): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
 c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(206): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(215): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(226): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(244): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(256): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(267): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(216): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(225): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(236): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(254): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(266): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
 c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(277): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(308): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(313): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(326): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(331): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(433): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(434): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(437): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(491): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(495): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(499): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(607): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-  Event.cpp
-c:\users\유재현\documents\github\lh_server\server\physics.h(57): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(58): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(59): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.h(11): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
-  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(287): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(330): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(335): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(347): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(351): warning C4806: '==': 안전하지 않은 연산입니다. 'bool' 형식의 값('Weapon_Type' 형식으로 확장)이 주어진 상수와 같을 수 없습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(352): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(456): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(457): warning C4244: '초기화 중': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(460): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(514): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(518): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(522): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\유재현\documents\github\lh_server\server\cplayer.cpp(631): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
   main.cpp
-c:\users\유재현\documents\github\lh_server\server\physics.h(57): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(58): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(59): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\physics.h(61): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\physics.h(62): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\유재현\documents\github\lh_server\server\physics.h(63): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 c:\users\유재현\documents\github\lh_server\server\cplayer.h(11): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
   c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
 c:\users\유재현\documents\github\lh_server\server\main.cpp(32): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
 c:\users\유재현\documents\github\lh_server\server\main.cpp(319): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
-  state.cpp
-c:\users\유재현\documents\github\lh_server\server\physics.h(57): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(58): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\physics.h(59): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\유재현\documents\github\lh_server\server\cplayer.h(11): warning C4005: 'MAX_MOVE_RANGE': 매크로 재정의
-  c:\users\유재현\documents\github\lh_server\server\cobject.h(5): note: 'MAX_MOVE_RANGE'의 이전 정의를 참조하십시오.
-c:\users\유재현\documents\github\lh_server\server\state.cpp(126): warning C4838: 'int'에서 'short'(으)로의 변환에는 축소 변환이 필요합니다.
   코드를 생성하고 있습니다.
-  2 of 1733 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  5 of 1734 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    13 functions had inline decision re-evaluated but remain unchanged
+    28 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   Server.vcxproj -> C:\Users\유재현\Documents\GitHub\LH_Server\x64\Release\Server.exe

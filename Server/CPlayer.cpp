@@ -108,13 +108,23 @@ void CPlayer::Attck() {
 	// send_packet(id, &pack);
 	// Sleep(500);
 	this_thread::sleep_for(100ms);
+	bool flag = false;
 	for (int i = NPC_ID_START; i < NPC_ID_START + MAX_MONSTER; ++i) {
 		// if (i < NPC_ID_START) continue;
 		// cout << oid<<"\t"<<GetDistance(g_monster[oid]->GetPosition()) << endl;
 		if (g_monster[i] == NULL) continue;
 		if (g_monster[i]->GetHealthPoint() == 0) continue;
 		if (GetDistance(g_monster[i]->GetPosition()) < ATTACK_RANGE) {
-			if (!IsFront(g_monster[i]->GetPosition())) continue;
+			// if (!IsFront(g_monster[i]->GetPosition())) continue;
+			if (flag == false) {
+				rotation.y = GetDegree(pos, g_monster[i]->GetPosition());
+				SC_SET_ROTATION rp{ sizeof(SC_SET_ROTATION), sc_set_rotation, id, rotation };
+				for (int i = 0; i < MAX_PLAYER; ++i) {
+					if (g_player[i] == NULL) continue;
+					send_packet(i, &rp);
+				}
+				flag = true;
+			}
 			Position directionVec = { cos(rotation.y), sin(rotation.y), 0 };
 
 			cout << name << id << "의 공격으로 몬스터" << i << "에게 " << atkPoint << "의 대미지!" << endl;
@@ -129,7 +139,7 @@ void CPlayer::Attck() {
 
 void CPlayer::Berserk() {
 	if (isBerserk) return;
-	if (wpnType == wpn_none) return;
+	if (wpnType != wpn_sword) return;
 	cout << name << id << "(이)가 버서크 스킬을 사용" << endl;
 	
 	SC_BERSERK pack{sizeof(SC_BERSERK), sc_berserk, id};
@@ -297,7 +307,19 @@ void CPlayer::Assassinate() {
 }
 
 void CPlayer::WeaponOn(const Weapon_Type& wpn) {
-	if (wpnType != wpn_none) return;
+	// if (wpnType != wpn_none) return;
+	// if (wpnType == wpn == wpn_sword){
+	// 	WeaponOff(wpn_sword);
+	// 	return;
+	// }
+	// if (wpnType == wpn == wpn_hammer) {
+	// 	WeaponOff(wpn_hammer);
+	// 	return;
+	// }
+	if (wpnType == wpn) {
+		WeaponOff(wpn);
+		return;
+	}
 	if (wpn == wpn_sword)
 		cout << name << id << "(이)가 검, 방패 장착\n";
 	else if (wpn == wpn_hammer)
@@ -321,17 +343,18 @@ void CPlayer::WeaponOff(const Weapon_Type& wpn) {
 		WeaponOn(wpn);
 		return;
 	}
-	cout << name << id << "(이)가 무기를 탈착\n";
-	if (wpnType == wpn_sword) {
+	if (wpnType == wpn == wpn_sword) {
 		SC_SWORD_OFF pack{ sizeof(SC_SWORD_OFF), sc_sword_off, id };
 		for (int i = 0; i < MAX_PLAYER; ++i)
 			send_packet(i, &pack);
 	}
-	else if (wpnType == wpn_hammer) {
+	else if (wpnType == wpn == wpn_hammer) {
 		SC_HAMMER_OFF pack{ sizeof(SC_HAMMER_OFF), sc_hammer_off, id };
 		for (int i = 0; i < MAX_PLAYER; ++i)
 			send_packet(i, &pack);
 	}
+	else return;
+	cout << name << id << "(이)가 무기를 탈착\n";
 	wpnType = wpn_none;
 }
 
@@ -593,6 +616,7 @@ int CPlayer::GetLevel() const {
 }
 
 void CPlayer::SetVelocity(const Position& v) {
+	if (v.IsZero()) return;
 	velocity = v;
 }
 

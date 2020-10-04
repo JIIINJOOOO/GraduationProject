@@ -52,6 +52,8 @@ private:
 	int exp;
 	int atkPoint;
 
+	int atkRange;
+
 	Position rotation;
 	Position velocity;
 
@@ -110,6 +112,7 @@ public:
 	void SetIndex(const int& idx);
 	int GetEXP() const;
 	int GetHP() const;
+	int GetAtkRange() const;
 
 	void SetVelocity(const Position& v);
 	void SetRotation(const Position& r);

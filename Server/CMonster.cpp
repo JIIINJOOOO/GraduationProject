@@ -38,15 +38,6 @@ float GetDegree(Position p1, Position p2) {
 }
 
 void CMonster::Chase(const CPlayer& target) {
-	/*
-	지금 문제가 서버에서는 각 노드로 바로 이동해버리는데
-	클라에서는 각 노드를 사용해 velocity를 얻어서 이동하니까
-	서버에서는 100씩 이동하는데 클라에서는 이동중임
-	이걸 해결하려면
-	1. 노드를 분할해서 이동시킨다
-	2. 0번클라에서 이동한 값을 받아서 동기화시킨다.
-		- 근데 이걸 어쩌지
-	*/
 	velocity = target.GetPosition() - pos;
 	velocity.z = 0;
 	pos = pos + (velocity * SPEED);
@@ -181,7 +172,8 @@ void CMonster::Initialize(Position pos, int type) {
 	m_activityRange = ACTIVITY_RANGE;
 	atkPoint = 10;
 	isActive = false;
-
+	atkRange = ATTACK_RANGE;
+	if (type == OBJ_MINI_GOLEM) atkRange = 200;
 	for (int i = 0; i < MAX_PLAYER; ++i)
 		player_dir[i] = 999'999'999;
 }
@@ -351,6 +343,10 @@ void CMonster::SetVelocity(const Position& v) {
 }
 void CMonster::SetRotation(const Position& r) {
 	rotation = r;
+}
+
+int CMonster::GetAtkRange() const {
+	return atkRange;
 }
 
 void CMonster::UpdateTarget() {

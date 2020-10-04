@@ -45,6 +45,10 @@ struct Position {
 	void Show() const {
 		cout << x << "\t" << y << "\t" << z << endl;
 	}
+	bool IsZero() const {
+		if ((int)x == 0 && (int)y == 0) return true;
+		return false;
+	}
 };
 
 struct Velocity {

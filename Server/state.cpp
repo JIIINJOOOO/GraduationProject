@@ -61,7 +61,7 @@ void IdleState::Execute(CMonster* mon) {
 		return;
 	}
 	mon->SetTarget(chaseID);
-	if (disArray[chaseID] < ATTACK_RANGE)
+	if (disArray[chaseID] < mon->GetAtkRange())
 		mon->ChangeState(AttackState::GetInstance());
 	else if (mon->GetDistance(mon->GetDefPosition()) > ACTIVITY_RANGE)
 		mon->ChangeState(ReturnHomeState::GetInstance());
@@ -107,7 +107,7 @@ void ChaseState::Execute(CMonster* mon) {
 
 	mon->Chase(*tg);
 
-	if (mon->GetDistance(tg->GetPosition()) < ATTACK_RANGE) {
+	if (mon->GetDistance(tg->GetPosition()) < mon->GetAtkRange()) {
 		mon->ChangeState(AttackState::GetInstance());
 		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
@@ -176,7 +176,7 @@ void AttackState::Execute(CMonster* mon) {
 	
 	mon->Attack(*tg);
 
-	if (mon->GetDistance(tg->GetPosition()) > ATTACK_RANGE) {
+	if (mon->GetDistance(tg->GetPosition()) > mon->GetAtkRange()) {
 		mon->ChangeState(ChaseState::GetInstance());
 		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;

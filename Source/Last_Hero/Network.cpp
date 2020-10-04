@@ -241,7 +241,8 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
-		wpnType = wpn_sword;
+		if (pack->oid == my_id)
+			wpnType = wpn_sword;
 
 		objEventQue[pack->oid].push(ev);
 	}break;
@@ -250,7 +251,8 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
-		wpnType = wpn_none;
+		if (pack->oid == my_id)
+			wpnType = wpn_none;
 
 		objEventQue[pack->oid].push(ev);
 	}break;
@@ -259,7 +261,8 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
-		wpnType = wpn_hammer;
+		if (pack->oid == my_id)
+			wpnType = wpn_hammer;
 
 		objEventQue[pack->oid].push(ev);
 	}break;
@@ -268,7 +271,8 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
-		wpnType = wpn_none;
+		if (pack->oid == my_id)
+			wpnType = wpn_none;
 
 		objEventQue[pack->oid].push(ev);
 	}break;
@@ -327,22 +331,7 @@ void Network::ProcessPacket(char* buf) {
 		
 		objEventQue[pack->oid].push(ev);
 	}break;
-	case sc_hide: {
-		SC_HIDE* pack = reinterpret_cast<SC_HIDE*>(buf);
-		GMB_Event ev;
-		ev.type = pack->type;
-		ev.oid = pack->oid;
 
-		objEventQue[pack->oid].push(ev);
-	}break;
-	case sc_hide_off: {
-		SC_HIDE_OFF* pack = reinterpret_cast<SC_HIDE_OFF*>(buf);
-		GMB_Event ev;
-		ev.type = pack->type;
-		ev.oid = pack->oid;
-
-		objEventQue[pack->oid].push(ev);
-	}break;
 	default:
 		break;
 	}

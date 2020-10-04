@@ -105,48 +105,38 @@ void AMyPlayerController::Tick(float DeltaTime) {
 	if (net.isMovingN) isPrevMove = true;
 	else isPrevMove = false;
 
-	if (lastInputTime + 500ms < high_resolution_clock::now())
+	if (lastInputTime + 300ms < high_resolution_clock::now())
 		isInput = false;
-
-	// static int cnt = 0;
-	// if (isInput) {
-	// 	cnt++;
-	// 	if (cnt == 100) {
-	// 		isInput = false;
-	// 		cnt = 0;
-	// 	}
-	// }
-
-	// isInput = true;
-
 
 	// 키 하나가 여러 역할을 하는 경우는 나중에 처리
 	if (IsInputKeyDown(EKeys::One) && !isInput) {
+		lastInputTime = high_resolution_clock::now();
+		isInput = true;
 		if (net.wpnType == wpn_none) {
 			CS_SWORD_ON pack{ sizeof(CS_SWORD_ON), cs_sword_on };
 			net.SendPacket(&pack);
+			return;
 		}
-		else if (net.wpnType == wpn_sword) {
-			CS_SWORD_OFF pack{ sizeof(CS_SWORD_OFF), cs_sword_off };
-			net.SendPacket(&pack);
+		// else if (net.wpnType == wpn_sword) {
+		CS_SWORD_OFF pack{ sizeof(CS_SWORD_OFF), cs_sword_off };
+		net.SendPacket(&pack);
 			//net.wpnType = wpn_none;
-		}
-		lastInputTime = high_resolution_clock::now();
-		isInput = true;
+		//}
 	}
 	if (IsInputKeyDown(EKeys::Two) && !isInput) {
+		lastInputTime = high_resolution_clock::now();
+		isInput = true;
 		if (net.wpnType == wpn_none) {
 			CS_HAMMER_ON pack{ sizeof(CS_HAMMER_ON), cs_hammer_on };
 			net.SendPacket(&pack);
+			return;
 			//net.wpnType = wpn_hammer;
 		}
-		else if (net.wpnType == wpn_hammer) {
-			CS_HAMMER_OFF pack{ sizeof(CS_HAMMER_ON), cs_hammer_off };
-			net.SendPacket(&pack);
+		// else if (net.wpnType == wpn_hammer) {
+		CS_HAMMER_OFF pack{ sizeof(CS_HAMMER_ON), cs_hammer_off };
+		net.SendPacket(&pack);
 			//net.wpnType = wpn_none;
-		}
-		lastInputTime = high_resolution_clock::now();
-		isInput = true;
+		// }
 	}
 	if (IsInputKeyDown(EKeys::Three)) {
 		CS_BERSERK pack;
@@ -167,6 +157,11 @@ void AMyPlayerController::Tick(float DeltaTime) {
 		net.SendPacket(&pack);
 	}
 	if (IsInputKeyDown(EKeys::RightMouseButton)) {
+		if (net.wpnType == wpn_none) {
+			CS_SWORD_ON pack{ sizeof(CS_SWORD_ON), cs_sword_on };
+			net.SendPacket(&pack);
+			return;
+		}
 		CS_GUARD pack;
 		pack.size = sizeof(CS_GUARD);
 		pack.type = cs_guard;

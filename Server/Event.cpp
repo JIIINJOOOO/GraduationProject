@@ -43,16 +43,20 @@ void TimerThread() {
 				PostQueuedCompletionStatus(g_iocp, 1, ev.objID, &exover->over);
 			}break;
 			case EV_BERSERK:
+				if (g_player[ev.objID] == NULL) break;
 				g_player[ev.objID]->BerserkOff();
 				break;
 			case EV_ATK_OFF:
+				if (g_player[ev.objID] == NULL) break;
 				g_player[ev.objID]->isAttack = false;
 				g_player[ev.objID]->lastAtkTime = high_resolution_clock::now();
 				break;
 			case EV_GUARD_OFF:
+				if (g_player[ev.objID] == NULL) break;
 				g_player[ev.objID]->isGuard = false;
 				break;
 			case EV_EVADE_OFF:
+				if (g_player[ev.objID] == NULL) break;
 				g_player[ev.objID]->isEvade = false;
 				break;
 			case EV_FIREBALL: {
@@ -62,6 +66,7 @@ void TimerThread() {
 				// g_player[ev.objID]->fireball.Update();
 			}break;
 			case EV_ASS_OFF:
+				if (g_player[ev.objID] == NULL) break;
 				g_player[ev.objID]->isAssasinate = false;
 				break;
 			}

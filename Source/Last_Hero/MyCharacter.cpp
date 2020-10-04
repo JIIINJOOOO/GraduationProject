@@ -183,7 +183,6 @@ void AMyCharacter::Tick(float DeltaTime)
 		isMoving = false;
 	}break;
 	case sc_hammer_on: {
-		HammerEquipped_cpp = true;
 		wpnType = wpn_hammer;
 		BPHammer_cpp->AttachTo(HandSocket3_cpp);
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
@@ -191,7 +190,6 @@ void AMyCharacter::Tick(float DeltaTime)
 		isMoving = false;
 	}break;
 	case sc_hammer_off: {
-		HammerEquipped_cpp = false;
 		wpnType = wpn_none;
 		BPHammer_cpp->DetachFromParent();
 		BPHammer_cpp->AttachTo(HammerStrap_cpp);
@@ -254,20 +252,10 @@ void AMyCharacter::Tick(float DeltaTime)
 		MovementState_cpp = static_cast<EMovementStateCPP>(ev.hp);
 		net.my_moveState = ev.hp;
 		break;
-	case sc_hide: {
-		// MovementState_cpp = EMovementStateCPP::MS_WALKING;
-		// net.my_moveState = static_cast<short>(MovementState_cpp);
-		// CS_UPDATE_MOVE_STATE pack{ sizeof(pack), cs_update_move_state };
-		// pack.state = net.my_moveState;
-		// net.SendPacket(&pack);
-	}break;
-	case sc_hide_off: {
-		// MovementState_cpp = EMovementStateCPP::MS_WALKING;
-		// net.my_moveState = static_cast<short>(MovementState_cpp);
-		// CS_UPDATE_MOVE_STATE pack{ sizeof(pack), cs_update_move_state };
-		// pack.state = net.my_moveState;
-		// net.SendPacket(&pack);
-	}break;
+	case sc_set_rotation:
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		SetActorRotation(rotation);
+		break;
 	default:
 		isMoving = false;
 		break;
