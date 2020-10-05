@@ -35,6 +35,7 @@ private:
 	bool isMoving;
 	FVector netPos;
 	Weapon_Type wpnType;
+	bool other;
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();

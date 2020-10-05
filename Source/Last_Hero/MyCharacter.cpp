@@ -83,6 +83,7 @@ AMyCharacter::AMyCharacter()
 	speed = 0.f;
 	isMoving = false;
 	wpnType = wpn_none;
+	other = false;
 }
 //5/31: 290p 세팅까지 마친상태
 
@@ -99,9 +100,8 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UE_LOG(LogTemp, Log, TEXT("mosasadste %d"), MovementState_cpp);
 	if (net.GetStatus() != p_login) return;
-
+	if (other == false) id = net.GetMyID();
 	if (isMoving) AddMovementInput(velocity, speed);
 	// else SetActorLocation(netPos);
 
@@ -424,6 +424,7 @@ void AMyCharacter::PossessedBy(AController* NewController)
 void AMyCharacter::SetID(const int& id) {
 	SpawnDefaultController();
 	this->id = id;
+	other = true;
 }
 
 void AMyCharacter::SetPosition(float x, float y, float z) {
