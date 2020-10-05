@@ -294,6 +294,60 @@ void AMyMonster::LazardUpdate() {
 	}
 }
 
+void AMyMonster::TrollUpdate() {
+	if (net.objEventQue[id].empty()) return;
+	auto ev = net.objEventQue[id].front();
+	net.objEventQue[id].pop();
+
+	switch (ev.type) {
+	case sc_update_obj:
+		MonPos = { ev.pos.x, ev.pos.y, MonPos.Z };
+		velocity = { ev.velocity.x, ev.velocity.y, ev.velocity.z };
+		rotation = { ev.rotation.x, ev.rotation.y, ev.rotation.z };
+		netPos = MonPos;
+		// SetActorLocation(MonPos);
+		SetActorLocationAndRotation(MonPos, rotation, false, 0, ETeleportType::TeleportPhysics);
+		isMoving = true;
+		speed = 200.f;
+		break;
+	case sc_attack: {
+		// auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
+		// if (animInst != nullptr) {
+		// 	if (ev.mp == 0) animInst->Attack1();
+		// 	if (ev.mp == 1) animInst->Attack2();
+		// 	if (ev.mp == 2) animInst->Attack3();
+		// }
+		isMoving = false;
+		speed = 0.f;
+		velocity = { 0,0,0 };
+	}break;
+	case sc_damaged: {
+		// auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
+		// if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		velocity = { 0,0,0 };
+		speed = 0.f;
+		hp = ev.hp;
+	}break;
+	case sc_dead: {
+		// auto animInst = Cast<ULazardAnimInstance>(GetMesh()->GetAnimInstance());
+		// if (animInst != nullptr) animInst->Hitreaction();
+		isMoving = false;
+		isDead = true;
+		deathTime = high_resolution_clock::now();
+	}break;
+	case sc_set_rotation:
+		speed = 0.f;
+		isMoving = false;
+		rotation = { ev.rotation.x,ev.rotation.y, ev.rotation.z };
+		SetActorRotation(rotation);
+		break;
+	default:
+		isMoving = false;
+		break;
+	}
+}
+
 bool AMyMonster::IsCyclops() {
 	return (CYCLOPS_ID <= id && id < BEETLE_ID);
 }

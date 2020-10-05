@@ -13,8 +13,27 @@
 #define GOBLIN_3 10003
 #define GOBLIN_4 10004
 
+#define CYCLOPS_0 10100
+#define CYCLOPS_1 10101
+#define CYCLOPS_2 10102
 
-#define CYCLOPS_0 11000
+#define BEETLE_0 10200
+#define BEETLE_1 10201
+
+#define MINI_GOLEM_0 10300
+#define MINI_GOLEM_1 10301
+#define MINI_GOLEM_2 10302
+#define MINI_GOLEM_3 10303
+#define MINI_GOLEM_4 10304
+#define MINI_GOLEM_5 10305
+
+#define LAZARD_0 10400
+#define LAZARD_1 10401
+#define LAZARD_2 10402
+
+#define TROLL_0 10500
+#define TROLL_1 10501
+
 
 #define SPEED 0.03
 using namespace std;
@@ -97,6 +116,7 @@ void CMonster::Attack(CPlayer& target) {
 	// 949000.0
 	int attack_num = dis(gen);	// 어떤 공격 사용할지인데 클라에서 출력만 다르게 하고 대미지 처리는 모두 동일하게 진행
 	if (GetDistance(target.GetPosition()) > ATTACK_RANGE) return;
+	if (GetDistance(target.GetPosition()) < 0) return;
 	rotation.y = GetDegree(pos, target.GetPosition());
 	SC_OBJ_ATTACK pack{ sizeof(pack), sc_attack, id,attack_num };
 	SC_SET_ROTATION pack_rot{ sizeof(pack_rot), sc_set_rotation, id };
@@ -173,7 +193,7 @@ void CMonster::Initialize(Position pos, int type) {
 	atkPoint = 10;
 	isActive = false;
 	atkRange = ATTACK_RANGE;
-	if (type == OBJ_MINI_GOLEM) atkRange = 200;
+	// if (type == OBJ_MINI_GOLEM) atkRange = 200;
 	for (int i = 0; i < MAX_PLAYER; ++i)
 		player_dir[i] = 999'999'999;
 }
@@ -245,7 +265,6 @@ Position CMonster::GetDefPosition() const {
 int CMonster::GetDistance(Position pos) {
 	int x = pow((this->pos.x - pos.x), 2);
 	int y = pow((this->pos.y - pos.y), 2);
-	// int z = pow((this->pos.z - pos.z), 2);
 	// cout << "pos-----" << endl;
 	// cout << this->pos.x << "\t" << this->pos.y << "\t" << this->pos.z << endl;
 	// cout << pos.x << "\t" << pos.y << "\t" << pos.z << endl;
@@ -400,15 +419,47 @@ void CreateMonsters(int num) {
 	// cout << "Boss Golem(id=" <<idx<< ") Spawn(" << defPos.x << ", " << defPos.y << ", " << defPos.z << ")\n";
 
 	idx = NPC_ID_START;
-	SpawnMonster(GOBLIN_0, 12853.0, 76285.0, -420.0, OBJ_GOBLIN);
-	SpawnMonster(GOBLIN_1, 10480.0, 77260.0, -410.0, OBJ_CYCLOPS);
-	SpawnMonster(GOBLIN_2, 13090.0, 78376.0, -410.0, OBJ_BEETLE);
-	SpawnMonster(GOBLIN_3, 11010.0, 74920.0, -410.0, OBJ_MINI_GOLEM);
-	SpawnMonster(GOBLIN_4, 11730.0, 79790.0, -600.0, OBJ_LAZARD);
-	// 19320.0, 81700.0, 81700.0
-	// 10480.0, 77260.0, -410.0
-	// 11690.0, 76590.0, -340.0
-	// SpawnMonster(CYCLOPS_0, 13000, 76285.28125, -420.191681, OBJ_CYCLOPS);
+	// SpawnMonster(GOBLIN_1, 10480.0, 77260.0, -410.0, OBJ_TROLL);
+	// return;
+	// Test Spawn
+	// SpawnMonster(GOBLIN_0, 12853.0, 76285.0, -420.0, OBJ_GOBLIN);
+	// SpawnMonster(GOBLIN_1, 10480.0, 77260.0, -410.0, OBJ_CYCLOPS);
+	// SpawnMonster(GOBLIN_2, 13090.0, 78376.0, -410.0, OBJ_BEETLE);
+	// SpawnMonster(GOBLIN_3, 11010.0, 74920.0, -410.0, OBJ_MINI_GOLEM);
+	// SpawnMonster(GOBLIN_4, 11730.0, 79790.0, -600.0, OBJ_LAZARD);
+
+	// True Spawn ------------------------------------------------------
+	// Goblin
+	SpawnMonster(GOBLIN_0, 15640.0, 79760.0, -428.114075, OBJ_GOBLIN);
+	SpawnMonster(GOBLIN_1, 16180.0, 79150.0, -428.114075, OBJ_GOBLIN);
+	SpawnMonster(GOBLIN_2, 14950.0, 80431.7, -426.609375, OBJ_GOBLIN);
+
+	// Cyclops
+	SpawnMonster(CYCLOPS_0, 18448.2, 90659.0, -550.0, OBJ_CYCLOPS);
+	SpawnMonster(CYCLOPS_1, 16920.0, 91460.0, -550.0, OBJ_CYCLOPS);
+	SpawnMonster(CYCLOPS_2, 18714.1, 91243.3, -550.0, OBJ_CYCLOPS);
+
+	// Beetle
+	SpawnMonster(BEETLE_0, 53864.5, 63020.0, -1161.325195, OBJ_BEETLE);
+	SpawnMonster(BEETLE_1, 56264.5, 64160.0, -981.325195, OBJ_BEETLE);
+
+	// Lazard
+	SpawnMonster(LAZARD_0, 23560.0, 81780.0, -612.0, OBJ_LAZARD);
+	SpawnMonster(LAZARD_1, 22800.0, 83120.0, -612.0, OBJ_LAZARD);
+	SpawnMonster(LAZARD_2, 24350.0, 82480.0, -612.0, OBJ_LAZARD);
+
+	// Mini Golem
+	// SpawnMonster(MINI_GOLEM_0, 29130.6, 78242.9, -374.753357, OBJ_MINI_GOLEM);
+	SpawnMonster(MINI_GOLEM_1, 34532.1, 58345.7, -898.869446, OBJ_MINI_GOLEM);
+	SpawnMonster(MINI_GOLEM_2, 33689.3, 59456.5, -859.889099, OBJ_MINI_GOLEM);
+	SpawnMonster(MINI_GOLEM_3, 8813.9, 86079.6, -203.521851, OBJ_MINI_GOLEM);
+	SpawnMonster(MINI_GOLEM_4, 8949.7, 88621.6, 196.9, OBJ_MINI_GOLEM);
+	SpawnMonster(MINI_GOLEM_5, 10237.7, 86787.7, 238.321106, OBJ_MINI_GOLEM);
+
+	// Troll
+	SpawnMonster(TROLL_0, 64227.8, 56500.0, -414.321045, OBJ_TROLL);
+	SpawnMonster(TROLL_1, 65807.8, 56600.0, -294.321045, OBJ_TROLL);
+
 }
 
 void SpawnMonster(int id, float x, float y, float z, int type) {
@@ -427,6 +478,9 @@ void SpawnMonster(int id, float x, float y, float z, int type) {
 		break;
 	case OBJ_LAZARD:
 		cout << "Lazard(id=" << id << ") Spawn(" << x << ", " << y << ", " << z << ")\n";
+		break;
+	case OBJ_TROLL:
+		cout << "Troll(id=" << id << ") Spawn(" << x << ", " << y << ", " << z << ")\n";
 		break;
 	}
 	g_monster[id] = new CMonster;

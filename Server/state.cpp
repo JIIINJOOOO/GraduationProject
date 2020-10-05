@@ -61,8 +61,10 @@ void IdleState::Execute(CMonster* mon) {
 		return;
 	}
 	mon->SetTarget(chaseID);
-	if (disArray[chaseID] < mon->GetAtkRange())
+	if (mon->GetDistance(g_player[chaseID]->GetPosition()) < mon->GetAtkRange()) {
+		if (mon->GetDistance(g_player[chaseID]->GetPosition()) < 0) return;
 		mon->ChangeState(AttackState::GetInstance());
+	}
 	else if (mon->GetDistance(mon->GetDefPosition()) > ACTIVITY_RANGE)
 		mon->ChangeState(ReturnHomeState::GetInstance());
 	else if (mon->GetDistance(g_player[chaseID]->GetPosition()) < CHASE_RANGE)

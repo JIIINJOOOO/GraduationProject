@@ -116,6 +116,7 @@ void CPlayer::Attck() {
 		if (g_monster[i]->GetHealthPoint() == 0) continue;
 		if (GetDistance(g_monster[i]->GetPosition()) < ATTACK_RANGE) {
 			// if (!IsFront(g_monster[i]->GetPosition())) continue;
+			if (GetDistance(g_monster[i]->GetPosition()) < 0) continue;
 			if (flag == false) {
 				rotation.y = GetDegree(pos, g_monster[i]->GetPosition());
 				SC_SET_ROTATION rp{ sizeof(SC_SET_ROTATION), sc_set_rotation, id, rotation };
@@ -151,6 +152,7 @@ void CPlayer::Berserk() {
 		if (g_monster[i] == NULL) continue;
 		if (g_monster[i]->GetHealthPoint() == 0) continue;
 		if (GetDistance(g_monster[i]->GetPosition()) < BERSERK_RANGE) {
+			if (GetDistance(g_monster[i]->GetPosition()) < 0) continue;
 			if (g_monster[i]->TakeDamage(50) <= 0)
 				KillMonster(i);
 			cout << name << id << "의 버서크로 몬스터" << i << "에게 " << 50 << "의 대미지!" << endl;
@@ -294,6 +296,7 @@ void CPlayer::Assassinate() {
 		if (g_monster[i] == NULL) continue;
 		if (g_monster[i]->GetHealthPoint() == 0) continue;
 		if (GetDistance(g_monster[i]->GetPosition()) < ATTACK_RANGE) {
+			if (GetDistance(g_monster[i]->GetPosition()) < 0) continue;
 			// if (!IsFront(g_monster[oid]->GetPosition())) continue;
 			cout << name << id << "의 암살 스킬로 몬스터" << i << "에게 " << atkPoint*2 << "의 대미지!" << endl;
 			if (g_monster[i]->TakeDamage(atkPoint*2) <= 0)

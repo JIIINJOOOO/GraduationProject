@@ -77,4 +77,5 @@ public:
 	void BeetleUpdate();
 	void MiniGolemUpdate();
 	void LazardUpdate();
+	void TrollUpdate();
 };
