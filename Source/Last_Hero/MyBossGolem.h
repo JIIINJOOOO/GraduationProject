@@ -172,8 +172,8 @@ private:
 	bool IsDownInit;
 
 public:
-	char* GetPartString(int pid);
+	/*char* GetPartString(int pid);
 	void AttackPacketProcess(const int& atk_num);
-	CS_BOSS_BONE MakeBonePacket();
+	CS_BOSS_BONE MakeBonePacket();*/
 	void SetID(const int& id);
 };

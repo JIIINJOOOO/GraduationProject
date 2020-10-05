@@ -184,6 +184,14 @@ GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, 
 		else
 			return DOWN_ATTACK_1;
 		break;
+	case 18:
+		if (!IsBreakLeftArm && !IsHalfBreakLeftArm) {
+			return DOWN_SWEEP;
+		}
+		else {
+			return DOWN_ATTACK_1;
+		}
+		break;
 	default:
 		if (IsDown)
 			return SWEEP_ATTACK;
@@ -260,7 +268,15 @@ void AMyBossGolem::ChargeStompingLoopEnd()
 	GolemAnim->JumpToStompAttackMontageSection(FName("End"));
 }
 
+void AMyBossGolem::ChargeDownSweepLoopStart()
+{
+	GolemAnim->JumpToDownSweepMontageSection(FName("End"));
+}
 
+void AMyBossGolem::ChargeDownSweepLoopEnd()
+{
+	GolemAnim->JumpToDownSweepMontageSection(FName("End"));
+}
 
 
 void AMyBossGolem::OnAttackMontageEnded(UAnimMontage * Montage, bool bInterrupted)
@@ -350,7 +366,10 @@ void AMyBossGolem::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 		BreakLegsCpp(OtherActor);
 	}
 }
-
+void AMyBossGolem::SetID(const int& id) {
+	this->id = id;
+	type = OBJ_GOLEM;
+}
 
 
 //// Fill out your copyright notice in the Description page of Project Settings.
@@ -962,7 +981,3 @@ void AMyBossGolem::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 //	return "";
 //}
 //
-//void AMyBossGolem::SetID(const int& id) {
-//	this->id = id;
-//	type = OBJ_GOLEM;
-//}
