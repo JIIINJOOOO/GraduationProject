@@ -392,15 +392,15 @@ void AMyBossGolem::BeginPlay()
 	BoneMap.Emplace("Bip001-R-Hand", 20);
 	BoneMap.Emplace("Bip001-R-Forearm", 22);
 	BoneMap.Emplace("Bip001-R-UpperArm", 24);
-	BoneMap.Emplace("Bip001-R-Foot", 30);
-	BoneMap.Emplace("Bip001-R-Calf", 32);
-	BoneMap.Emplace("Bip001-R-Thigh", 34);
+	BoneMap.Emplace("Bip001-R-Foot", 42);
+	BoneMap.Emplace("Bip001-R-Calf", 44);
+	BoneMap.Emplace("Bip001-R-Thigh", 46);
 	BoneMap.Emplace("Bip001-L-Hand", 10);
 	BoneMap.Emplace("Bip001-L-Forearm", 14);
 	BoneMap.Emplace("Bip001-L-UpperArm", 18);
-	BoneMap.Emplace("Bip001-L-Foot", 30);
-	BoneMap.Emplace("Bip001-L-Calf", 32);
-	BoneMap.Emplace("Bip001-L-Thigh", 34);	
+	BoneMap.Emplace("Bip001-L-Foot", 42);
+	BoneMap.Emplace("Bip001-L-Calf", 44);
+	BoneMap.Emplace("Bip001-L-Thigh", 46);	
 
 	pos = GetActorLocation();
 	rotate = GetActorRotation();
