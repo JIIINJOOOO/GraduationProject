@@ -170,6 +170,10 @@ private:
 
 	// c++ variables
 	bool IsDownInit;
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GolemInfo)
+		float ServerGolemHP;
+
 
 public:
 	char* GetPartString(int pid);

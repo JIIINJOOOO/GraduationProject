@@ -4,6 +4,7 @@
 
 #include "Last_Hero.h"
 #include "Engine/GameInstance.h"
+#include "Engine/StreamableManager.h"
 #include "MyGameInstance.generated.h"
 
 /**
@@ -16,4 +17,7 @@ class LAST_HERO_API UMyGameInstance : public UGameInstance
 public:
 	UMyGameInstance();
 	virtual void Init() override;
+
+	FStreamableManager StreamableManager;
+
 };
