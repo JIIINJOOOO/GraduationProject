@@ -8,7 +8,7 @@
 
 enum Weapon_Class
 {
-	Weapon_Sword, Weapon_Hammer, Weapon_3, Weapon_4
+	Weapon_Sword, Weapon_Hammer
 };
 /**
  * 
@@ -28,7 +28,7 @@ protected:
 		int32 CurIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
-		int32 MaxIndex = 4;
+		int32 MaxIndex = 2;
 
 	TWeakObjectPtr<USkeletalMeshComponent> TargetComponent;
 

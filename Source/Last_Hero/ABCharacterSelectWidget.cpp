@@ -11,7 +11,7 @@ void UABCharacterSelectWidget::NextCharacter(bool IsNextBtn)
 {
 	if (IsNextBtn)
 	{
-		if (CurIndex < MaxIndex)
+		if (CurIndex < MaxIndex - 1)
 		{
 			CurIndex++;
 		}
@@ -26,18 +26,15 @@ void UABCharacterSelectWidget::NextCharacter(bool IsNextBtn)
 	switch (CurIndex)
 	{
 	case Weapon_Sword:
-		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(true, false); // sword 
-		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(true, false); // shield
-		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(false, false); // hammer
+		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(false, false); // sword
+		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(true, false); // shield
+		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(true, false); // hammer
+
 		break;
 	case Weapon_Hammer:
-		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(false, false); // sword 
-		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(false, false); // shield
-		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(true, false); // hammer
-		break;
-	case Weapon_3:
-		break;
-	case Weapon_4:
+		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(true, false); // sword
+		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(false, false); // shield
+		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(false, false); // hammer
 		break;
 	default:
 		break;

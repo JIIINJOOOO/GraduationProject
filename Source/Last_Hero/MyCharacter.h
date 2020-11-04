@@ -110,6 +110,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerInfo)
 		float ServerPlayerHP;
+
 	
 //private:
 //	void MoveForward(float NewAxisValue);
