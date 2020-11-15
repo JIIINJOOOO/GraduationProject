@@ -25,16 +25,15 @@ void UABCharacterSelectWidget::NextCharacter(bool IsNextBtn)
 	}
 	switch (CurIndex)
 	{
-	case Weapon_Sword:
-		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(false, false); // sword
+	case /*Weapon_Sword*/0:
+		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(true, false); // 소드
 		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(true, false); // shield
-		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(true, false); // hammer
-
+		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(false, false); // 해머
 		break;
-	case Weapon_Hammer:
-		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(true, false); // sword
+	case /*Weapon_Hammer*/1:
+		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(false, false); // 소드
 		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(false, false); // shield
-		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(false, false); // hammer
+		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(true, false); // 해머
 		break;
 	default:
 		break;
