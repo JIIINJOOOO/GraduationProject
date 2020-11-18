@@ -51,4 +51,6 @@ protected:
 		void SpawnGolem(int oid, float x, float y, float z);
 	UFUNCTION()
 		void SpawnTroll(int oid, float x, float y, float z);
+
+	
 };

@@ -20,4 +20,7 @@ public:
 
 	FStreamableManager StreamableManager;
 
+	// 캐릭터 외형 타입
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerInfo)
+		int CharTypeNum;
 };

@@ -3,6 +3,7 @@
 
 #include "MyCharacter.h"
 #include "MyAnimInstance.h"
+#include "MyGameInstance.h"
 #include "DrawDebugHelpers.h"
 extern Network net;
 
@@ -93,6 +94,8 @@ void AMyCharacter::BeginPlay()
 	Super::BeginPlay();
 	SetActorLocation(FVector(10227.3125, 76509.90625, -437.344971));
 	netPos = { 10227.3125, 76509.90625, -437.344971 };
+
+	
 	id = net.GetMyID();
 }
 

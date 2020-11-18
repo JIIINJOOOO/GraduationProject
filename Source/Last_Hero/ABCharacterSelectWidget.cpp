@@ -9,6 +9,10 @@
 
 void UABCharacterSelectWidget::NextCharacter(bool IsNextBtn)
 {
+	auto MyGameInstance = GetWorld()->GetGameInstance<UMyGameInstance>();
+	ABCHECK(nullptr != MyGameInstance);
+	ABCHECK(TargetComponent.IsValid());
+
 	if (IsNextBtn)
 	{
 		if (CurIndex < MaxIndex - 1)
@@ -23,21 +27,23 @@ void UABCharacterSelectWidget::NextCharacter(bool IsNextBtn)
 			CurIndex--;
 		}
 	}
-	switch (CurIndex)
-	{
-	case /*Weapon_Sword*/0:
-		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(true, false); // 소드
-		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(true, false); // shield
-		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(false, false); // 해머
-		break;
-	case /*Weapon_Hammer*/1:
-		TargetComponent.Get()->GetChildComponent(0)->SetVisibility(false, false); // 소드
-		TargetComponent.Get()->GetChildComponent(1)->SetVisibility(false, false); // shield
-		TargetComponent.Get()->GetChildComponent(2)->SetVisibility(true, false); // 해머
-		break;
-	default:
-		break;
-	}
+	//switch (CurIndex)
+	//{
+	//case /*Weapon_Sword*/0:
+	//	//TargetComponent.Get()->GetChildComponent(0)->SetVisibility(true, false); // 소드
+	//	//TargetComponent.Get()->GetChildComponent(1)->SetVisibility(true, false); // shield
+	//	//TargetComponent.Get()->GetChildComponent(2)->SetVisibility(false, false); // 해머
+
+	//	break;
+	//case /*Weapon_Hammer*/1:
+	//	//TargetComponent.Get()->GetChildComponent(0)->SetVisibility(false, false); // 소드
+	//	//TargetComponent.Get()->GetChildComponent(1)->SetVisibility(false, false); // shield
+	//	//TargetComponent.Get()->GetChildComponent(2)->SetVisibility(true, false); // 해머
+	//	break;
+	//default:
+	//	break;
+	//}
+	MyGameInstance->CharTypeNum = CurIndex;
 
 	//for (TActorIterator<ASkeletalMeshActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	//{
@@ -48,9 +54,6 @@ void UABCharacterSelectWidget::NextCharacter(bool IsNextBtn)
 	//		//CharacterSkeletalMesh->GetSkeletalMeshComponent()->GetAttachChildren()->Find("SwordSM")->SetVisibility(true);
 	//	}
 	//}
-	auto MyGameInstance = GetWorld()->GetGameInstance<UMyGameInstance>();
-	ABCHECK(nullptr != MyGameInstance);
-	ABCHECK(TargetComponent.IsValid());
 
 	
 	/*if (nullptr != Asset)
@@ -103,7 +106,8 @@ void UABCharacterSelectWidget::OnNextClicked()
 void UABCharacterSelectWidget::OnConfirmClicked()
 {
 	// 여기서 플레이어 아이디 정해주거나 그런 동작
-
+	auto MyGameInstance = GetWorld()->GetGameInstance<UMyGameInstance>();
+	MyGameInstance->CharTypeNum = CurIndex;
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Test_map2"));
 }
 

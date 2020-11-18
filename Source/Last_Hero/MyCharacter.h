@@ -111,6 +111,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerInfo)
 		float ServerPlayerHP;
 
+	// 캐릭터 외형 타입 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerInfo)
+		int CharTypeNum;
+
 	
 //private:
 //	void MoveForward(float NewAxisValue);

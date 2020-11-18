@@ -28,7 +28,7 @@ protected:
 		int32 CurIndex;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Character)
-		int32 MaxIndex = 2;
+		int32 MaxIndex = 4;
 
 	TWeakObjectPtr<USkeletalMeshComponent> TargetComponent;
 
@@ -53,5 +53,6 @@ private:
 
 	UFUNCTION()
 		void OnConfirmClicked();
+
 
 };
