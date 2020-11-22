@@ -134,7 +134,18 @@ void CPlayer::Attck() {
 			//	break;
 		}
 	}
-	
+
+	auto& boss = g_boss[BOSS_IDX];
+	if (boss != NULL) {
+		if (0 < boss->GetMainHP()) {
+			if (GetDistance(boss->GetPosition()) < ATTACK_RANGE) {
+				// cout << "asdasasdasd" << endl;
+				cout << name << id << "의 공격으로 보스에게 20의 대미지!" << endl;
+				boss->TakeDamage(20);
+			}
+		}
+	}
+
 	AddTimer(id, EV_ATK_OFF, high_resolution_clock::now() + 500ms, NULL);	// 공격 종료를 알림
 }
 
@@ -235,10 +246,22 @@ void CPlayer::TakeDamage(int damage) {
 void CPlayer::Evade() {
 	if (isEvade) return;
 	isEvade = true;
-	SC_EVADE pack{ sizeof(SC_EVADE), sc_evade, id };
-	for (int i = 0; i < MAX_PLAYER; ++i) {
-		if (g_player[i] == NULL) continue;
-		send_packet(i, &pack);
+
+	if (IsBattleMode() == true) {
+		SC_EVADE pack{ sizeof(SC_EVADE), sc_evade, id };
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (g_player[i] == NULL) continue;
+			if (i == id) continue;
+			send_packet(i, &pack);
+		}
+	}
+	else {
+		SC_JUMP pack{ sizeof(SC_EVADE), sc_evade, id };
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (g_player[i] == NULL) continue;
+			if (i == id) continue;
+			send_packet(i, &pack);
+		}
 	}
 	AddTimer(id, EV_EVADE_OFF, high_resolution_clock::now() + 2s, NULL);
 }
@@ -373,17 +396,26 @@ void CPlayer::MoveTo(const Position& p) {
 		if (i == id) continue;
 		newVl.insert(i);
 	}
-	for (int i = NPC_ID_START; i < START_POINT_MONSTER+MAX_MONSTER; ++i) {
-		// cout << i << endl;
-		if (g_monster[i] == NULL) continue;
-		if (GetDistance(g_monster[i]->GetPosition()) > MAX_VIEW_RANGE) continue;
-		newVl.insert(i);	// player index와 구분한다
+	// for (int i = NPC_ID_START; i < START_POINT_MONSTER+MAX_MONSTER; ++i) {
+	// 	// cout << i << endl;
+	// 	if (g_monster[i] == NULL) continue;
+	// 	if (GetDistance(g_monster[i]->GetPosition()) > MAX_VIEW_RANGE) continue;
+	// 	if (g_monster[i]->isActive) break;
+	// 	AddTimer(i, EV_MONSTER, chrono::high_resolution_clock::now() + 1s, NULL);
+	// 	g_monster[i]->isActive = true;
+	// 	newVl.insert(i);	// player index와 구분한다
+	// }
+	for (int i = 0; i < MAX_PLAYER; ++i) {
+		if (g_player[i] == NULL) continue;
+		if (i == id) continue;
+		send_packet(i, &MakeUpdatePacket());
 	}
+	return;
 	// if (boss != NULL || GetDistance(boss->GetPosition()))
 	// 	newVl.insert(BOSS_IDX);	// Boss를 얼마나 스폰시킬지 몰라서 일단 단일개체로 설정함
 	/// 일단 보스빼고 송수신해보자
 
-	// send_packet(id, &MakeUpdatePacket());
+	send_packet(id, &MakeUpdatePacket());
 
 	// 시야에 새로 들어온 오브젝트에 대한 처리
 	for (auto& no : newVl) {
@@ -448,8 +480,8 @@ void CPlayer::MoveTo(const Position& p) {
 	// }
 }
 
-void CPlayer::SetPosition(const Position& pos) {
-	// if (GetDistance(pos) < 10 )
+void CPlayer::SetPosition(const Position& pos, bool teleport) {
+	if (!IsTeleport()&&GetDistance(pos) < 100) return;
 	this->pos = pos;
 }
 Position CPlayer::GetPosition() const {
@@ -468,7 +500,7 @@ SC_OBJECT_ENTER CPlayer::MakeEnterPacket() {
 	SC_OBJECT_ENTER p;
 	p.type = sc_enter_obj;
 	p.size = sizeof(SC_OBJECT_ENTER);
-	p.o_type = OBJ_PLAYER;
+	p.o_type = objType;
 	strcpy_s(p.name, name.c_str());
 	p.pos = pos;
 	p.oid = id;
@@ -562,6 +594,9 @@ void CPlayer::EnterGame() {
 		pack.type = sc_set_host;
 		send_packet(id, &pack);
 	}
+	// Sleep(1000);
+	// pos = { 59060.0, 55640.0, 1970.0 };
+	// send_packet(id, &MakeUpdatePacket());
 }
 
 void CPlayer::EnterObj(int oid) {
@@ -584,6 +619,13 @@ bool CPlayer::IsFront(const Position& mon_pos) {
 	if (velocity.y < 0)
 		if (mon_pos.y > pos.y) return false;
 	return true;
+}
+
+bool CPlayer::IsTeleport() {
+	// 포탈 근처에 있으면 거리검사 건너뛰기?
+	Position potal3{ 59398.644531, 55202.507812, 2160.0 };
+	if (GetDistance(potal3) < 300) return true;
+	return false;
 }
 
 void CPlayer::SetRotation(const Position& rotation) {
@@ -623,6 +665,10 @@ void CPlayer::SetVelocity(const Position& v) {
 	velocity = v;
 }
 
+void CPlayer::SetObjType(const OBJ_TYPE& obj_type) {
+	objType = obj_type;
+}
+
 void CPlayer::SetMoveState(const Movement_State& new_state) {
 	if (new_state == moveState) return;
 	if (new_state == P_ONWALL)
@@ -637,4 +683,17 @@ void CPlayer::SetMoveState(const Movement_State& new_state) {
 		if (g_player[i] == NULL) continue;
 		send_packet(i, &pack);
 	}
+}
+
+bool CPlayer::IsBattleMode(){
+	for (int i = 0; i < MAX_MONSTER; ++i) {
+		int oid = NPC_ID_START + i;
+		if (g_monster[oid] == NULL) continue;
+		int dis = GetDistance(g_monster[oid]->GetPosition());
+		if (0 < dis && dis < 1000) return true;
+	}
+	if (g_boss[BOSS_IDX] == NULL) return false;
+	int dis = GetDistance(g_boss[BOSS_IDX]->GetPosition());
+	if (0 < dis && dis < 1000) return true;
+	return false;
 }

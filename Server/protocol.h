@@ -30,7 +30,7 @@ enum Lobby_State {
 };
 
 enum OBJ_TYPE {
-	OBJ_PLAYER, OBJ_GOBLIN, OBJ_CYCLOPS, OBJ_BEETLE, OBJ_MINI_GOLEM, OBJ_LAZARD, OBJ_GOLEM, OBJ_TROLL
+	OBJ_PLAYER_A, OBJ_PLAYER_B, OBJ_PLAYER_C, OBJ_PLAYER_D, OBJ_GOBLIN, OBJ_CYCLOPS, OBJ_BEETLE, OBJ_MINI_GOLEM, OBJ_LAZARD, OBJ_GOLEM, OBJ_TROLL
 };
 
 #pragma pack(push, 1)
@@ -39,6 +39,7 @@ struct CS_LOGIN {
 	char type;
 	char id[MAXLEN];
 	char password[MAXLEN];
+	char character;
 };
 struct SC_LOGIN {
 	char size;
@@ -485,13 +486,6 @@ struct CS_BOSS_ATTACK {
 	short atk_num;
 };
 
-struct SC_BOSS_ATTACK {
-	char size;
-	char type;
-	short oid;
-	short atk_num;
-};
-
 struct CS_BOSS_BONE {
 	char size;
 	char type;
@@ -545,6 +539,14 @@ struct SC_UPDATE_MOVE_STATE {
 	char type;
 	short oid;
 	short state;
+};
+
+struct SC_BOSS_ATTACK {
+	char size;
+	char type;
+	short oid;
+	char atk_state;
+	Position target;
 };
 
 #pragma pack(pop)

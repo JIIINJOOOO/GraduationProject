@@ -55,6 +55,7 @@ AMyBossGolem::AMyBossGolem()
 	IsPlayerInDetRange = false;
 	id = 20000;
 	type = OBJ_GOLEM;
+	ServerGolemHP = 600;
 }
 
 void AMyBossGolem::Attack_CloseRange()
@@ -63,11 +64,11 @@ void AMyBossGolem::Attack_CloseRange()
 	if (IsFalling) return;
 	if (!IsDown)
 	{
-		RndAtkMtg = setRandomAttackMontage(CLOSE_RANGE_START, CLOSE_RANGE_END);
+		// RndAtkMtg = setRandomAttackMontage(CLOSE_RANGE_START, CLOSE_RANGE_END);
 	}
 	else
 	{
-		RndAtkMtg = setRandomAttackMontage(DOWN_START, DOWN_END);
+		// RndAtkMtg = setRandomAttackMontage(DOWN_START, DOWN_END);
 		/*if (RndDownAtk == 0)
 		{
 			GolemAnim->PlayDownAttack_1_Montage();
@@ -77,7 +78,7 @@ void AMyBossGolem::Attack_CloseRange()
 			GolemAnim->PlayDownAttack_2_Montage();
 		}*/
 	}
-	GolemAnim->PlayGolemMontage(RndAtkMtg);
+	// GolemAnim->PlayGolemMontage(RndAtkMtg);
 	//GolemAnim->PlayGolemMontage(STOMP_ATTACK);
 
 
@@ -144,7 +145,8 @@ void AMyBossGolem::setGroundFrictionZero()
 
 GOLEM_ANIM_MONTAGE AMyBossGolem::setRandomAttackMontage(GOLEM_ANIM_MONTAGE Min, GOLEM_ANIM_MONTAGE Max)
 {
-	if (net.isHost == false) return GOLEM_ANIM_MONTAGE();
+	// if (net.isHost == false) 
+	return GOLEM_ANIM_MONTAGE();
 	int rnd = FMath::RandRange(Min + 1, Max - 1);
 	CS_BOSS_ATTACK pack{ sizeof(CS_BOSS_ATTACK), cs_boss_attack, id };
 	switch (rnd)
@@ -392,20 +394,21 @@ void AMyBossGolem::BeginPlay()
 	BoneMap.Emplace("Bip001-R-Hand", 20);
 	BoneMap.Emplace("Bip001-R-Forearm", 22);
 	BoneMap.Emplace("Bip001-R-UpperArm", 24);
-	BoneMap.Emplace("Bip001-R-Foot", 42);
-	BoneMap.Emplace("Bip001-R-Calf", 44);
-	BoneMap.Emplace("Bip001-R-Thigh", 46);
-	BoneMap.Emplace("Bip001-L-Hand", 10);
-	BoneMap.Emplace("Bip001-L-Forearm", 14);
-	BoneMap.Emplace("Bip001-L-UpperArm", 18);
-	BoneMap.Emplace("Bip001-L-Foot", 42);
-	BoneMap.Emplace("Bip001-L-Calf", 44);
-	BoneMap.Emplace("Bip001-L-Thigh", 46);	
+	BoneMap.Emplace("Bip001-R-Foot", 20);
+	BoneMap.Emplace("Bip001-R-Calf", 22);
+	BoneMap.Emplace("Bip001-R-Thigh", 24);
+	BoneMap.Emplace("Bip001-L-Hand", 5);
+	BoneMap.Emplace("Bip001-L-Forearm", 7);
+	BoneMap.Emplace("Bip001-L-UpperArm", 9);
+	BoneMap.Emplace("Bip001-L-Foot", 20);
+	BoneMap.Emplace("Bip001-L-Calf", 22);
+	BoneMap.Emplace("Bip001-L-Thigh", 24);	
 
 	pos = GetActorLocation();
 	rotate = GetActorRotation();
 
 	sendTime = high_resolution_clock::now();
+	// IsDown = true;
 }
 
 void AMyBossGolem::PostInitializeComponents()
@@ -433,7 +436,8 @@ void AMyBossGolem::Tick(float DeltaTime)
 	{
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::ChargeSpear, 2.5f, true, 0.0f);
 	}*/
-
+	// UE_LOG(LogTemp, Log, TEXT("boss asdf %d"), (int)ServerGolemHP);
+	// if (ServerGolemHP > 0) ServerGolemHP -= 1;
 	if (net.isHost) {
 		pos = GetActorLocation();
 		rotate = GetActorRotation();
@@ -449,13 +453,6 @@ void AMyBossGolem::Tick(float DeltaTime)
 		}
 		// return;
 	}
-	else {
-		if (sendTime + 100ms < high_resolution_clock::now()) {
-			auto bonePack = MakeBonePacket();
-			net.SendPacket(&bonePack);
-			sendTime = high_resolution_clock::now();
-		}
-	}
 
 	if (net.objEventQue[id].empty()) return;
 	auto ev = net.objEventQue[id].front();
@@ -463,7 +460,10 @@ void AMyBossGolem::Tick(float DeltaTime)
 
 	switch (ev.type) {
 	case sc_boss_attack:
-		if (net.isHost) break;
+		// if (net.isHost) break;
+		if (IsDown) break;
+		LaunchForce = 0.f;
+		// TargetLookVec = FVector(ev.pos.x, ev.pos.y, ev.pos.z) - GetActorLocation();
 		AttackPacketProcess(ev.exp);
 		break;
 	case sc_update_obj:
@@ -474,10 +474,20 @@ void AMyBossGolem::Tick(float DeltaTime)
 		// SetActorLocationAndRotation(pos, rotate, false, 0, ETeleportType::TeleportPhysics);
 		break;
 	case sc_bone_break:
+		if (IsLeg(ev.o_type) && !IsDown) IsDown = true;
 		BoneMap[GetPartString(ev.o_type)] = 0;
+		/*if (ev.o_type == L_CALF || ev.o_type == L_FOOR || ev.o_type == L_THIGHT)
+			IsBreakLeftLeg = true;
+		if (ev.o_type == R_CALF || ev.o_type == R_FOOR || ev.o_type == R_THIGHT)
+			IsBreakLeftLeg = true;*/
 		break;
 	case sc_bone_update:
 		BoneMap[GetPartString(ev.o_type)] = ev.hp;
+		break;
+	case sc_set_rotation:
+		UE_LOG(LogTemp, Log, TEXT("Boss Rotate"));
+		rotate = { ev.rotation.x, ev.rotation.y,ev.rotation.z };
+		SetActorRotation(rotate);
 		break;
 	default:
 		break;
@@ -517,31 +527,60 @@ void AMyBossGolem::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, cla
 
 void AMyBossGolem::AttackPacketProcess(const int& atk_num) {
 	switch (atk_num) {
-	case STOMP_ATTACK:
+	case B_NORMAL_ATK:
+		if (IsDown) return;
+		RndAtkMtg = NORMAL_ATTACK;
+		break;
+	case B_DASH_ATK:
+		if (IsDown) return;
+		LaunchForce = 1000.f;
+		// IsRushing = true;
+		RndAtkMtg = RUSH_ATTACK;
+		break;
+	case B_SWING_ATK:
+		if (IsDown) return;
+		RndAtkMtg = SWEEP_ATTACK;
+		break;
+		// case B_STRIKE_ATK:
+		// 	break;
+	case B_THROW_ATK:
+		if (IsDown) return;
+		RndAtkMtg = THROW_STONE;
+		break;
+	case B_STOMP_ATK:
+		if (IsDown) return;
 		LaunchForce = 2000.f;
-		IsStomping = true;
+		RndAtkMtg = STOMP_ATTACK;
 		break;
-	case WALKING_ATTACK:
-		LaunchForce = 1000.f;
-		IsWalkingAtk = true;
+	case B_ICESPEAR_ATK:
+		if (IsDown) return;
+		RndAtkMtg = THROW_SPEAR;
 		break;
-	case RUSH_ATTACK:
-		LaunchForce = 1000.f;
-		IsRushing = true;
+	case B_HANDCLAP_ATK:
+		if (IsDown) return;
+		RndAtkMtg = HANDCLAP_ATTACK;
 		break;
-	case LONG_RUSH_ATTACK:
-		LaunchForce = 1500.f;
-		IsRushing = true;
+	case B_PUNCH_ATK:
+		if (IsDown) return;
+		RndAtkMtg = PUNCH_ATTACK;
+		break;
+	case B_DOWN_ATK_L:
+		RndAtkMtg = DOWN_ATTACK_1;
+		break;
+	case B_DOWN_ATK_R:
+		RndAtkMtg = DOWN_ATTACK_2;
+		break;
+	case B_DOWN_ATK_SWEEP:
+		RndAtkMtg = DOWN_SWEEP;
+		break;
+	default:
+		return;
 		break;
 	}
 
-	RndAtkMtg = (GOLEM_ANIM_MONTAGE)atk_num;
-	if (atk_num == LONG_RUSH_ATTACK)
-		RndAtkMtg = RUSH_ATTACK;
-
 	GolemAnim->PlayGolemMontage(RndAtkMtg);
-	IsAttacking = true;
-
+	RndAtkMtg = GOLEM_ANIM_MONTAGE();
+	LaunchForce = 0.f;
 }
 
 CS_BOSS_BONE AMyBossGolem::MakeBonePacket() {
@@ -611,6 +650,14 @@ char* AMyBossGolem::GetPartString(int pid) {
 void AMyBossGolem::SetID(const int& id) {
 	this->id = id;
 	type = OBJ_GOLEM;
+}
+
+bool AMyBossGolem::IsLeg(const int& o_type) {
+	if (o_type == L_FOOR || o_type == L_CALF || o_type == L_THIGHT)
+		return true;
+	if (o_type == R_FOOR || o_type == R_CALF || o_type == R_THIGHT)
+		return true;
+	return false;
 }
 //// Fill out your copyright notice in the Description page of Project Settings.
 //

@@ -11,6 +11,7 @@
 
 // Global Values
 Network net;	// 다른 소스파일에서 extern으로 가져다 씀
+extern int charType;
 
 AMyGameModeBase::AMyGameModeBase()
 {
@@ -61,18 +62,22 @@ void AMyGameModeBase::BeginPlay()
 	// // 19340.0  82040.0  60.0
 	// SpawnGolem(20001, 19340.0, 82040.0, 60.0);
 	// SpawnPlayer(-2, 0, 0, 0);
-	if (net.GetStatus() != p_login) {
-		CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234" };
-		net.SendPacket(&p);
-	}
+	// UE_LOG(LogTemp, Log, TEXT("Player Model Info GMB : %d"), charType);
+	// if (net.GetStatus() != p_login) {
+	// 	CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234" };
+	// 	net.SendPacket(&p);
+	// }
 	/*
 	12853.588867, 76285.28125, -420.191681
 	*/
+	//wid->AddToViewport();
+
 }
 
 void AMyGameModeBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	if (net.GetStatus() != p_login) return;
 	ProcessEvent3();
 }
 
@@ -170,7 +175,7 @@ void AMyGameModeBase::SpawnLazard(const int& oid, float x, float y, float z) {
 	SpawnMonster->SetID(oid);
 }
 
-void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z) {
+void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z, int o_type) {
 	FActorSpawnParameters SpawnInfo;
 	SpawnInfo.bNoFail = true;
 	SpawnInfo.Owner = this;
@@ -180,6 +185,7 @@ void AMyGameModeBase::SpawnPlayer(int oid, float x, float y, float z) {
 	auto MyChar = GetWorld()->SpawnActor<AMyCharacter>(DefaultPawnClass, SpawnLocation, FRotator::ZeroRotator, SpawnInfo);
 	MyChar->SetID(oid);
 	MyChar->SetPosition(x, y, z);
+	MyChar->SetCharType(o_type);
 }
 
 void AMyGameModeBase::SpawnGolem(int oid, float x, float y, float z) {
@@ -229,7 +235,7 @@ void AMyGameModeBase::ProcessEvent3()
 	switch (ev.type) {
 	case sc_enter_obj: {
 		if (ev.oid < MAX_PLAYER) {
-			SpawnPlayer(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
+			SpawnPlayer(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z, ev.o_type);
 		}
 		// else if (ev.oid == 20000) {
 		// 	// SpawnBoss(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
@@ -251,8 +257,18 @@ void AMyGameModeBase::ProcessEvent3()
 				SpawnTroll(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
 		}
 	}break;
-
+	case sc_dead:
+		DisplayResultScene();
+		break;
 	default:
 		break;
 	}
+}
+
+void AMyGameModeBase::DisplayResultScene() {
+	auto pc = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	FStringClassReference MyWidgetClassRegf(TEXT("WidgetBlueprint'/Game/Game/UI/UI_BossResult.UI_BossResult_C'"));
+	auto classWidget = MyWidgetClassRegf.TryLoadClass<UUserWidget>();
+	auto wid = CreateWidget<UUserWidget>(pc, classWidget);
+	wid->AddToViewport();
 }

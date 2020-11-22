@@ -151,4 +151,5 @@ public:
 public:
 	void SetID(const int& id);
 	void SetPosition(float x, float y, float z);
+	void SetCharType(const int& o_type);
 };

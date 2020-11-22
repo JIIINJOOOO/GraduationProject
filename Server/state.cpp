@@ -37,12 +37,13 @@ void IdleState::Execute(CMonster* mon) {
 		if (g_player[i] == NULL) continue;
 		if (!g_player[i]->isAlive) continue;
 		int dis = mon->GetDistance(g_player[i]->GetPosition());
-		if (dis < CHASE_RANGE) disArray[i] = dis;
+		if (0 <= dis && dis < CHASE_RANGE) disArray[i] = dis;
 	}
 	
 	int chaseID = 0;
 	for (int i = 0; i<MAX_PLAYER; ++i) 
 		if (disArray[i] != NO_DETECTED) {
+			if (disArray[i] < 0) continue;
 			if (disArray[i] < disArray[chaseID])
 				chaseID = i;
 		}
@@ -62,7 +63,10 @@ void IdleState::Execute(CMonster* mon) {
 	}
 	mon->SetTarget(chaseID);
 	if (mon->GetDistance(g_player[chaseID]->GetPosition()) < mon->GetAtkRange()) {
-		if (mon->GetDistance(g_player[chaseID]->GetPosition()) < 0) return;
+		if (mon->GetDistance(g_player[chaseID]->GetPosition()) < 0) {
+			AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
+			return;
+		}
 		mon->ChangeState(AttackState::GetInstance());
 	}
 	else if (mon->GetDistance(mon->GetDefPosition()) > ACTIVITY_RANGE)
@@ -104,9 +108,14 @@ void ChaseState::Execute(CMonster* mon) {
 	// 	AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 	// 	return;
 	// }
-	if (target == NO_DETECTED) return;
-	if (tg == NULL) return;
-
+	if (target == NO_DETECTED) {
+		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
+		return;
+	}
+	if (tg == NULL) {
+		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
+		return;
+	}
 	mon->Chase(*tg);
 
 	if (mon->GetDistance(tg->GetPosition()) < mon->GetAtkRange()) {
@@ -163,16 +172,19 @@ void AttackState::Execute(CMonster* mon) {
 	int target = mon->GetTarget();
 	if (target == NO_DETECTED) {
 		mon->ChangeState(IdleState::GetInstance());
+		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
 	}
 	CPlayer*& tg = g_player[target];
 	if (tg == NULL) {
 		mon->ChangeState(IdleState::GetInstance());
+		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
 	}
 	
 	if (!tg->isAlive) {
 		mon->ChangeState(IdleState::GetInstance());
+		AddTimer(mon->GetID(), EV_MONSTER, high_resolution_clock::now() + 1s, NULL);
 		return;
 	}
 	

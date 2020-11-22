@@ -180,4 +180,5 @@ public:
 	void AttackPacketProcess(const int& atk_num);
 	CS_BOSS_BONE MakeBonePacket();
 	void SetID(const int& id);
+	bool IsLeg(const int& o_type);
 };

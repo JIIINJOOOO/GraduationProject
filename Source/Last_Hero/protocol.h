@@ -2,12 +2,17 @@
 #pragma once
 #define MAXLEN 10
 enum OBJ_TYPE {
-	OBJ_PLAYER, OBJ_GOBLIN, OBJ_CYCLOPS, OBJ_BEETLE, OBJ_MINI_GOLEM, OBJ_LAZARD, OBJ_GOLEM, OBJ_TROLL
+	OBJ_PLAYER_A, OBJ_PLAYER_B, OBJ_PLAYER_C, OBJ_PLAYER_D, OBJ_GOBLIN, OBJ_CYCLOPS, OBJ_BEETLE, OBJ_MINI_GOLEM, OBJ_LAZARD, OBJ_GOLEM, OBJ_TROLL
 };
+
 struct Position {
 	float x, y, z;
 };
 #define MAX_CHAT_LEN 80
+
+enum B_STATE {
+	B_IDLE, B_CHASE, B_ATTACK, B_DEAD, B_DASH_ATK, B_SWING_ATK, B_STRIKE_ATK, B_THROW_ATK, B_STOMP_ATK, B_ICESPEAR_ATK, B_HANDCLAP_ATK, B_PUNCH_ATK, B_DOWN_ATK, B_NORMAL_ATK, B_DOWN_ATK_R, B_DOWN_ATK_L, B_DOWN_ATK_SWEEP
+};
 
 enum PACKET_TYPE {
 	cs_login, cs_signup, lobby_packet, player_packet, start_packet, init_packet, move_packet, attack_packet, act_packet, skill_packet,
@@ -47,6 +52,7 @@ struct CS_LOGIN {
 	char type;
 	char id[MAXLEN];
 	char password[MAXLEN];
+	char character;
 };
 struct SC_LOGIN {
 	char size;
@@ -480,7 +486,8 @@ struct SC_BOSS_ATTACK {
 	char size;
 	char type;
 	short oid;
-	short atk_num;
+	char atk_state;
+	Position target;
 };
 
 struct CS_BOSS_BONE {

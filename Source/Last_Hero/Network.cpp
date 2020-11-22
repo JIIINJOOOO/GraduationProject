@@ -199,6 +199,8 @@ void Network::ProcessPacket(char* buf) {
 		ev.oid = pack->oid;
 
 		objEventQue[pack->oid].push(ev);
+		if (pack->oid == 20'000)
+			objEventQue[GMB_ID].push(ev);
 	}break;
 	case sc_damaged: {
 		SC_DAMAGED* pack = reinterpret_cast<SC_DAMAGED*>(buf);
@@ -281,7 +283,8 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
-		ev.exp = pack->atk_num;
+		ev.exp = pack->atk_state;
+		ev.pos = pack->target;
 
 		objEventQue[pack->oid].push(ev);
 	}break;
@@ -328,7 +331,7 @@ void Network::ProcessPacket(char* buf) {
 		ev.type = pack->type;
 		ev.oid = pack->oid;
 		ev.hp = pack->state;
-		
+
 		objEventQue[pack->oid].push(ev);
 	}break;
 
@@ -355,7 +358,7 @@ int Network::GetMyID() const {
 }
 
 void Network::PopEvent() {
-	
+
 }
 
 int recvn(SOCKET s, char *buf, int len, int flags) {

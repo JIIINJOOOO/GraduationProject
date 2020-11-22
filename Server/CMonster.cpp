@@ -1,5 +1,6 @@
 #include <map>
 #include <random>
+#include "Event.h"
 #include "CMonster.h"
 #include "globals.h"
 #include "CTerrain.h"
@@ -36,6 +37,8 @@
 
 
 #define SPEED 0.03
+#define EV_MONSTER 3
+
 using namespace std;
 // extern short board[SIDE_LEN][SIDE_LEN];
 extern CTerrain *g_tmap;
@@ -116,7 +119,7 @@ void CMonster::Attack(CPlayer& target) {
 	// 949000.0
 	int attack_num = dis(gen);	// 어떤 공격 사용할지인데 클라에서 출력만 다르게 하고 대미지 처리는 모두 동일하게 진행
 	if (GetDistance(target.GetPosition()) > ATTACK_RANGE) return;
-	if (GetDistance(target.GetPosition()) < 0) return;
+	if (GetDistance(target.GetPosition()) <= 0) return;
 	rotation.y = GetDegree(pos, target.GetPosition());
 	SC_OBJ_ATTACK pack{ sizeof(pack), sc_attack, id,attack_num };
 	SC_SET_ROTATION pack_rot{ sizeof(pack_rot), sc_set_rotation, id };
@@ -188,7 +191,7 @@ void CMonster::Initialize(Position pos, int type) {
 	zIdx = pos.z;
 	state = IdleState::GetInstance();
 	m_pathFinder = new CPathFinder;
-	exp = 100;
+	exp = 10;
 	m_activityRange = ACTIVITY_RANGE;
 	atkPoint = 10;
 	isActive = false;
@@ -379,7 +382,7 @@ void CMonster::UpdateTarget() {
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
 		if (!g_player[i]->isAlive) continue;
-		if (player_dir[i] < player_dir[target])
+		if (0 <= player_dir[i] && player_dir[i] < player_dir[target])
 			target = i;
 	}
 }
@@ -411,6 +414,9 @@ void CreateMonsters(int num) {
 	g_boss[idx] = new Boss;
 	g_boss[idx]->Initialize(idx, defPos);
 	cout<<"Boss Golem(id="<<idx<<") Spawn("<<defPos.x<<", " << defPos.y << ", " << defPos.z << ")\n";
+	AddTimer(BOSS_IDX, 4, chrono::high_resolution_clock::now() + 1s, NULL);
+	// return;
+	// return
 	// return;
 	// idx = idx + 1;
 	// defPos = { 22976.53125, 35731.6875, -932.329895 };
@@ -486,5 +492,5 @@ void SpawnMonster(int id, float x, float y, float z, int type) {
 	g_monster[id] = new CMonster;
 	g_monster[id]->Initialize(Position(x, y, z), type);
 	g_monster[id]->SetIndex(id);
-
+	AddTimer(id, EV_MONSTER, chrono::high_resolution_clock::now() + 1s, NULL);
 }

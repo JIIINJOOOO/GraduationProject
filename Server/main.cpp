@@ -140,7 +140,11 @@ void worker_thread() {
 		}break;
 
 		case EV_BOSS:
-			boss->Update();
+			if (g_boss[BOSS_IDX] == NULL) {
+				delete exover;
+				break;
+			}
+			g_boss[BOSS_IDX]->Update();
 			delete exover;
 			break;
 		case EV_MONSTER:
@@ -223,14 +227,16 @@ void ProcessPacket(int uid, char* buf) {
 		g_player[uid]->Attck();
 	}break;
 	case cs_fireball: {
+		// g_player[uid]->MoveTo(Position(59060.0, 55640.0, 1970.0));
+		g_player[uid]->SetPosition(Position(59060.0, 55640.0, 1970.0), true);
+		send_packet(uid, &g_player[uid]->MakeUpdatePacket());
+		break;
 		SC_FIREBALL pack;
 		pack.size = sizeof(SC_FIREBALL);
 		pack.type = sc_fireball;
 		pack.oid = uid;
 		g_player[uid]->FireBall();
-		for (auto& oid : g_player[uid]->viewList)
-			if (oid <= MAX_PLAYER)
-				send_packet(oid, &pack);
+		
 	}break;
 	case cs_guard: {
 		g_player[uid]->Guard();
@@ -241,9 +247,10 @@ void ProcessPacket(int uid, char* buf) {
 		pack.size = sizeof(SC_JUMP);
 		pack.type = sc_jump;
 		pack.oid = uid;
-		for (auto& oid : g_player[uid]->viewList)
-			if (oid < MAX_PLAYER)
-				send_packet(oid, &pack);
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (g_player[i] == NULL) continue;
+			send_packet(i, &pack);
+		}
 	}break;
 	case cs_evade: {
 		g_player[uid]->Evade();
@@ -439,6 +446,7 @@ void Login(const int& uid, const CS_LOGIN& pack) {
 	string sql = "select * from Account where id  = \'" + (string)pack.id +
 		"\' and password = \'" + (string)pack.password + "\'";
 	AddQuary(uid, 5, pack.id, pack.password);
+	g_player[uid]->SetObjType(static_cast<OBJ_TYPE>(pack.character));
 	return;
 	int status;	// check login status (fail, success)
 	int ret = g_dbc.ExcuteStatementDirect((SQLCHAR*)sql.c_str());

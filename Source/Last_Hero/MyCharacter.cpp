@@ -92,10 +92,11 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	// netPos = { 10227.3125, 76509.90625, -437.344971 };
+
+	// SetActorLocation(FVector(59060.0, 55640.0, 1970.0));
 	SetActorLocation(FVector(10227.3125, 76509.90625, -437.344971));
 	netPos = { 10227.3125, 76509.90625, -437.344971 };
-
-	
 	id = net.GetMyID();
 }
 
@@ -433,4 +434,8 @@ void AMyCharacter::SetID(const int& id) {
 void AMyCharacter::SetPosition(float x, float y, float z) {
 	SetActorLocation(FVector(x, y, z));
 	netPos = { x,y,z };
+}
+
+void AMyCharacter::SetCharType(const int& o_type) {
+	CharTypeNum = o_type;
 }
