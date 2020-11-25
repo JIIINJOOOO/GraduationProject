@@ -55,7 +55,7 @@ AMyBossGolem::AMyBossGolem()
 	IsPlayerInDetRange = false;
 	id = 20000;
 	type = OBJ_GOLEM;
-	ServerGolemHP = 600;
+	netHP = ServerGolemHP = 600;
 }
 
 void AMyBossGolem::Attack_CloseRange()
@@ -438,6 +438,7 @@ void AMyBossGolem::Tick(float DeltaTime)
 		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMyBossGolem::ChargeSpear, 2.5f, true, 0.0f);
 	}*/
 	// UE_LOG(LogTemp, Log, TEXT("boss asdf %d"), (int)ServerGolemHP);
+	ServerGolemHP = netHP;
 	// if (ServerGolemHP > 0) ServerGolemHP -= 1;
 	if (net.isHost) {
 		pos = GetActorLocation();
@@ -488,6 +489,11 @@ void AMyBossGolem::Tick(float DeltaTime)
 	case sc_set_rotation:
 		rotate = { ev.rotation.x, ev.rotation.y,ev.rotation.z };
 		SetActorRotation(rotate);
+		break;
+	case sc_damaged:
+		ServerGolemHP = ev.hp;
+		netHP = ServerGolemHP;
+		UE_LOG(LogTemp, Log, TEXT("boss asdf %d"), (int)ev.hp);
 		break;
 	default:
 		break;

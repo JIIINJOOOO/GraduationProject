@@ -207,6 +207,7 @@ void Network::ProcessPacket(char* buf) {
 		GMB_Event ev;
 		ev.type = pack->type;
 		ev.oid = pack->oid;
+		ev.hp = pack->hp;
 
 		objEventQue[pack->oid].push(ev);
 	}break;

@@ -389,6 +389,13 @@ void Boss::TakeDamage(const int& damage) {
 			send_packet(i, &pack);
 		}
 	}
+	else {
+		SC_DAMAGED pack{ sizeof(SC_DAMAGED), sc_damaged, id, mainHP };
+		for (int i = 0; i < MAX_PLAYER; ++i) {
+			if (g_player[i] == NULL) continue;
+			send_packet(i, &pack);
+		}
+	}
 }
 
 

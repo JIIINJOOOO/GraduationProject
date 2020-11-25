@@ -173,7 +173,7 @@ private:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = GolemInfo)
 		float ServerGolemHP;
-
+	float netHP;
 
 public:
 	char* GetPartString(int pid);

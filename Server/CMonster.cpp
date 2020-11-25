@@ -412,7 +412,7 @@ void CreateMonsters(int num) {
 	g_boss[idx]->Initialize(idx, defPos);
 	cout<<"Boss Golem(id="<<idx<<") Spawn("<<defPos.x<<", " << defPos.y << ", " << defPos.z << ")\n";
 	AddTimer(BOSS_IDX, 4, chrono::high_resolution_clock::now() + 1s, NULL);
-
+	// return;
 	// Goblin
 	SpawnMonster(GOBLIN_0, 15640.0, 79760.0, -428.114075, OBJ_GOBLIN);
 	SpawnMonster(GOBLIN_1, 16180.0, 79150.0, -428.114075, OBJ_GOBLIN);
