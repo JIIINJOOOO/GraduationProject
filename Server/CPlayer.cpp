@@ -90,7 +90,7 @@ void CPlayer::Attck() {
 	if (isAttack) return;
 	if (wpnType == wpn_none) return;
 	isAttack = true;
-
+	
 	// 마지막 공격으로부터 1초 이내에 공격시 콤보 증가
 	if (lastAtkTime + 1s > high_resolution_clock::now()) {
 		if (wpnType == wpn_sword)
@@ -138,8 +138,8 @@ void CPlayer::Attck() {
 	auto& boss = g_boss[BOSS_IDX];
 	if (boss != NULL) {
 		if (0 < boss->GetMainHP()) {
-			if (GetDistance(boss->GetPosition()) < ATTACK_RANGE) {
-				// cout << "asdasasdasd" << endl;
+			if (0 < GetDistance(boss->GetPosition())
+				&& GetDistance(boss->GetPosition()) < 1000) {
 				cout << name << id << "의 공격으로 보스에게 20의 대미지!" << endl;
 				boss->TakeDamage(20);
 			}
@@ -291,7 +291,7 @@ void CPlayer::Hide() {
 	SC_HIDE pack{sizeof(SC_HIDE), sc_hide, id};
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
-		send_packet(i, &pack);
+		// send_packet(i, &pack);
 	}
 }
 
@@ -302,7 +302,7 @@ void CPlayer::HideOff() {
 	SC_HIDE_OFF pack{ sizeof(SC_HIDE_OFF), sc_hide_off, id };
 	for (int i = 0; i < MAX_PLAYER; ++i) {
 		if (g_player[i] == NULL) continue;
-		send_packet(i, &pack);
+		// send_packet(i, &pack);
 	}
 }
 

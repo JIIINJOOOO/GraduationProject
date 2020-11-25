@@ -2,21 +2,26 @@
 
 
 #include "MyGameInstance.h"
-#include "Network.h"
-int charType;
+
 extern Network net;
 UMyGameInstance::UMyGameInstance()
 {
-
+	
 }
 
 void UMyGameInstance::Init()
 {
 	Super::Init();
 	//AMyCharacter* SpawnedPlayer = GetWorld()->SpawnActor<AMyCharacter>(WhoToSpawn, SpawnLocation, SpawnRotation);
-	charType = CharTypeNum;
-	if (net.GetStatus() != p_login) {
-		CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234", charType };
-		net.SendPacket(&p);
-	}
+	TickDelegateHandle = FTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateUObject(this, &UMyGameInstance::Tick));
+}
+
+void UMyGameInstance::Shutdown() {
+	FTicker::GetCoreTicker().RemoveTicker(TickDelegateHandle);
+	Super::Shutdown();
+}
+
+bool UMyGameInstance::Tick(float DeltaTime) {
+	net.my_charType = CharTypeNum;
+	return true;
 }

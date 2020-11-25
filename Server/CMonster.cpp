@@ -389,9 +389,6 @@ void CMonster::UpdateTarget() {
 
 void CreateMonsters(int num) {
 	Position defPos{ 15580.f, 77800.f, -490.f };
-	// 14900.0, 78160.0 -432.0
-	// 15580.0 77800.0 -490.0
-	
 	// 13068.541016  86198.484375 -448.772888
 	//for (int i = 0; i < 4; ++i) {
 	//	short idx = START_POINT_MONSTER + i*1000;
@@ -415,26 +412,7 @@ void CreateMonsters(int num) {
 	g_boss[idx]->Initialize(idx, defPos);
 	cout<<"Boss Golem(id="<<idx<<") Spawn("<<defPos.x<<", " << defPos.y << ", " << defPos.z << ")\n";
 	AddTimer(BOSS_IDX, 4, chrono::high_resolution_clock::now() + 1s, NULL);
-	// return;
-	// return
-	// return;
-	// idx = idx + 1;
-	// defPos = { 22976.53125, 35731.6875, -932.329895 };
-	// g_boss[idx] = new Boss;
-	// g_boss[idx]->Initialize(idx, defPos);
-	// cout << "Boss Golem(id=" <<idx<< ") Spawn(" << defPos.x << ", " << defPos.y << ", " << defPos.z << ")\n";
 
-	idx = NPC_ID_START;
-	// SpawnMonster(GOBLIN_1, 10480.0, 77260.0, -410.0, OBJ_TROLL);
-	// return;
-	// Test Spawn
-	// SpawnMonster(GOBLIN_0, 12853.0, 76285.0, -420.0, OBJ_GOBLIN);
-	// SpawnMonster(GOBLIN_1, 10480.0, 77260.0, -410.0, OBJ_CYCLOPS);
-	// SpawnMonster(GOBLIN_2, 13090.0, 78376.0, -410.0, OBJ_BEETLE);
-	// SpawnMonster(GOBLIN_3, 11010.0, 74920.0, -410.0, OBJ_MINI_GOLEM);
-	// SpawnMonster(GOBLIN_4, 11730.0, 79790.0, -600.0, OBJ_LAZARD);
-
-	// True Spawn ------------------------------------------------------
 	// Goblin
 	SpawnMonster(GOBLIN_0, 15640.0, 79760.0, -428.114075, OBJ_GOBLIN);
 	SpawnMonster(GOBLIN_1, 16180.0, 79150.0, -428.114075, OBJ_GOBLIN);

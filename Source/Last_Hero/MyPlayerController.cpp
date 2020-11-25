@@ -23,8 +23,6 @@ AMyPlayerController::AMyPlayerController()
 	{
 		ResultWidgetClass = UI_RESULT_C.Class;
 	}
-	// ResultWidget = CreateWidget<UMyGameplayResultWidget>(this, ResultWidgetClass);
-	ABCHECK(nullptr != ResultWidget);
 
 	PrimaryActorTick.bCanEverTick = true;
 	bEnableClickEvents = true;
@@ -89,13 +87,6 @@ void AMyPlayerController::BeginPlay()
 	ChangeInputMode(true);
 	// ResultWidget = CreateWidget< UMyGameplayResultWidget>(this, ResultWidgetClass);
 	lastSendTime = high_resolution_clock::now();
-	// ShowResultUI();
-	return;
-	FStringClassReference MyWidgetClassRegf(TEXT("WidgetBlueprint'/Game/Game/UI/UI_BossResult.UI_BossResult'"));
-	auto classWidget = MyWidgetClassRegf.TryLoadClass<UUserWidget>();
-	auto wid = CreateWidget<UUserWidget>(this, classWidget);
-	// wid->AddToViewport();
-	wid->AddToViewport();
 }
 
 void AMyPlayerController::ShowResultUI()
@@ -118,17 +109,6 @@ void AMyPlayerController::Tick(float DeltaTime) {
 
 	// 키 하나가 여러 역할을 하는 경우는 나중에 처리
 	if (IsInputKeyDown(EKeys::One) && !isInput) {
-		// ResultWidget = CreateWidget< UMyGameplayResultWidget>(this, ResultWidgetClass);
-		/*FName path = TEXT("WidgetBlueprint'/Game/Game/UI/UI_BossResult.UI_BossResult_C'");
-		auto obj = Cast<UMyGameplayResultWidget>(StaticLoadObject(UMyGameplayResultWidget::StaticClass(), NULL, *path.ToString()));
-		obj->AddToViewport();*/
-		// ResultWidget = CreateWidget<UMyGameplayResultWidget>(this, ResultWidgetClass);
-		// ResultWidget->SetVisibility(ESlateVisibility::Visible);
-		// ChangeInputMode(false);
-		/*FStringClassReference MyWidgetClassRegf(TEXT("WidgetBlueprint'/Game/Game/UI/UI_BossResult.UI_BossResult'"));
-		auto classWidget = MyWidgetClassRegf.TryLoadClass<UABGameplayWidget>();
-		auto wid = CreateWidget<UABGameplayWidget>(GetWorld(), classWidget);
-		wid->AddToViewport();*/
 		lastInputTime = high_resolution_clock::now();
 		isInput = true;
 		if (net.wpnType == wpn_none) {

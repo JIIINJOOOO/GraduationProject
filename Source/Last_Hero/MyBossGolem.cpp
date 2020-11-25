@@ -408,7 +408,8 @@ void AMyBossGolem::BeginPlay()
 	rotate = GetActorRotation();
 
 	sendTime = high_resolution_clock::now();
-	// IsDown = true;
+	TargetLookVec = { 0,0,0 };
+	IsDown = false;
 }
 
 void AMyBossGolem::PostInitializeComponents()
@@ -451,7 +452,6 @@ void AMyBossGolem::Tick(float DeltaTime)
 			auto bonePack = MakeBonePacket();
 			net.SendPacket(&bonePack);
 		}
-		// return;
 	}
 
 	if (net.objEventQue[id].empty()) return;
@@ -460,10 +460,10 @@ void AMyBossGolem::Tick(float DeltaTime)
 
 	switch (ev.type) {
 	case sc_boss_attack:
-		// if (net.isHost) break;
-		if (IsDown) break;
+		/*if (!IsDown)
+			TargetLookVec = FVector(ev.pos.x, ev.pos.y, ev.pos.z) - GetActorLocation();
+		else TargetLookVec = { 0,0,0 };*/
 		LaunchForce = 0.f;
-		// TargetLookVec = FVector(ev.pos.x, ev.pos.y, ev.pos.z) - GetActorLocation();
 		AttackPacketProcess(ev.exp);
 		break;
 	case sc_update_obj:
@@ -482,10 +482,10 @@ void AMyBossGolem::Tick(float DeltaTime)
 			IsBreakLeftLeg = true;*/
 		break;
 	case sc_bone_update:
+		if (BoneMap[GetPartString(ev.o_type)] == 0) break;
 		BoneMap[GetPartString(ev.o_type)] = ev.hp;
 		break;
 	case sc_set_rotation:
-		UE_LOG(LogTemp, Log, TEXT("Boss Rotate"));
 		rotate = { ev.rotation.x, ev.rotation.y,ev.rotation.z };
 		SetActorRotation(rotate);
 		break;

@@ -229,7 +229,6 @@ void AMyCharacter::Tick(float DeltaTime)
 		isMoving = false;
 	}break;
 	case sc_damaged: {
-		UE_LOG(LogTemp, Log, TEXT("Player Damaged!"));
 		UMyAnimInstance* myAnimInst = Cast<UMyAnimInstance>(animInstance);
 		if (myAnimInst != nullptr) myAnimInst->SwordShieldImpact1();
 		hp = ev.hp;

@@ -278,10 +278,8 @@ void Boss::BoneMapUpdate(char* new_boneMap) {
 				boneLock.unlock();
 				continue;
 			}
-			cout << "boss is damaged\n";
+			
 			BoneMap[i] -= 1;
-			// TakeDamage(20);
-			// BoneMap[i] = 0;
 			boneLock.unlock();
 
 			if (BoneMap[i] <= 0) {
@@ -293,14 +291,14 @@ void Boss::BoneMapUpdate(char* new_boneMap) {
 					send_packet(i, &pack);
 				}
 			}
-			// else {
-			// 	SC_BONE_UPDATE pack{ sizeof(SC_BONE_UPDATE), sc_bone_update, id, i };
-			// 	pack.attacked = BoneMap[i];
-			// 	for (int i = 0; i < MAX_PLAYER; ++i) {
-			// 		if (g_player[i] == NULL) continue;
-			// 		send_packet(i, &pack);
-			// 	}
-			// }
+			else {
+				SC_BONE_UPDATE pack{ sizeof(SC_BONE_UPDATE), sc_bone_update, id, i };
+				pack.attacked = BoneMap[i];
+				for (int i = 0; i < MAX_PLAYER; ++i) {
+					if (g_player[i] == NULL) continue;
+					send_packet(i, &pack);
+				}
+			}
 		}
 		else boneLock.unlock();
 	}

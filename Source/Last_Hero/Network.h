@@ -60,6 +60,7 @@ private:
 	string id, pass;
 	int my_id;
 public:
+	int my_charType;
 	short my_moveState;
 	bool isHost;
 	SOCKET m_sock;

@@ -11,7 +11,6 @@
 
 // Global Values
 Network net;	// 다른 소스파일에서 extern으로 가져다 씀
-extern int charType;
 
 AMyGameModeBase::AMyGameModeBase()
 {
@@ -71,6 +70,11 @@ void AMyGameModeBase::BeginPlay()
 	12853.588867, 76285.28125, -420.191681
 	*/
 	//wid->AddToViewport();
+	if (net.GetStatus() != p_login) {
+		CS_LOGIN p{ sizeof(CS_LOGIN), cs_login, "test", "1234", net.my_charType };
+		UE_LOG(LogTemp, Log, TEXT("Player Model Info GMB : %d"), net.my_charType);
+		net.SendPacket(&p);
+	}
 
 }
 
@@ -218,16 +222,7 @@ void AMyGameModeBase::SpawnTroll(int oid, float x, float y, float z) {
 	SpawnMonster->SetID(oid);
 }
 
-void AMyGameModeBase::ProcessEvent3()
-{
-	// net.eventLock.lock();
-	// if (net.eventQue.empty()) {
-	// 	net.eventLock.unlock();
-	// 	return;
-	// }
-	// auto ev = net.eventQue.front();
-	// net.eventLock.unlock();
-	// return;
+void AMyGameModeBase::ProcessEvent3() {
 	if (net.objEventQue[GMB_ID].empty()) return;
 	auto ev = net.objEventQue[GMB_ID].front();
 	net.objEventQue[GMB_ID].pop();
@@ -237,9 +232,6 @@ void AMyGameModeBase::ProcessEvent3()
 		if (ev.oid < MAX_PLAYER) {
 			SpawnPlayer(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z, ev.o_type);
 		}
-		// else if (ev.oid == 20000) {
-		// 	// SpawnBoss(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
-		// }
 		else {	// Normal Monster
 			if (ev.o_type == OBJ_GOBLIN)
 				SpawnGoblin(ev.oid, ev.pos.x, ev.pos.y, ev.pos.z);
