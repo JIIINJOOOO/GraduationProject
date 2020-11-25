@@ -83,6 +83,7 @@ public:
 		bool SwordEquipped_cpp;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
 		EMovementStateCPP MovementState_cpp;
+
 	
 	// attack count
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Server)
