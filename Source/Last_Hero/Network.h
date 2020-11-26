@@ -16,6 +16,7 @@
 #include <queue>
 #include <unordered_map>
 #include <chrono>
+#include <atomic>
 #undef UpdateResource
 #undef PlaySound
 #include "protocol.h"
@@ -29,6 +30,7 @@
 #define NPC_ID_START 10000
 #define MAX_MONSTER 100
 #define GMB_ID 999
+#define GI_ID 998	// Game Instance
 /**
  *
  */

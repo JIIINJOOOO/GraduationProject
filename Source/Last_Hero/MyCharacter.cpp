@@ -104,6 +104,7 @@ void AMyCharacter::BeginPlay()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	// CharTypeNum = 2;
 	if (net.GetStatus() != p_login) return;
 	if (other == false) id = net.GetMyID();
 	if (isMoving) AddMovementInput(velocity, speed);
@@ -126,6 +127,7 @@ void AMyCharacter::Tick(float DeltaTime)
 		net.my_vel = { GetVelocity().X, GetVelocity().Y, GetVelocity().Z };
 		netPos = position;
 	}
+	// else CharTypeNum = 3;
 	velocity = { 0,0,0 };
 
 	if (net.objEventQue[id].empty()) return;

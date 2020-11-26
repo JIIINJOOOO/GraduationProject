@@ -109,8 +109,12 @@ void Network::ProcessPacket(char* buf) {
 		ev.pos = pack->pos;
 		ev.oid = pack->oid;
 		ev.o_type = pack->o_type;
-
-		objEventQue[GMB_ID].push(ev);
+		if (ev.oid < MAX_USERS) {
+			objEventQue[GI_ID].push(ev);
+			// this_thread::sleep_for(50ms);
+		}
+		else
+			objEventQue[GMB_ID].push(ev);
 	}break;
 	case sc_update_obj: {
 		SC_UPDATE_OBJ* pack = reinterpret_cast<SC_UPDATE_OBJ*>(buf);
